@@ -17,14 +17,14 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Microsoft YaHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #333;
             overflow: hidden;
         }
-        
+
         /* ========== 加载动画样式 ========== */
         #loadingOverlay {
             position: fixed;
@@ -40,37 +40,37 @@
             z-index: 9999;
             transition: opacity 0.5s ease, visibility 0.5s ease;
         }
-        
+
         #loadingOverlay.hidden {
             opacity: 0;
             visibility: hidden;
         }
-        
+
         .loading-content {
             text-align: center;
             color: white;
         }
-        
+
         .loading-logo {
             width: 80px;
             height: 80px;
             margin-bottom: 30px;
             animation: pulse 2s ease-in-out infinite;
         }
-        
+
         .loading-title {
             font-size: 24px;
             font-weight: 600;
             margin-bottom: 10px;
             letter-spacing: 1px;
         }
-        
+
         .loading-subtitle {
             font-size: 14px;
             opacity: 0.9;
             margin-bottom: 40px;
         }
-        
+
         /* 进度条容器 */
         .progress-container {
             width: 300px;
@@ -81,20 +81,20 @@
             position: relative;
             backdrop-filter: blur(10px);
         }
-        
+
         /* 进度条 */
         .progress-bar-loading {
             height: 100%;
-            background: linear-gradient(90deg, 
-                rgba(255, 255, 255, 0.8) 0%, 
-                rgba(255, 255, 255, 1) 50%, 
+            background: linear-gradient(90deg,
+                rgba(255, 255, 255, 0.8) 0%,
+                rgba(255, 255, 255, 1) 50%,
                 rgba(255, 255, 255, 0.8) 100%);
             border-radius: 10px;
             width: 0%;
             transition: width 0.3s ease;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
-        
+
         /* 加载文本 */
         .loading-text {
             margin-top: 20px;
@@ -102,13 +102,13 @@
             opacity: 0.8;
             min-height: 20px;
         }
-        
+
         /* 加载动画 - 跳动的点 */
         .loading-dots {
             display: inline-block;
             margin-left: 5px;
         }
-        
+
         .loading-dots span {
             display: inline-block;
             width: 6px;
@@ -118,15 +118,15 @@
             margin: 0 2px;
             animation: bounce 1.4s infinite ease-in-out both;
         }
-        
+
         .loading-dots span:nth-child(1) {
             animation-delay: -0.32s;
         }
-        
+
         .loading-dots span:nth-child(2) {
             animation-delay: -0.16s;
         }
-        
+
         @keyframes bounce {
             0%, 80%, 100% {
                 transform: scale(0);
@@ -137,7 +137,7 @@
                 opacity: 1;
             }
         }
-        
+
         @keyframes pulse {
             0%, 100% {
                 transform: scale(1);
@@ -148,7 +148,7 @@
                 opacity: 0.8;
             }
         }
-        
+
         /* 旋转的圆环 */
         .spinner {
             width: 50px;
@@ -159,23 +159,23 @@
             animation: spin 1s linear infinite;
             margin: 20px auto;
         }
-        
+
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        
+
         #container {
             width: 100%;
             height: 100vh;
             position: relative;
         }
-        
+
         /* 控制面板样式优化 */
         .control-panel {
             position: absolute;
             top: 15px;
             left: 15px;
-            width: 380px;
+            width: 400px;
             background: rgba(255, 255, 255, 0.98);
             border-radius: 16px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
@@ -188,7 +188,7 @@
             overflow: hidden;
             backdrop-filter: blur(10px);
         }
-        
+
         /* 面板头部 */
         .panel-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -200,13 +200,13 @@
             flex-shrink: 0;
             border-radius: 16px 16px 0 0;
         }
-        
+
         .panel-header-left {
             display: flex;
             align-items: center;
             flex: 1;
         }
-        
+
         .panel-header .map-icon {
             width: 48px;
             height: 48px;
@@ -214,14 +214,14 @@
             object-fit: contain;
             filter: brightness(0) invert(1);
         }
-        
+
         .panel-header h2 {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             margin: 0;
             line-height: 1.3;
         }
-        
+
         .version-badge {
             font-size: 10px;
             opacity: 0.9;
@@ -231,7 +231,7 @@
             gap: 4px;
             font-weight: 500;
         }
-        
+
         .toggle-panel {
             background: rgba(255, 255, 255, 0.2);
             border: none;
@@ -245,27 +245,27 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .toggle-panel:hover {
             background: rgba(255, 255, 255, 0.3);
         }
-        
+
         .panel-content {
             overflow-y: auto;
             flex-grow: 1;
             padding: 20px;
         }
-        
+
         .panel-content.collapsed {
             display: none;
         }
-        
+
         /* 搜索框优化 */
         .search-wrapper {
             position: relative;
             margin-bottom: 20px;
         }
-        
+
         .search-icon {
             position: absolute;
             left: 15px;
@@ -274,7 +274,7 @@
             color: #6c757d;
             pointer-events: none;
         }
-        
+
         #tipinput {
             padding-left: 45px;
             border-radius: 12px;
@@ -282,12 +282,12 @@
             transition: all 0.3s;
             height: 48px;
         }
-        
+
         #tipinput:focus {
             border-color: #667eea;
             box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
         }
-        
+
         /* 按钮组优化 */
         .btn-group-custom {
             display: grid;
@@ -295,7 +295,7 @@
             gap: 12px;
             margin: 20px 0;
         }
-        
+
         .btn-custom {
             border-radius: 12px;
             padding: 12px 16px;
@@ -308,8 +308,9 @@
             border: none;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
-        
+
         .btn-custom::before {
             content: '';
             position: absolute;
@@ -320,36 +321,434 @@
             background: rgba(255, 255, 255, 0.2);
             transition: left 0.3s;
         }
-        
+
         .btn-custom:hover::before {
             left: 100%;
         }
-        
+
         .btn-primary-custom {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
-        
+
         .btn-success-custom {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             color: white;
         }
-        
+
         .btn-danger-custom {
             background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
             color: white;
         }
-        
+
         .btn-warning-custom {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
         }
-        
+
+        .btn-info-custom {
+            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+            color: white;
+        }
+
+        .btn-purple-custom {
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            color: white;
+        }
+
         .btn-custom:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
-        
+
+        /* 经纬度输入区域 */
+        .coords-input-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: linear-gradient(135deg, #11998e15 0%, #38ef7d15 100%);
+            border-radius: 12px;
+            border: 2px solid #11998e30;
+        }
+
+        .coords-input-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .coords-input-header h5 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #11998e;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toggle-coords-btn {
+            background: #11998e;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .toggle-coords-btn:hover {
+            background: #0d7a6e;
+        }
+
+        .toggle-coords-btn i {
+            transition: transform 0.3s;
+        }
+
+        .toggle-coords-btn.collapsed i {
+            transform: rotate(-90deg);
+        }
+
+        .coords-input-body {
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        .coords-input-body.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .coords-textarea {
+            width: 100%;
+            min-height: 120px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            padding: 12px;
+            font-size: 13px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            resize: vertical;
+            transition: all 0.3s;
+            line-height: 1.6;
+        }
+
+        .coords-textarea:focus {
+            border-color: #11998e;
+            box-shadow: 0 0 0 0.2rem rgba(17, 153, 142, 0.2);
+            outline: none;
+        }
+
+        .coords-format-hint {
+            font-size: 11px;
+            color: #6c757d;
+            margin-top: 8px;
+            padding: 8px 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            line-height: 1.5;
+        }
+
+        .coords-format-hint code {
+            background: #e9ecef;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 10px;
+            color: #495057;
+        }
+
+        .coords-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .coords-actions .btn {
+            flex: 1;
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .coords-actions .btn-apply {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .coords-actions .btn-apply:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(17, 153, 142, 0.3);
+        }
+
+        .coords-actions .btn-clear-input {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 2px solid #e0e0e0;
+        }
+
+        .coords-actions .btn-clear-input:hover {
+            background: #e9ecef;
+        }
+
+        .coords-error {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 8px;
+            padding: 8px 10px;
+            background: #f8d7da;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .coords-error.show {
+            display: block;
+        }
+
+        .coords-success {
+            color: #11998e;
+            font-size: 12px;
+            margin-top: 8px;
+            padding: 8px 10px;
+            background: #d1f2eb;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .coords-success.show {
+            display: block;
+        }
+
+        /* JSON导入区域 - 新增样式 */
+        .json-input-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: linear-gradient(135deg, #a855f715 0%, #ec489915 100%);
+            border-radius: 12px;
+            border: 2px solid #a855f730;
+        }
+
+        .json-input-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .json-input-header h5 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #a855f7;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toggle-json-btn {
+            background: #a855f7;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .toggle-json-btn:hover {
+            background: #9333ea;
+        }
+
+        .toggle-json-btn i {
+            transition: transform 0.3s;
+        }
+
+        .toggle-json-btn.collapsed i {
+            transform: rotate(-90deg);
+        }
+
+        .json-input-body {
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            max-height: 600px;
+            opacity: 1;
+        }
+
+        .json-input-body.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .json-textarea {
+            width: 100%;
+            min-height: 200px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            padding: 12px;
+            font-size: 12px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            resize: vertical;
+            transition: all 0.3s;
+            line-height: 1.6;
+            background: #fafafa;
+        }
+
+        .json-textarea:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 0 0.2rem rgba(168, 85, 247, 0.2);
+            outline: none;
+        }
+
+        .json-format-hint {
+            font-size: 11px;
+            color: #6c757d;
+            margin-top: 8px;
+            padding: 8px 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            line-height: 1.5;
+        }
+
+        .json-format-hint code {
+            background: #e9ecef;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 10px;
+            color: #495057;
+        }
+
+        .json-format-hint .example-title {
+            color: #a855f7;
+            font-weight: 600;
+            margin-top: 8px;
+            display: block;
+        }
+
+        .json-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .json-actions .btn {
+            flex: 1;
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .json-actions .btn-apply {
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            color: white;
+        }
+
+        .json-actions .btn-apply:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+        }
+
+        .json-actions .btn-preview {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+        }
+
+        .json-actions .btn-preview:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .json-error {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 8px;
+            padding: 8px 10px;
+            background: #f8d7da;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .json-error.show {
+            display: block;
+        }
+
+        .json-success {
+            color: #a855f7;
+            font-size: 12px;
+            margin-top: 8px;
+            padding: 8px 10px;
+            background: #f3e8ff;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .json-success.show {
+            display: block;
+        }
+
+        /* 解析结果预览 */
+        .json-parse-result {
+            margin-top: 12px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            max-height: 150px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .json-parse-result.show {
+            display: block;
+        }
+
+        .json-parse-result .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .json-parse-result .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .json-parse-result .result-name {
+            font-weight: 600;
+            color: #333;
+            flex: 1;
+        }
+
+        .json-parse-result .result-area {
+            color: #a855f7;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
         /* 面积显示卡片 */
         .area-info {
             margin: 20px 0;
@@ -358,7 +757,7 @@
             border-radius: 12px;
             border: 2px solid #667eea30;
         }
-        
+
         .area-info h5 {
             font-size: 16px;
             margin-bottom: 15px;
@@ -368,14 +767,14 @@
             align-items: center;
             gap: 8px;
         }
-        
+
         .area-display {
             display: flex;
             align-items: baseline;
             justify-content: space-between;
             margin-bottom: 15px;
         }
-        
+
         .area-value {
             font-size: 32px;
             font-weight: 700;
@@ -384,13 +783,13 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
+
         .area-unit {
             font-size: 14px;
             color: #6c757d;
             margin-left: 8px;
         }
-        
+
         /* 单位选择器 */
         .unit-selector {
             display: grid;
@@ -398,7 +797,7 @@
             gap: 8px;
             margin-top: 15px;
         }
-        
+
         .unit-btn {
             padding: 8px 12px;
             border-radius: 8px;
@@ -409,30 +808,30 @@
             transition: all 0.3s;
             font-weight: 500;
         }
-        
+
         .unit-btn.active {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border-color: transparent;
         }
-        
+
         .unit-btn:hover:not(.active) {
             border-color: #667eea;
             background: #f8f9fa;
         }
-        
+
         /* 历史记录卡片优化 */
         .history-section {
             margin-top: 20px;
         }
-        
+
         .history-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
         }
-        
+
         .history-header h5 {
             font-size: 16px;
             font-weight: 700;
@@ -442,7 +841,7 @@
             gap: 8px;
             margin: 0;
         }
-        
+
         #historyList {
             max-height: 300px;
             overflow-y: auto;
@@ -450,21 +849,21 @@
             background-color: #f8f9fa;
             padding: 10px;
         }
-        
+
         #historyList::-webkit-scrollbar {
             width: 6px;
         }
-        
+
         #historyList::-webkit-scrollbar-track {
             background: #f1f1f1;
             border-radius: 10px;
         }
-        
+
         #historyList::-webkit-scrollbar-thumb {
             background: #667eea;
             border-radius: 10px;
         }
-        
+
         .history-item {
             background: white;
             padding: 15px;
@@ -474,31 +873,31 @@
             transition: all 0.3s;
             border: 2px solid transparent;
         }
-        
+
         .history-item:hover {
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
             border-color: #667eea30;
             transform: translateX(5px);
         }
-        
+
         .history-item:last-child {
             margin-bottom: 0;
         }
-        
+
         .history-item-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 12px;
         }
-        
+
         .history-item-name {
             font-weight: 600;
             color: #333;
             font-size: 14px;
             flex: 1;
         }
-        
+
         .history-item-name input {
             border: none;
             background: transparent;
@@ -507,12 +906,12 @@
             width: 100%;
             padding: 0;
         }
-        
+
         .history-item-name input:focus {
             outline: none;
             border-bottom: 2px solid #667eea;
         }
-        
+
         .history-item-area {
             color: #667eea;
             font-weight: 700;
@@ -520,13 +919,13 @@
             white-space: nowrap;
             margin-left: 10px;
         }
-        
+
         .history-item-actions {
             display: flex;
             gap: 5px;
             margin-left: 10px;
         }
-        
+
         .history-item-btn {
             width: 28px;
             height: 28px;
@@ -539,43 +938,44 @@
             justify-content: center;
             font-size: 12px;
         }
-        
+
         .btn-highlight {
             background: #fff3cd;
             color: #856404;
         }
-        
+
         .btn-highlight:hover {
             background: #ffc107;
         }
-        
+
         .btn-delete {
             background: #f8d7da;
             color: #721c24;
         }
-        
+
         .btn-delete:hover {
             background: #dc3545;
             color: white;
         }
-        
+
         .history-item-remark {
             margin-top: 10px;
         }
-        
+
         .history-item-remark input {
             border-radius: 8px;
             border: 1px solid #e0e0e0;
             padding: 8px 12px;
             font-size: 12px;
             transition: all 0.3s;
+            width: 100%;
         }
-        
+
         .history-item-remark input:focus {
             border-color: #667eea;
             box-shadow: 0 0 0 0.15rem rgba(102, 126, 234, 0.15);
         }
-        
+
         /* 搜索结果 */
         .search-results {
             margin-top: 8px;
@@ -587,34 +987,34 @@
             background: white;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-        
+
         .search-item {
             padding: 12px 15px;
             border-bottom: 1px solid #f1f1f1;
             cursor: pointer;
             transition: all 0.3s;
         }
-        
+
         .search-item:hover {
             background: linear-gradient(90deg, #667eea10 0%, transparent 100%);
             padding-left: 20px;
         }
-        
+
         .search-item:last-child {
             border-bottom: none;
         }
-        
+
         .search-name {
             font-weight: 600;
             margin-bottom: 4px;
             color: #333;
         }
-        
+
         .search-address {
             font-size: 12px;
             color: #6c757d;
         }
-        
+
         /* 地图样式选择器 */
         .form-select {
             border-radius: 12px;
@@ -623,19 +1023,19 @@
             transition: all 0.3s;
             height: 48px;
         }
-        
+
         .form-select:focus {
             border-color: #667eea;
             box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
         }
-        
+
         .form-label {
             font-weight: 600;
             margin-bottom: 8px;
             color: #495057;
             font-size: 14px;
         }
-        
+
         /* 使用说明优化 */
         .instructions {
             margin-top: 20px;
@@ -647,22 +1047,22 @@
             border-radius: 10px;
             border-left: 4px solid #667eea;
         }
-        
+
         .instructions strong {
             color: #667eea;
             display: block;
             margin-bottom: 8px;
         }
-        
+
         .instructions ol {
             padding-left: 1.5em;
             margin: 0;
         }
-        
+
         .instructions li {
             margin-bottom: 5px;
         }
-        
+
         /* 版权信息样式 */
         .copyright-info {
             margin-top: 20px;
@@ -674,13 +1074,13 @@
             color: #6c757d;
             border-top: 2px solid #667eea30;
         }
-        
+
         .copyright-info .version {
             font-weight: 600;
             color: #667eea;
             margin-bottom: 5px;
         }
-        
+
         .copyright-info .author {
             display: flex;
             align-items: center;
@@ -688,23 +1088,23 @@
             gap: 5px;
             margin-top: 5px;
         }
-        
+
         .copyright-info .author i {
             color: #e74c3c;
             animation: heartbeat 1.5s infinite;
         }
-        
+
         @keyframes heartbeat {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.1); }
         }
-        
+
         .copyright-info .divider {
             margin: 8px 0;
             height: 1px;
             background: linear-gradient(90deg, transparent, #667eea50, transparent);
         }
-        
+
         /* 状态栏优化 */
         .status-bar {
             position: absolute;
@@ -722,7 +1122,7 @@
             backdrop-filter: blur(10px);
             animation: slideUp 0.3s ease;
         }
-        
+
         @keyframes slideUp {
             from {
                 opacity: 0;
@@ -733,7 +1133,7 @@
                 transform: translate(-50%, 0);
             }
         }
-        
+
         /* 浮动水印 */
         .watermark {
             position: absolute;
@@ -748,12 +1148,12 @@
             z-index: 999;
             backdrop-filter: blur(5px);
         }
-        
+
         .watermark i {
             color: #667eea;
             margin-right: 5px;
         }
-        
+
         /* 工具栏 */
         .toolbar {
             position: absolute;
@@ -764,7 +1164,7 @@
             gap: 10px;
             z-index: 999;
         }
-        
+
         .toolbar-btn {
             width: 48px;
             height: 48px;
@@ -780,14 +1180,14 @@
             font-size: 18px;
             color: #667eea;
         }
-        
+
         .toolbar-btn:hover {
             transform: scale(1.1);
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
-        
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             .control-panel {
@@ -795,11 +1195,11 @@
                 top: 10px;
                 left: 15px;
             }
-            
+
             .btn-group-custom {
                 grid-template-columns: 1fr;
             }
-            
+
             .toolbar {
                 flex-direction: row;
                 top: auto;
@@ -808,36 +1208,58 @@
                 left: 15px;
                 justify-content: center;
             }
-            
+
             .watermark {
                 display: none;
             }
-            
+
             .loading-title {
                 font-size: 20px;
             }
-            
+
             .progress-container {
                 width: 250px;
             }
         }
-        
+
         /* 空状态 */
         .empty-state {
             text-align: center;
             padding: 40px 20px;
             color: #6c757d;
         }
-        
+
         .empty-state i {
             font-size: 48px;
             margin-bottom: 15px;
             opacity: 0.3;
         }
-        
+
         .empty-state p {
             margin: 0;
             font-size: 14px;
+        }
+
+        /* 预览标记 */
+        .preview-marker {
+            background: #11998e;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* JSON预览标记 */
+        .json-preview-marker {
+            background: #a855f7;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -850,11 +1272,11 @@
             </div>
             <div class="loading-title">土地面积测量工具</div>
             <div class="loading-subtitle">国家税务总局扬州市邗江区税务局</div>
-            
+
             <div class="progress-container">
                 <div class="progress-bar-loading" id="progressBar"></div>
             </div>
-            
+
             <div class="loading-text">
                 <span id="loadingText">正在初始化</span>
                 <span class="loading-dots">
@@ -867,7 +1289,7 @@
     </div>
 
     <div id="container"></div>
-    
+
     <div class="control-panel">
         <div class="panel-header">
             <div class="panel-header-left">
@@ -875,7 +1297,7 @@
                 <div>
                     <h2>国家税务总局扬州市税务局<br>土地面积测量工具</h2>
                     <div class="version-badge">
-                        <i class="fas fa-certificate"></i>v1.0.0
+                        <i class="fas fa-certificate"></i>v2.1.0
                     </div>
                 </div>
             </div>
@@ -883,7 +1305,7 @@
                 <i class="fas fa-chevron-up"></i>
             </button>
         </div>
-        
+
         <div class="panel-content">
             <!-- 搜索框 -->
             <div class="search-wrapper">
@@ -911,7 +1333,7 @@
                     <option value="amap://styles/grey">锖青黑</option>
                 </select>
             </div>
-            
+
             <!-- 操作按钮组 -->
             <div class="btn-group-custom">
                 <button id="drawArea" class="btn-custom btn-primary-custom">
@@ -927,7 +1349,105 @@
                     <i class="fas fa-trash-alt"></i> 全部清除
                 </button>
             </div>
-            
+
+            <!-- JSON批量导入区域 - 新增功能 -->
+            <div class="json-input-section">
+                <div class="json-input-header">
+                    <h5>
+                        <i class="fas fa-file-code"></i> JSON数据批量导入
+                    </h5>
+                    <button class="toggle-json-btn" id="toggleJsonInput">
+                        <i class="fas fa-chevron-down"></i> 展开
+                    </button>
+                </div>
+                <div class="json-input-body" id="jsonInputBody">
+                    <textarea id="jsonInput" class="json-textarea" placeholder="粘贴JSON格式数据，自动提取shape字段进行面积测量
+
+支持的JSON格式示例：
+{
+    "data": {
+        "spec": {
+            "mining_shape": {
+                "shape": "119.687497,32.345709;119.690453,32.343734;..."
+            }
+        },
+        "base": {
+            "name": "企业名称"
+        }
+    }
+}"></textarea>
+                    <div class="json-format-hint">
+                        <strong>功能说明：</strong><br>
+                        <code>自动提取</code> JSON中的 <code>spec.mining_shape.shape</code> 字段<br>
+                        <code>支持批量</code> 导入多个企业数据<br>
+                        <code>智能解析</code> 分号分隔的经纬度坐标<br>
+                        <span class="example-title">JSON示例结构：</span>
+                        <code>{"data":{"spec":{"mining_shape":{"shape":"经度,纬度;..."}},"base":{"name":"名称"}}}</code>
+                    </div>
+                    <div class="json-error" id="jsonError"></div>
+                    <div class="json-success" id="jsonSuccess"></div>
+
+                    <!-- 解析结果预览 -->
+                    <div class="json-parse-result" id="jsonParseResult"></div>
+
+                    <div class="json-actions">
+                        <button id="previewJson" class="btn btn-preview">
+                            <i class="fas fa-eye"></i> 预览
+                        </button>
+                        <button id="applyJson" class="btn btn-apply">
+                            <i class="fas fa-check"></i> 应用并测量
+                        </button>
+                        <button id="clearJsonInput" class="btn btn-clear-input">
+                            <i class="fas fa-trash"></i> 清空
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 经纬度输入区域 -->
+            <div class="coords-input-section">
+                <div class="coords-input-header">
+                    <h5>
+                        <i class="fas fa-map-pin"></i> 经纬度批量导入
+                    </h5>
+                    <button class="toggle-coords-btn" id="toggleCoordsInput">
+                        <i class="fas fa-chevron-down"></i> 展开
+                    </button>
+                </div>
+                <div class="coords-input-body" id="coordsInputBody">
+                    <textarea id="coordsInput" class="coords-textarea" placeholder="输入经纬度坐标，每行一组：
+
+119.398015,32.377528
+119.399015,32.378528
+119.400015,32.377528
+119.399015,32.376528
+
+或用分号分隔：
+119.398015,32.377528;119.399015,32.378528;119.400015,32.377528"></textarea>
+                    <div class="coords-format-hint">
+                        <strong>格式说明：</strong><br>
+                        支持以下输入格式：<br>
+                        <code>经度,纬度</code> 每行一组 - 推荐格式<br>
+                        <code>经度,纬度;经度,纬度</code> 分号分隔<br>
+                        <code>经度 纬度</code> 空格分隔<br>
+                        <code>(经度,纬度)</code> 带括号格式
+                    </div>
+                    <div class="coords-error" id="coordsError"></div>
+                    <div class="coords-success" id="coordsSuccess"></div>
+                    <div class="coords-actions">
+                        <button id="previewCoords" class="btn btn-clear-input">
+                            <i class="fas fa-eye"></i> 预览
+                        </button>
+                        <button id="applyCoords" class="btn btn-apply">
+                            <i class="fas fa-check"></i> 应用并测量
+                        </button>
+                        <button id="clearCoordsInput" class="btn btn-clear-input">
+                            <i class="fas fa-trash"></i> 清空
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- 总面积显示 -->
             <div class="area-info" id="totalAreaInfo" style="display: none;">
                 <h5>
@@ -937,7 +1457,7 @@
                     <div>
                         <span class="area-value" id="totalAreaValue">0</span>
                         <span class="area-unit" id="totalAreaUnit">平方米</span>
-                        </div>
+                    </div>
                 </div>
                 <div class="unit-selector">
                     <button class="unit-btn active" data-unit="sqm">m²</button>
@@ -946,48 +1466,52 @@
                     <button class="unit-btn" data-unit="sqkm">km²</button>
                 </div>
             </div>
+
             <!-- 历史记录 -->
-        <div class="history-section">
-            <div class="history-header">
-                <h5><i class="fas fa-history"></i> 测量记录</h5>
-                <button id="exportHistory" class="btn-custom btn-success-custom" style="padding: 6px 12px; font-size: 12px;">
-                    <i class="fas fa-file-csv"></i> 导出
-                </button>
-            </div>
-            <div id="historyList">
-                <div class="empty-state">
-                    <i class="fas fa-inbox"></i>
-                    <p>暂无测量记录<br>点击"绘制区域"开始测量</p>
+            <div class="history-section">
+                <div class="history-header">
+                    <h5><i class="fas fa-history"></i> 测量记录</h5>
+                    <button id="exportHistory" class="btn-custom btn-success-custom" style="padding: 6px 12px; font-size: 12px;">
+                        <i class="fas fa-file-csv"></i> 导出
+                    </button>
+                </div>
+                <div id="historyList">
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>暂无测量记录<br>点击"绘制区域"开始测量</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 使用说明 -->
-        <div class="instructions">
-            <strong><i class="fas fa-info-circle"></i> 使用说明</strong>
-            <ol>
-                <li>搜索框定位到目标地点</li>
-                <li>点击"绘制区域"开始测量</li>
-                <li>单击添加点,双击完成绘制</li>
-                <li>可重复绘制多个区域</li>
-                <li>鼠标悬停可高亮对应区域</li>
-                <li>支持撤销、删除、重命名</li>
-                <li>点击"保存数据"可本地保存</li>
-                <li>导出CSV获取详细报表</li>
-            </ol>
-        </div>
+            <!-- 使用说明 -->
+            <div class="instructions">
+                <strong><i class="fas fa-info-circle"></i> 使用说明</strong>
+                <ol>
+                    <li>搜索框定位到目标地点</li>
+                    <li>点击"绘制区域"开始测量</li>
+                    <li>单击添加点,双击完成绘制</li>
+                    <li><strong>新功能：</strong>JSON批量导入，自动提取shape字段</li>
+                    <li><strong>新功能：</strong>支持批量导入多个企业数据</li>
+                    <li>可重复绘制多个区域</li>
+                    <li>鼠标悬停可高亮对应区域</li>
+                    <li>支持撤销、删除、重命名</li>
+                    <li>点击"保存数据"可本地保存</li>
+                    <li>导出CSV获取详细报表</li>
+                </ol>
+            </div>
 
-        <!-- 版权信息 -->
-        <div class="copyright-info">
-            <div class="version">
-                <i class="fas fa-code-branch"></i> 版本 v1.0.0
-            </div>
-            <div class="divider"></div>
-            <div class="author">
-                测量数据仅供参考，如有错误请指正 <i class="fas fa-heart"></i> 
-            </div>
-            <div style="margin-top: 8px; font-size: 11px; opacity: 0.7;">
-                © 2025 扬州市邗江区税务局 · All Rights Reserved.
+            <!-- 版权信息 -->
+            <div class="copyright-info">
+                <div class="version">
+                    <i class="fas fa-code-branch"></i> 版本 v2.1.0
+                </div>
+                <div class="divider"></div>
+                <div class="author">
+                    测量数据仅供参考，如有错误请指正 <i class="fas fa-heart"></i>
+                </div>
+                <div style="margin-top: 8px; font-size: 11px; opacity: 0.7;">
+                    © 2025 扬州市邗江区税务局 · All Rights Reserved.
+                </div>
             </div>
         </div>
     </div>
@@ -1008,7 +1532,7 @@
 
 <!-- 浮动水印 -->
 <div class="watermark">
-    <i class="fas fa-code"></i> v1.0.0 Professional Edition
+    <i class="fas fa-code"></i> v2.1.0 Professional Edition
 </div>
 
 <div class="status-bar" id="statusBar">
@@ -1016,7 +1540,7 @@
 </div>
 
 <!-- 高德地图API -->
-<script> 
+<script>
     window._AMapSecurityConfig = {
         securityJsCode: 'a048cfa884168ed8300bf427776c0b70',
     }
@@ -1034,13 +1558,13 @@
         { progress: 80, text: '正在配置界面组件' },
         { progress: 100, text: '加载完成' }
     ];
-    
+
     let currentStepIndex = 0;
-    
+
     function updateLoadingProgress(progress, text) {
         const progressBar = document.getElementById('progressBar');
         const loadingText = document.getElementById('loadingText');
-        
+
         if (progressBar) {
             progressBar.style.width = progress + '%';
         }
@@ -1048,7 +1572,7 @@
             loadingText.textContent = text;
         }
     }
-    
+
     function nextLoadingStep() {
         if (currentStepIndex < loadingSteps.length) {
             const step = loadingSteps[currentStepIndex];
@@ -1056,57 +1580,63 @@
             currentStepIndex++;
         }
     }
-    
+
     function hideLoadingOverlay() {
         updateLoadingProgress(100, '加载完成');
         setTimeout(() => {
             const overlay = document.getElementById('loadingOverlay');
             if (overlay) {
                 overlay.classList.add('hidden');
-                // 完全隐藏后移除元素
                 setTimeout(() => {
                     overlay.remove();
                 }, 500);
             }
         }, 300);
     }
-    
-    // 初始加载步骤
-    nextLoadingStep(); // 20% - 加载地图资源
-    
+
+    nextLoadingStep();
+
     // --- 全局变量 ---
     var map = null;
     var mouseTool = null;
     var placeSearch = null;
     var autoComplete = null;
-    
+
     var polygons = [];
     var markers = [];
     var historyData = [];
-    
+
     var currentUnit = 'sqm';
     var totalAreaInSquareMeters = 0;
     var regionCounter = 0;
     var highlightedPolygon = null;
-    
+
+    // 经纬度预览相关变量
+    var previewMarkers = [];
+    var previewPolygon = null;
+
+    // JSON预览相关变量
+    var jsonPreviewMarkers = [];
+    var jsonPreviewPolygons = [];
+
     const regionColors = [
         '#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe',
-        '#43e97b', '#38f9d7', '#fa709a', '#fee140', '#30cfd0', '#330867'
+        '#43e97b', '#38f9d7', '#fa709a', '#fee140', '#30cfd0', '#330867',
+        '#a855f7', '#ec4899', '#f97316', '#84cc16', '#06b6d4', '#8b5cf6'
     ];
 
     // --- 初始化地图 ---
-    nextLoadingStep(); // 40% - 初始化地图引擎
-    
+    nextLoadingStep();
+
     map = new AMap.Map("container", {
         resizeEnable: true,
         zoom: 12,
         center: [119.398015, 32.377528],
         mapStyle: "amap://styles/light"
     });
-    
-    // 地图加载完成事件
+
     map.on('complete', function() {
-        nextLoadingStep(); // 60% - 加载插件模块
+        nextLoadingStep();
         initializePlugins();
     });
 
@@ -1116,18 +1646,17 @@
             placeSearch = new AMap.PlaceSearch({ map: map, pageSize: 5 });
             autoComplete = new AMap.AutoComplete({ input: "tipinput", city: "扬州", citylimit: true });
             mouseTool = new AMap.MouseTool(map);
-            
+
             autoComplete.on("select", handleSearchSelect);
             mouseTool.on('draw', handleDrawFinish);
-            
-            nextLoadingStep(); // 80% - 配置界面组件
+
+            nextLoadingStep();
             initializeUI();
         });
     }
-    
+
     // --- 初始化UI ---
     function initializeUI() {
-        // 事件绑定
         document.getElementById('drawArea').addEventListener('click', startDrawing);
         document.getElementById('clearAll').addEventListener('click', clearAll);
         document.getElementById('undoLast').addEventListener('click', undoLast);
@@ -1138,30 +1667,38 @@
         document.getElementById('fullScreen').addEventListener('click', toggleFullScreen);
         document.getElementById('togglePanel').addEventListener('click', togglePanel);
         document.getElementById('tipinput').addEventListener('input', handleSearchInput);
-        
+
+        // JSON输入相关事件
+        document.getElementById('toggleJsonInput').addEventListener('click', toggleJsonInput);
+        document.getElementById('previewJson').addEventListener('click', previewJsonOnMap);
+        document.getElementById('applyJson').addEventListener('click', applyJsonAndMeasure);
+        document.getElementById('clearJsonInput').addEventListener('click', clearJsonInput);
+
+        // 经纬度输入相关事件
+        document.getElementById('toggleCoordsInput').addEventListener('click', toggleCoordsInput);
+        document.getElementById('previewCoords').addEventListener('click', previewCoordsOnMap);
+        document.getElementById('applyCoords').addEventListener('click', applyCoordsAndMeasure);
+        document.getElementById('clearCoordsInput').addEventListener('click', clearCoordsInput);
+
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.control-panel')) {
                 document.getElementById('searchResults').style.display = 'none';
             }
         });
-        
+
         document.querySelectorAll('.unit-btn').forEach(button => {
             button.addEventListener('click', handleUnitChange);
         });
-        
+
         document.getElementById('mapStyleSelector').addEventListener('change', function() {
             const selectedStyle = this.value;
             map.setMapStyle(selectedStyle);
             showStatus(`地图样式已切换`);
         });
-        
-        // 初始化完成
+
         renderHistoryList();
-        
-        // 隐藏加载动画
         hideLoadingOverlay();
-        
-        // 显示欢迎信息
+
         setTimeout(() => {
             showStatus("已就绪，可以开始测量！");
         }, 800);
@@ -1175,6 +1712,600 @@
         content.classList.toggle('collapsed');
         icon.classList.toggle('fa-chevron-up');
         icon.classList.toggle('fa-chevron-down');
+    }
+
+    // ========== JSON批量导入相关功能 ==========
+
+    function toggleJsonInput() {
+        const body = document.getElementById('jsonInputBody');
+        const btn = document.getElementById('toggleJsonInput');
+        body.classList.toggle('collapsed');
+        btn.classList.toggle('collapsed');
+
+        if (btn.classList.contains('collapsed')) {
+            btn.innerHTML = '<i class="fas fa-chevron-down"></i> 展开';
+        } else {
+            btn.innerHTML = '<i class="fas fa-chevron-up"></i> 收起';
+        }
+    }
+
+    /**
+     * 解析JSON数据，提取shape字段
+     * 支持多种JSON格式
+     */
+    function parseJsonData(jsonString) {
+        const results = [];
+        const errors = [];
+
+        try {
+            // 尝试解析JSON
+            let jsonData;
+            try {
+                jsonData = JSON.parse(jsonString);
+            } catch (e) {
+                errors.push('JSON格式错误: ' + e.message);
+                return { results, errors };
+            }
+
+            // 判断是单个对象还是数组
+            let items = [];
+            if (Array.isArray(jsonData)) {
+                items = jsonData;
+            } else if (jsonData.data) {
+                // 单个对象格式: { data: {...} }
+                items = [jsonData];
+            } else {
+                // 可能是数组包装: { list: [...] } 或其他
+                items = [jsonData];
+            }
+
+            // 遍历每个数据项
+            items.forEach((item, index) => {
+                const data = item.data || item;
+
+                // 尝试提取shape字段
+                let shape = null;
+
+                // 路径1: spec.mining_shape.shape
+                if (data.spec && data.spec.mining_shape && data.spec.mining_shape.shape) {
+                    shape = data.spec.mining_shape.shape;
+                }
+                // 路径2: spec.shape
+                else if (data.spec && data.spec.shape) {
+                    shape = data.spec.shape;
+                }
+                // 路径3: mining_shape.shape
+                else if (data.mining_shape && data.mining_shape.shape) {
+                    shape = data.mining_shape.shape;
+                }
+                // 路径4: shape (直接在data下)
+                else if (data.shape) {
+                    shape = data.shape;
+                }
+                // 路径5: geometry.coordinates (GeoJSON格式)
+                else if (data.geometry && data.geometry.coordinates) {
+                    shape = data.geometry.coordinates;
+                }
+
+                // 提取名称
+                let name = `区域 ${index + 1}`;
+                if (data.base && data.base.name) {
+                    name = data.base.name;
+                } else if (data.name) {
+                    name = data.name;
+                } else if (data.title) {
+                    name = data.title;
+                } else if (data.base && data.base.title) {
+                    name = data.base.title;
+                }
+
+                if (shape) {
+                    // 解析shape坐标
+                    const coords = parseShapeString(shape);
+                    if (coords && coords.length >= 3) {
+                        results.push({
+                            name: name,
+                            coords: coords,
+                            raw: item
+                        });
+                    } else if (coords && coords.length < 3) {
+                        errors.push(`"${name}" 的坐标点不足 (需要至少3个点)`);
+                    }
+                } else {
+                    errors.push(`"${name}" 未找到shape字段`);
+                }
+            });
+
+        } catch (e) {
+            errors.push('解析错误: ' + e.message);
+        }
+
+        return { results, errors };
+    }
+
+    /**
+     * 解析shape字符串为坐标数组
+     * 支持格式: "经度,纬度;经度,纬度;..." 或 二维数组
+     */
+    function parseShapeString(shape) {
+        // 如果是数组（GeoJSON格式）
+        if (Array.isArray(shape)) {
+            // 可能是 [[lng, lat], [lng, lat], ...]
+            if (shape.length > 0 && Array.isArray(shape[0])) {
+                if (typeof shape[0][0] === 'number') {
+                    // [[lng, lat], [lng, lat]]
+                    return shape;
+                } else if (Array.isArray(shape[0][0]) && typeof shape[0][0][0] === 'number') {
+                    // [[[lng, lat], [lng, lat]], ...] 取第一个多边形
+                    return shape[0];
+                }
+            }
+        }
+
+        // 如果是字符串
+        if (typeof shape === 'string') {
+            const coords = [];
+            const points = shape.split(';');
+
+            for (const point of points) {
+                const trimmed = point.trim();
+                if (!trimmed) continue;
+
+                // 支持 "lng,lat" 或 "(lng,lat)" 格式
+                const cleaned = trimmed.replace(/[()（）【】[\]]/g, '');
+                const parts = cleaned.split(',');
+
+                if (parts.length >= 2) {
+                    const lng = parseFloat(parts[0].trim());
+                    const lat = parseFloat(parts[1].trim());
+
+                    if (!isNaN(lng) && !isNaN(lat)) {
+                        // 验证中国经纬度范围
+                        if (lng >= 73 && lng <= 135 && lat >= 3 && lat <= 54) {
+                            coords.push([lng, lat]);
+                        }
+                    }
+                }
+            }
+
+            return coords;
+        }
+
+        return null;
+    }
+
+    /**
+     * 清除JSON预览
+     */
+    function clearJsonPreview() {
+        if (jsonPreviewMarkers.length > 0) {
+            map.remove(jsonPreviewMarkers);
+            jsonPreviewMarkers = [];
+        }
+        if (jsonPreviewPolygons.length > 0) {
+            map.remove(jsonPreviewPolygons);
+            jsonPreviewPolygons = [];
+        }
+    }
+
+    /**
+     * 在地图上预览JSON数据
+     */
+    function previewJsonOnMap() {
+        const input = document.getElementById('jsonInput').value;
+        const errorEl = document.getElementById('jsonError');
+        const successEl = document.getElementById('jsonSuccess');
+        const resultEl = document.getElementById('jsonParseResult');
+
+        clearJsonPreview();
+
+        if (!input.trim()) {
+            errorEl.textContent = '请输入JSON数据';
+            errorEl.classList.add('show');
+            successEl.classList.remove('show');
+            resultEl.classList.remove('show');
+            return;
+        }
+
+        const { results, errors } = parseJsonData(input);
+
+        if (results.length === 0) {
+            errorEl.innerHTML = errors.length > 0 ? '解析失败：<br>' + errors.slice(0, 3).join('<br>') : '未能从JSON中提取有效的shape数据';
+            errorEl.classList.add('show');
+            successEl.classList.remove('show');
+            resultEl.classList.remove('show');
+            return;
+        }
+
+        // 显示解析结果预览
+        let resultHtml = '<strong>解析结果：</strong>';
+        results.forEach((item, index) => {
+            const area = AMap.GeometryUtil.ringArea(item.coords.map(c => new AMap.LngLat(c[0], c[1])));
+            resultHtml += `<div class="result-item">
+                <span class="result-name">${index + 1}. ${item.name}</span>
+                <span class="result-area">${formatArea(area, currentUnit)}</span>
+            </div>`;
+        });
+        resultEl.innerHTML = resultHtml;
+        resultEl.classList.add('show');
+
+        // 创建预览多边形
+        results.forEach((item, index) => {
+            const color = regionColors[(regionCounter + index) % regionColors.length];
+
+            // 添加标记
+            item.coords.forEach((coord, coordIndex) => {
+                const marker = new AMap.Marker({
+                    position: coord,
+                    content: `<div class="json-preview-marker">${index + 1}-${coordIndex + 1}</div>`,
+                    offset: new AMap.Pixel(-20, -10),
+                    zIndex: 100
+                });
+                jsonPreviewMarkers.push(marker);
+                map.add(marker);
+            });
+
+            // 添加多边形
+            const polygon = new AMap.Polygon({
+                path: item.coords,
+                strokeColor: color,
+                strokeOpacity: 0.6,
+                strokeWeight: 2,
+                fillColor: color,
+                fillOpacity: 0.2,
+                strokeDashStyle: 'dash',
+                zIndex: 99
+            });
+            jsonPreviewPolygons.push(polygon);
+            map.add(polygon);
+        });
+
+        // 调整视野
+        if (jsonPreviewMarkers.length > 0) {
+            map.setFitView(jsonPreviewMarkers);
+        }
+
+        // 显示成功信息
+        successEl.innerHTML = `<i class="fas fa-check-circle"></i> 解析成功！共 ${results.length} 个区域，${results.reduce((sum, r) => sum + parseShapeString(r.raw.data?.spec?.mining_shape?.shape || '').length, 0)} 个坐标点`;
+        successEl.classList.add('show');
+        errorEl.classList.remove('show');
+
+        showStatus(`预览 ${results.length} 个区域`);
+    }
+
+    /**
+     * 应用JSON数据并测量
+     */
+    function applyJsonAndMeasure() {
+        const input = document.getElementById('jsonInput').value;
+        const errorEl = document.getElementById('jsonError');
+        const successEl = document.getElementById('jsonSuccess');
+        const resultEl = document.getElementById('jsonParseResult');
+
+        if (!input.trim()) {
+            errorEl.textContent = '请输入JSON数据';
+            errorEl.classList.add('show');
+            successEl.classList.remove('show');
+            resultEl.classList.remove('show');
+            showStatus('请先输入JSON数据');
+            return;
+        }
+
+        const { results, errors } = parseJsonData(input);
+
+        if (results.length === 0) {
+            errorEl.innerHTML = errors.length > 0 ? '解析失败：<br>' + errors.slice(0, 3).join('<br>') : '未能从JSON中提取有效的shape数据';
+            errorEl.classList.add('show');
+            successEl.classList.remove('show');
+            resultEl.classList.remove('show');
+            showStatus('JSON数据解析失败');
+            return;
+        }
+
+        // 清除预览
+        clearJsonPreview();
+
+        // 统计信息
+        let totalAreas = 0;
+        const addedItems = [];
+
+        // 创建实际多边形
+        results.forEach((item, index) => {
+            const color = regionColors[regionCounter % regionColors.length];
+            const path = item.coords.map(c => new AMap.LngLat(c[0], c[1]));
+            const area = AMap.GeometryUtil.ringArea(path);
+
+            const polygon = new AMap.Polygon({
+                path: path,
+                strokeColor: color,
+                strokeOpacity: 0.9,
+                strokeWeight: 3,
+                fillColor: color,
+                fillOpacity: 0.3,
+                extData: { id: Date.now() + index, source: 'json' }
+            });
+
+            map.add(polygon);
+            polygons.push(polygon);
+            totalAreaInSquareMeters += area;
+            totalAreas += area;
+            regionCounter++;
+
+            const historyItem = {
+                id: polygon.getExtData().id,
+                name: item.name,
+                areaSqm: area,
+                remark: '',
+                color: color,
+                coords: item.coords,
+                source: 'json'
+            };
+            historyData.push(historyItem);
+            addedItems.push(historyItem);
+
+            // 添加面积标签
+            addAreaMarker(polygon, area, historyItem.name);
+        });
+
+        // 更新显示
+        updateTotalAreaDisplay();
+        renderHistoryList();
+
+        // 调整视野
+        if (polygons.length > 0) {
+            map.setFitView(polygons);
+        }
+
+        // 清空输入框
+        document.getElementById('jsonInput').value = '';
+        errorEl.classList.remove('show');
+        successEl.classList.remove('show');
+        resultEl.classList.remove('show');
+
+        showStatus(`批量导入成功: ${results.length} 个区域，总面积 ${formatArea(totalAreas, currentUnit)}`);
+    }
+
+    /**
+     * 清空JSON输入
+     */
+    function clearJsonInput() {
+        document.getElementById('jsonInput').value = '';
+        document.getElementById('jsonError').classList.remove('show');
+        document.getElementById('jsonSuccess').classList.remove('show');
+        document.getElementById('jsonParseResult').classList.remove('show');
+        clearJsonPreview();
+        showStatus('已清空JSON输入');
+    }
+
+    // ========== 经纬度输入相关功能 ==========
+
+    function toggleCoordsInput() {
+        const body = document.getElementById('coordsInputBody');
+        const btn = document.getElementById('toggleCoordsInput');
+        body.classList.toggle('collapsed');
+        btn.classList.toggle('collapsed');
+
+        if (btn.classList.contains('collapsed')) {
+            btn.innerHTML = '<i class="fas fa-chevron-down"></i> 展开';
+        } else {
+            btn.innerHTML = '<i class="fas fa-chevron-up"></i> 收起';
+        }
+    }
+
+    /**
+     * 解析经纬度输入
+     */
+    function parseCoordinates(input) {
+        const coords = [];
+        const errors = [];
+
+        let cleanedInput = input.trim();
+        cleanedInput = cleanedInput.replace(/;/g, '\n');
+
+        const lines = cleanedInput.split('\n');
+
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
+            if (!line) continue;
+
+            let lng, lat;
+            line = line.replace(/[()（）【】[\]]/g, '');
+
+            if (line.includes(',')) {
+                const parts = line.split(',');
+                if (parts.length >= 2) {
+                    lng = parseFloat(parts[0].trim());
+                    lat = parseFloat(parts[1].trim());
+                }
+            } else if (line.includes(' ')) {
+                const parts = line.split(/\s+/);
+                if (parts.length >= 2) {
+                    lng = parseFloat(parts[0].trim());
+                    lat = parseFloat(parts[1].trim());
+                }
+            }
+
+            if (isNaN(lng) || isNaN(lat)) {
+                errors.push(`第 ${i + 1} 行格式错误: "${lines[i]}"`);
+                continue;
+            }
+
+            if (lng < 73 || lng > 135) {
+                errors.push(`第 ${i + 1} 行: 经度 ${lng} 超出中国范围`);
+                continue;
+            }
+            if (lat < 3 || lat > 54) {
+                errors.push(`第 ${i + 1} 行: 纬度 ${lat} 超出中国范围`);
+                continue;
+            }
+
+            coords.push([lng, lat]);
+        }
+
+        return { coords, errors };
+    }
+
+    /**
+     * 清除预览标记
+     */
+    function clearPreviewMarkers() {
+        if (previewMarkers.length > 0) {
+            map.remove(previewMarkers);
+            previewMarkers = [];
+        }
+        if (previewPolygon) {
+            map.remove(previewPolygon);
+            previewPolygon = null;
+        }
+    }
+
+    /**
+     * 在地图上预览坐标
+     */
+    function previewCoordsOnMap() {
+        const input = document.getElementById('coordsInput').value;
+        const errorEl = document.getElementById('coordsError');
+        const successEl = document.getElementById('coordsSuccess');
+
+        clearPreviewMarkers();
+
+        if (!input.trim()) {
+            errorEl.textContent = '请输入经纬度坐标';
+            errorEl.classList.add('show');
+            successEl.classList.remove('show');
+            return;
+        }
+
+        const { coords, errors } = parseCoordinates(input);
+
+        if (coords.length < 3) {
+            errorEl.textContent = errors.length > 0 ? errors[0] : '至少需要3个坐标点';
+            errorEl.classList.add('show');
+            successEl.classList.remove('show');
+            return;
+        }
+
+        if (errors.length > 0 && coords.length >= 3) {
+            errorEl.innerHTML = '部分坐标解析失败：<br>' + errors.slice(0, 3).join('<br>') + (errors.length > 3 ? '...' : '');
+            errorEl.classList.add('show');
+        } else {
+            errorEl.classList.remove('show');
+        }
+
+        const color = regionColors[regionCounter % regionColors.length];
+
+        coords.forEach((coord, index) => {
+            const marker = new AMap.Marker({
+                position: coord,
+                content: `<div class="preview-marker">${index + 1}</div>`,
+                offset: new AMap.Pixel(-20, -10),
+                zIndex: 100
+            });
+            previewMarkers.push(marker);
+            map.add(marker);
+        });
+
+        previewPolygon = new AMap.Polygon({
+            path: coords,
+            strokeColor: color,
+            strokeOpacity: 0.6,
+            strokeWeight: 2,
+            fillColor: color,
+            fillOpacity: 0.2,
+            strokeDashStyle: 'dash',
+            zIndex: 99
+        });
+        map.add(previewPolygon);
+
+        map.setFitView(previewMarkers);
+
+        const area = AMap.GeometryUtil.ringArea(coords.map(c => new AMap.LngLat(c[0], c[1])));
+        successEl.innerHTML = `<i class="fas fa-check-circle"></i> 预览成功！共 ${coords.length} 个坐标点，预估面积：${formatArea(area, currentUnit)}`;
+        successEl.classList.add('show');
+
+        showStatus(`预览 ${coords.length} 个坐标点`);
+    }
+
+    /**
+     * 应用坐标并测量
+     */
+    function applyCoordsAndMeasure() {
+        const input = document.getElementById('coordsInput').value;
+        const errorEl = document.getElementById('coordsError');
+        const successEl = document.getElementById('coordsSuccess');
+
+        if (!input.trim()) {
+            errorEl.textContent = '请输入经纬度坐标';
+            errorEl.classList.add('show');
+            successEl.classList.remove('show');
+            showStatus('请先输入经纬度坐标');
+            return;
+        }
+
+        const { coords, errors } = parseCoordinates(input);
+
+        if (coords.length < 3) {
+            errorEl.textContent = errors.length > 0 ? errors[0] : '至少需要3个坐标点';
+            errorEl.classList.add('show');
+            successEl.classList.remove('show');
+            showStatus('坐标点不足');
+            return;
+        }
+
+        clearPreviewMarkers();
+
+        const color = regionColors[regionCounter % regionColors.length];
+        const path = coords.map(c => new AMap.LngLat(c[0], c[1]));
+        const area = AMap.GeometryUtil.ringArea(path);
+
+        const polygon = new AMap.Polygon({
+            path: path,
+            strokeColor: color,
+            strokeOpacity: 0.9,
+            strokeWeight: 3,
+            fillColor: color,
+            fillOpacity: 0.3,
+            extData: { id: Date.now(), source: 'coords' }
+        });
+
+        map.add(polygon);
+        polygons.push(polygon);
+        totalAreaInSquareMeters += area;
+        regionCounter++;
+
+        const historyItem = {
+            id: polygon.getExtData().id,
+            name: `区域 ${regionCounter} (坐标导入)`,
+            areaSqm: area,
+            remark: '',
+            color: color,
+            coords: coords,
+            source: 'coords'
+        };
+        historyData.push(historyItem);
+
+        addAreaMarker(polygon, area, historyItem.name);
+        updateTotalAreaDisplay();
+        renderHistoryList();
+
+        map.setFitView([polygon]);
+
+        document.getElementById('coordsInput').value = '';
+        errorEl.classList.remove('show');
+        successEl.classList.remove('show');
+
+        showStatus(`区域 ${regionCounter} 测量完成: ${formatArea(area, currentUnit)}`);
+    }
+
+    /**
+     * 清空经纬度输入框
+     */
+    function clearCoordsInput() {
+        document.getElementById('coordsInput').value = '';
+        document.getElementById('coordsError').classList.remove('show');
+        document.getElementById('coordsSuccess').classList.remove('show');
+        clearPreviewMarkers();
+        showStatus('已清空经纬度输入');
     }
 
     function handleSearchSelect(e) {
@@ -1191,7 +2322,7 @@
             }
         });
     }
-    
+
     function handleSearchInput(e) {
         const keyword = e.target.value.trim();
         const searchResults = document.getElementById('searchResults');
@@ -1226,6 +2357,9 @@
     }
 
     function startDrawing() {
+        clearPreviewMarkers();
+        clearJsonPreview();
+
         const color = regionColors[regionCounter % regionColors.length];
         mouseTool.polygon({
             strokeColor: color,
@@ -1233,7 +2367,7 @@
             strokeWeight: 3,
             fillColor: color,
             fillOpacity: 0.3,
-            extData: { id: Date.now() }
+            extData: { id: Date.now(), source: 'draw' }
         });
         showStatus("开始绘制，单击添加点，双击完成");
     }
@@ -1241,31 +2375,35 @@
     function handleDrawFinish(event) {
         const polygon = event.obj;
         mouseTool.close();
-        
+
         const area = AMap.GeometryUtil.ringArea(polygon.getPath());
         if (area === 0) {
             map.remove(polygon);
             showStatus("绘制无效，面积为0");
             return;
         }
-        
+
         regionCounter++;
         polygons.push(polygon);
         totalAreaInSquareMeters += area;
-        
+
+        const coords = polygon.getPath().map(p => [p.lng, p.lat]);
+
         const historyItem = {
             id: polygon.getExtData().id,
             name: `区域 ${regionCounter}`,
             areaSqm: area,
             remark: '',
-            color: regionColors[(regionCounter - 1) % regionColors.length]
+            color: regionColors[(regionCounter - 1) % regionColors.length],
+            coords: coords,
+            source: 'draw'
         };
         historyData.push(historyItem);
 
         addAreaMarker(polygon, area, historyItem.name);
         updateTotalAreaDisplay();
         renderHistoryList();
-        
+
         showStatus(`区域 ${regionCounter} 测量完成: ${formatArea(area, currentUnit)}`);
     }
 
@@ -1274,17 +2412,17 @@
             showStatus("没有可撤销的操作");
             return;
         }
-        
+
         const lastPolygon = polygons.pop();
         const lastMarker = markers.pop();
         const lastHistory = historyData.pop();
-        
+
         map.remove(lastPolygon);
         map.remove(lastMarker);
-        
+
         totalAreaInSquareMeters -= lastHistory.areaSqm;
         regionCounter--;
-        
+
         updateTotalAreaDisplay();
         renderHistoryList();
         showStatus("已撤销上一次操作");
@@ -1295,57 +2433,58 @@
             showStatus("当前没有测量数据");
             return;
         }
-        
+
         if (!confirm('确定要清除所有测量数据吗？')) {
             return;
         }
-        
+
         mouseTool.close(true);
         map.remove(polygons);
         map.remove(markers);
-        
+        clearPreviewMarkers();
+        clearJsonPreview();
+
         polygons = [];
         markers = [];
         historyData = [];
         totalAreaInSquareMeters = 0;
         regionCounter = 0;
-        
+
         updateTotalAreaDisplay();
         renderHistoryList();
         showStatus("已清除所有数据");
     }
-    
+
     function deleteRegion(id) {
         const index = historyData.findIndex(h => h.id === id);
         if (index === -1) return;
-        
+
         const item = historyData[index];
         const polygon = polygons.find(p => p.getExtData().id === id);
         const marker = markers.find(m => m.getExtData().polygonId === id);
-        
+
         if (polygon) {
             map.remove(polygon);
             polygons = polygons.filter(p => p.getExtData().id !== id);
         }
-        
+
         if (marker) {
             map.remove(marker);
             markers = markers.filter(m => m.getExtData().polygonId !== id);
         }
-        
+
         totalAreaInSquareMeters -= item.areaSqm;
         historyData.splice(index, 1);
-        
+
         updateTotalAreaDisplay();
         renderHistoryList();
         showStatus(`已删除 ${item.name}`);
     }
-    
+
     function highlightRegion(id) {
         const polygon = polygons.find(p => p.getExtData().id === id);
         if (!polygon) return;
-        
-        // 取消之前的高亮
+
         if (highlightedPolygon) {
             const prevItem = historyData.find(h => h.id === highlightedPolygon.getExtData().id);
             if (prevItem) {
@@ -1355,17 +2494,16 @@
                 });
             }
         }
-        
-        // 应用新的高亮
+
         polygon.setOptions({
             strokeWeight: 5,
             fillOpacity: 0.5
         });
-        
+
         highlightedPolygon = polygon;
         map.setFitView([polygon]);
     }
-    
+
     function unhighlightRegion() {
         if (highlightedPolygon) {
             const item = historyData.find(h => h.id === highlightedPolygon.getExtData().id);
@@ -1378,12 +2516,12 @@
             highlightedPolygon = null;
         }
     }
-    
+
     function handleUnitChange() {
         document.querySelectorAll('.unit-btn').forEach(btn => btn.classList.remove('active'));
         this.classList.add('active');
         currentUnit = this.getAttribute('data-unit');
-        
+
         updateTotalAreaDisplay();
         updateAllMarkers();
         renderHistoryList();
@@ -1403,7 +2541,7 @@
                 'font-weight': '600',
                 'box-shadow': '0 2px 8px rgba(0,0,0,0.2)'
             },
-            extData: { 
+            extData: {
                 polygonId: polygon.getExtData().id,
                 areaSqm: areaSqm
             }
@@ -1422,14 +2560,14 @@
             }
         });
     }
-    
+
     function updateTotalAreaDisplay() {
         const areaValueEl = document.getElementById('totalAreaValue');
         const areaUnitEl = document.getElementById('totalAreaUnit');
-        
+
         const convertedArea = convertArea(totalAreaInSquareMeters, currentUnit);
         const unitText = getUnitText(currentUnit);
-        
+
         areaValueEl.textContent = formatNumber(convertedArea);
         areaUnitEl.textContent = unitText;
         document.getElementById('totalAreaInfo').style.display = totalAreaInSquareMeters > 0 ? 'block' : 'none';
@@ -1449,6 +2587,9 @@
 
         listEl.innerHTML = '';
         historyData.forEach((item, index) => {
+            const sourceIcon = item.source === 'json' ? 'fa-file-code' : item.source === 'coords' ? 'fa-map-pin' : 'fa-draw-polygon';
+            const sourceLabel = item.source === 'json' ? 'JSON' : item.source === 'coords' ? '坐标' : '绘制';
+
             const itemEl = document.createElement('div');
             itemEl.className = 'history-item';
             itemEl.innerHTML = `
@@ -1458,6 +2599,7 @@
                     </div>
                     <div class="history-item-area">${formatArea(item.areaSqm, currentUnit)}</div>
                     <div class="history-item-actions">
+                        <span style="font-size: 10px; color: #6c757d; margin-right: 5px;"><i class="fas ${sourceIcon}"></i> ${sourceLabel}</span>
                         <button class="history-item-btn btn-highlight" data-id="${item.id}" title="高亮显示">
                             <i class="fas fa-eye"></i>
                         </button>
@@ -1467,12 +2609,12 @@
                     </div>
                 </div>
                 <div class="history-item-remark">
-                    <input type="text" class="form-control form-control-sm" placeholder="添加备注 (如: 企业名称、地块用途)" value="${item.remark}" data-id="${item.id}">
+                    <input type="text" class="form-control form-control-sm" placeholder="添加备注" value="${item.remark}" data-id="${item.id}">
                 </div>
             `;
             listEl.appendChild(itemEl);
         });
-        
+
         // 绑定事件
         listEl.querySelectorAll('.name-input').forEach(input => {
             input.addEventListener('change', (e) => {
@@ -1485,7 +2627,7 @@
                 }
             });
         });
-        
+
         listEl.querySelectorAll('.history-item-remark input').forEach(input => {
             input.addEventListener('change', (e) => {
                 const id = parseInt(e.target.dataset.id);
@@ -1495,14 +2637,14 @@
                 }
             });
         });
-        
+
         listEl.querySelectorAll('.btn-highlight').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const id = parseInt(e.currentTarget.dataset.id);
                 highlightRegion(id);
             });
         });
-        
+
         listEl.querySelectorAll('.btn-delete').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const id = parseInt(e.currentTarget.dataset.id);
@@ -1511,7 +2653,7 @@
                 }
             });
         });
-        
+
         // 鼠标悬停高亮
         listEl.querySelectorAll('.history-item').forEach(item => {
             const btns = item.querySelectorAll('.history-item-btn');
@@ -1528,9 +2670,9 @@
             showStatus("没有可保存的数据");
             return;
         }
-        
+
         const data = {
-            version: '2.0.0',
+            version: '2.1.0',
             timestamp: new Date().toISOString(),
             totalArea: totalAreaInSquareMeters,
             regionCounter: regionCounter,
@@ -1540,18 +2682,18 @@
                 path: p.getPath().map(point => [point.lng, point.lat])
             }))
         };
-        
+
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `土地测量数据_v2.0.0_${new Date().toLocaleString().replace(/[\/:]/g, '-')}.json`;
+        link.download = `土地测量数据_v2.1.0_${new Date().toLocaleString().replace(/[\/:]/g, '-')}.json`;
         link.click();
         URL.revokeObjectURL(url);
-        
+
         showStatus("数据已保存到本地");
     }
-    
+
     function loadData() {
         const input = document.createElement('input');
         input.type = 'file';
@@ -1559,46 +2701,45 @@
         input.onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
-            
+
             const reader = new FileReader();
             reader.onload = (event) => {
                 try {
                     const data = JSON.parse(event.target.result);
-                    
-                    // 清除现有数据
+
                     clearAll();
-                    
-                    // 恢复数据
+
                     totalAreaInSquareMeters = data.totalArea;
                     regionCounter = data.regionCounter;
-                    historyData = data.regions;
-                    
-                    // 重新绘制多边形
-                    data.polygonPaths.forEach((pathData, index) => {
-                        const historyItem = historyData.find(h => h.id === pathData.id);
-                        if (!historyItem) return;
-                        
-                        const path = pathData.path.map(p => new AMap.LngLat(p[0], p[1]));
-                        const polygon = new AMap.Polygon({
-                            path: path,
-                            strokeColor: historyItem.color || regionColors[index % regionColors.length],
-                            strokeOpacity: 0.9,
-                            strokeWeight: 3,
-                            fillColor: historyItem.color || regionColors[index % regionColors.length],
-                            fillOpacity: 0.3,
-                            extData: { id: pathData.id }
+                    historyData = data.regions || [];
+
+                    if (data.polygonPaths) {
+                        data.polygonPaths.forEach((pathData, index) => {
+                            const historyItem = historyData.find(h => h.id === pathData.id);
+                            if (!historyItem) return;
+
+                            const path = pathData.path.map(p => new AMap.LngLat(p[0], p[1]));
+                            const polygon = new AMap.Polygon({
+                                path: path,
+                                strokeColor: historyItem.color || regionColors[index % regionColors.length],
+                                strokeOpacity: 0.9,
+                                strokeWeight: 3,
+                                fillColor: historyItem.color || regionColors[index % regionColors.length],
+                                fillOpacity: 0.3,
+                                extData: { id: pathData.id, source: historyItem.source || 'load' }
+                            });
+
+                            map.add(polygon);
+                            polygons.push(polygon);
+
+                            addAreaMarker(polygon, historyItem.areaSqm, historyItem.name);
                         });
-                        
-                        map.add(polygon);
-                        polygons.push(polygon);
-                        
-                        addAreaMarker(polygon, historyItem.areaSqm, historyItem.name);
-                    });
-                    
+                    }
+
                     updateTotalAreaDisplay();
                     renderHistoryList();
                     map.setFitView();
-                    
+
                     showStatus(`数据加载成功 (版本: ${data.version || '1.0'})`);
                 } catch (error) {
                     showStatus("数据加载失败，文件格式错误");
@@ -1610,65 +2751,76 @@
         input.click();
     }
 
-function exportHistoryToCSV() {
-    if (historyData.length === 0) {
-        showStatus("没有可导出的记录");
-        return;
-    }
+    function exportHistoryToCSV() {
+        if (historyData.length === 0) {
+            showStatus("没有可导出的记录");
+            return;
+        }
 
-    let csvContent = "区域名称,备注,面积(平方米),面积(亩),面积(公顷),面积(平方千米)\r\n";
+        let csvContent = "序号,区域名称,备注,数据来源,面积(平方米),面积(亩),面积(公顷),面积(平方千米),经纬度坐标\r\n";
 
-    historyData.forEach(item => {
-        const row = [
-            `"${item.name}"`,
-            `"${item.remark.replace(/"/g, '""')}"`,
-            item.areaSqm.toFixed(2),
-            convertArea(item.areaSqm, 'mu').toFixed(4),
-            convertArea(item.areaSqm, 'hectare').toFixed(4),
-            convertArea(item.areaSqm, 'sqkm').toFixed(8)
-        ].join(",");
-        csvContent += row + "\r\n";
-    });
+        historyData.forEach((item, index) => {
+            let coordsStr = '';
+            if (item.coords && item.coords.length > 0) {
+                coordsStr = item.coords.map(c => `(${c[0]},${c[1]})`).join('; ');
+            }
 
-    const totalRow = [
-        '"总计"',
-        '""',
-        totalAreaInSquareMeters.toFixed(2),
-        convertArea(totalAreaInSquareMeters, 'mu').toFixed(4),
-        convertArea(totalAreaInSquareMeters, 'hectare').toFixed(4),
-        convertArea(totalAreaInSquareMeters, 'sqkm').toFixed(8)
-    ].join(",");
-    csvContent += totalRow + "\r\n";
+            const sourceLabel = item.source === 'json' ? 'JSON导入' : item.source === 'coords' ? '坐标导入' : '手动绘制';
 
-    // 在 pywebview 环境中，使用 window.pywebview.api 来保存文件
-    if (window.pywebview && window.pywebview.api) {
-        const fileName = `土地测量报表_${new Date().toLocaleDateString().replace(/\//g, '-')}.csv`;
-        window.pywebview.api.save_csv_file(fileName, csvContent).then(() => {
-            showStatus("报表已导出到应用程序目录");
-        }).catch((error) => {
-            console.error('导出失败:', error);
-            showStatus("导出失败，请重试");
+            const row = [
+                index + 1,
+                `"${item.name}"`,
+                `"${(item.remark || '').replace(/"/g, '""')}"`,
+                sourceLabel,
+                item.areaSqm.toFixed(2),
+                convertArea(item.areaSqm, 'mu').toFixed(4),
+                convertArea(item.areaSqm, 'hectare').toFixed(4),
+                convertArea(item.areaSqm, 'sqkm').toFixed(8),
+                `"${coordsStr}"`
+            ].join(",");
+            csvContent += row + "\r\n";
         });
-    } else {
-        // 备用方案：在浏览器环境中使用原来的下载方式
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement("a");
-        const url = URL.createObjectURL(blob);
-        link.setAttribute("href", url);
-        link.setAttribute("download", `土地测量报表_${new Date().toLocaleDateString().replace(/\//g, '-')}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        setTimeout(() => URL.revokeObjectURL(url), 100);
-        
-        showStatus("报表已下载");
+
+        const totalRow = [
+            '',
+            '"总计"',
+            '""',
+            '""',
+            totalAreaInSquareMeters.toFixed(2),
+            convertArea(totalAreaInSquareMeters, 'mu').toFixed(4),
+            convertArea(totalAreaInSquareMeters, 'hectare').toFixed(4),
+            convertArea(totalAreaInSquareMeters, 'sqkm').toFixed(8),
+            '""'
+        ].join(",");
+        csvContent += totalRow + "\r\n";
+
+        if (window.pywebview && window.pywebview.api) {
+            const fileName = `土地测量报表_${new Date().toLocaleDateString().replace(/\//g, '-')}.csv`;
+            window.pywebview.api.save_csv_file(fileName, csvContent).then(() => {
+                showStatus("报表已导出到应用程序目录");
+            }).catch((error) => {
+                console.error('导出失败:', error);
+                showStatus("导出失败，请重试");
+            });
+        } else {
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `土地测量报表_${new Date().toLocaleDateString().replace(/\//g, '-')}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 100);
+
+            showStatus("报表已下载");
+        }
     }
-}
-    
+
     function captureMap() {
         showStatus("截图功能需要浏览器支持，请使用系统截图工具");
     }
-    
+
     function toggleFullScreen() {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen();
@@ -1689,7 +2841,7 @@ function exportHistoryToCSV() {
             default: return areaSqm;
         }
     }
-    
+
     function getUnitText(unit) {
         const units = { sqm: '平方米', mu: '亩', hectare: '公顷', sqkm: '平方千米' };
         return units[unit] || '平方米';
@@ -1702,21 +2854,170 @@ function exportHistoryToCSV() {
         }
         return num.toExponential(4);
     }
-    
+
     function formatArea(areaSqm, unit) {
         const converted = convertArea(areaSqm, unit);
         return `${formatNumber(converted)} ${getUnitText(unit)}`;
     }
-    
+
     function showStatus(message, duration = 3000) {
         const statusBar = document.getElementById('statusBar');
         const statusText = document.getElementById('statusText');
-        
+
         statusText.textContent = message;
         statusBar.style.display = 'block';
-        
+
         setTimeout(() => {
             statusBar.style.display = 'none';
         }, duration);
     }
-    </script>
+</script>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.inland-security-footer {
+  position: fixed;
+  z-index: 10;
+  bottom: 0;
+  right: 0;
+  width: fit-content;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tooltip-container {
+  position: relative;
+}
+
+.trigger-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background-color: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.minimax-link {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 300;
+  color: #adadad;
+  text-decoration: none;
+}
+
+.minimax-link:visited {
+  color: #adadad;
+}
+
+.minimax-link:hover {
+  color: #666666;
+}
+
+.tooltip-content {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  padding-bottom: 16px;
+  font-size: 12px;
+  line-height: 17px;
+  background-color: #fafafa;
+  border-radius: 12px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  color: #171717;
+}
+
+.tooltip-content::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  height: 16px;
+}
+
+.tooltip-container:hover .tooltip-content {
+  display: flex;
+}
+
+.info-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.beian-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #171717;
+}
+
+.beian-icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 2px;
+}
+
+.underline-text {
+  color: #171717;
+  text-decoration: underline;
+}
+
+.underline-text:hover {
+  color: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+  .trigger-content {
+    background-color: transparent;
+  }
+
+  .minimax-link,
+  .minimax-link:visited {
+    color: #666666;
+  }
+
+  .minimax-link:hover {
+    color: #adadad;
+  }
+
+  .tooltip-content {
+    background-color: #262626;
+    color: #ededed;
+  }
+
+  .beian-link,
+  .underline-text {
+    color: #ededed;
+  }
+
+  .underline-text:hover {
+    color: #ffffff;
+  }
+}
+
+</style>
+
+
+</body>
+</html>
