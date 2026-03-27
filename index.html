@@ -232,6 +232,11 @@
             font-weight: 500;
         }
 
+        .panel-header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
         .toggle-panel {
             background: rgba(255, 255, 255, 0.2);
             border: none;
@@ -271,7 +276,7 @@
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: #6c757d;
+            color: #667eea;
             pointer-events: none;
         }
 
@@ -332,27 +337,27 @@
         }
 
         .btn-success-custom {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 
         .btn-danger-custom {
-            background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 
         .btn-warning-custom {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 
         .btn-info-custom {
-            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 
         .btn-purple-custom {
-            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 
@@ -365,9 +370,9 @@
         .coords-input-section {
             margin: 20px 0;
             padding: 15px;
-            background: linear-gradient(135deg, #11998e15 0%, #38ef7d15 100%);
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
             border-radius: 12px;
-            border: 2px solid #11998e30;
+            border: 2px solid #667eea30;
         }
 
         .coords-input-header {
@@ -380,7 +385,7 @@
         .coords-input-header h5 {
             font-size: 15px;
             font-weight: 700;
-            color: #11998e;
+            color: #667eea;
             margin: 0;
             display: flex;
             align-items: center;
@@ -388,7 +393,7 @@
         }
 
         .toggle-coords-btn {
-            background: #11998e;
+            background: #667eea;
             color: white;
             border: none;
             padding: 4px 10px;
@@ -402,7 +407,7 @@
         }
 
         .toggle-coords-btn:hover {
-            background: #0d7a6e;
+            background: #5a6fd6;
         }
 
         .toggle-coords-btn i {
@@ -423,6 +428,7 @@
         .coords-input-body.collapsed {
             max-height: 0;
             opacity: 0;
+            margin-bottom: 0;
         }
 
         .coords-textarea {
@@ -439,8 +445,8 @@
         }
 
         .coords-textarea:focus {
-            border-color: #11998e;
-            box-shadow: 0 0 0 0.2rem rgba(17, 153, 142, 0.2);
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.2);
             outline: none;
         }
 
@@ -484,13 +490,13 @@
         }
 
         .coords-actions .btn-apply {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 
         .coords-actions .btn-apply:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(17, 153, 142, 0.3);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
         .coords-actions .btn-clear-input {
@@ -518,11 +524,11 @@
         }
 
         .coords-success {
-            color: #11998e;
+            color: #667eea;
             font-size: 12px;
             margin-top: 8px;
             padding: 8px 10px;
-            background: #d1f2eb;
+            background: #f0f3ff;
             border-radius: 6px;
             display: none;
         }
@@ -535,9 +541,9 @@
         .json-input-section {
             margin: 20px 0;
             padding: 15px;
-            background: linear-gradient(135deg, #a855f715 0%, #ec489915 100%);
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
             border-radius: 12px;
-            border: 2px solid #a855f730;
+            border: 2px solid #667eea30;
         }
 
         .json-input-header {
@@ -550,7 +556,7 @@
         .json-input-header h5 {
             font-size: 15px;
             font-weight: 700;
-            color: #a855f7;
+            color: #667eea;
             margin: 0;
             display: flex;
             align-items: center;
@@ -558,7 +564,7 @@
         }
 
         .toggle-json-btn {
-            background: #a855f7;
+            background: #667eea;
             color: white;
             border: none;
             padding: 4px 10px;
@@ -572,7 +578,7 @@
         }
 
         .toggle-json-btn:hover {
-            background: #9333ea;
+            background: #5a6fd6;
         }
 
         .toggle-json-btn i {
@@ -593,6 +599,7 @@
         .json-input-body.collapsed {
             max-height: 0;
             opacity: 0;
+            margin-bottom: 0;
         }
 
         .json-textarea {
@@ -610,8 +617,8 @@
         }
 
         .json-textarea:focus {
-            border-color: #a855f7;
-            box-shadow: 0 0 0 0.2rem rgba(168, 85, 247, 0.2);
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.2);
             outline: none;
         }
 
@@ -634,7 +641,7 @@
         }
 
         .json-format-hint .example-title {
-            color: #a855f7;
+            color: #667eea;
             font-weight: 600;
             margin-top: 8px;
             display: block;
@@ -662,23 +669,23 @@
         }
 
         .json-actions .btn-apply {
-            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 
         .json-actions .btn-apply:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
         .json-actions .btn-preview {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 
         .json-actions .btn-preview:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
         .json-error {
@@ -696,11 +703,11 @@
         }
 
         .json-success {
-            color: #a855f7;
+            color: #667eea;
             font-size: 12px;
             margin-top: 8px;
             padding: 8px 10px;
-            background: #f3e8ff;
+            background: #f0f3ff;
             border-radius: 6px;
             display: none;
         }
@@ -744,7 +751,7 @@
         }
 
         .json-parse-result .result-area {
-            color: #a855f7;
+            color: #667eea;
             font-weight: 600;
             margin-left: 10px;
         }
@@ -835,7 +842,7 @@
         .history-header h5 {
             font-size: 16px;
             font-weight: 700;
-            color: #333;
+            color: #667eea;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -1032,35 +1039,8 @@
         .form-label {
             font-weight: 600;
             margin-bottom: 8px;
-            color: #495057;
-            font-size: 14px;
-        }
-
-        /* 使用说明优化 */
-        .instructions {
-            margin-top: 20px;
-            font-size: 13px;
-            color: #6c757d;
-            line-height: 1.8;
-            background: linear-gradient(135deg, #667eea05 0%, #764ba205 100%);
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 4px solid #667eea;
-        }
-
-        .instructions strong {
             color: #667eea;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .instructions ol {
-            padding-left: 1.5em;
-            margin: 0;
-        }
-
-        .instructions li {
-            margin-bottom: 5px;
+            font-size: 14px;
         }
 
         /* 版权信息样式 */
@@ -1242,7 +1222,7 @@
 
         /* 预览标记 */
         .preview-marker {
-            background: #11998e;
+            background: #667eea;
             color: white;
             padding: 4px 8px;
             border-radius: 4px;
@@ -1253,13 +1233,48 @@
 
         /* JSON预览标记 */
         .json-preview-marker {
-            background: #a855f7;
+            background: #667eea;
             color: white;
             padding: 4px 8px;
             border-radius: 4px;
             font-size: 11px;
             font-weight: 600;
             white-space: nowrap;
+        }
+
+        /* 模态框样式 */
+        .modal-content {
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 16px 16px 0 0;
+            border-bottom: none;
+            padding: 15px 20px;
+        }
+        .modal-title {
+            font-weight: 600;
+        }
+        .btn-close {
+            filter: invert(1);
+            opacity: 0.8;
+        }
+        .btn-close:hover {
+            opacity: 1;
+        }
+        .modal-body {
+            padding: 20px;
+            color: #333;
+        }
+        .modal-body ol {
+            padding-left: 1.5em;
+            line-height: 1.8;
+        }
+        .modal-body li strong {
+            color: #667eea;
         }
     </style>
 </head>
@@ -1301,9 +1316,14 @@
                     </div>
                 </div>
             </div>
-            <button class="toggle-panel" id="togglePanel">
-                <i class="fas fa-chevron-up"></i>
-            </button>
+            <div class="panel-header-actions">
+                <button class="toggle-panel" id="helpBtn" title="使用说明">
+                    <i class="fas fa-question"></i>
+                </button>
+                <button class="toggle-panel" id="togglePanel">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
         </div>
 
         <div class="panel-content">
@@ -1350,29 +1370,29 @@
                 </button>
             </div>
 
-            <!-- JSON批量导入区域 - 新增功能 -->
+            <!-- JSON批量导入区域 -->
             <div class="json-input-section">
                 <div class="json-input-header">
                     <h5>
                         <i class="fas fa-file-code"></i> JSON数据批量导入
                     </h5>
-                    <button class="toggle-json-btn" id="toggleJsonInput">
+                    <button class="toggle-json-btn collapsed" id="toggleJsonInput">
                         <i class="fas fa-chevron-down"></i> 展开
                     </button>
                 </div>
-                <div class="json-input-body" id="jsonInputBody">
+                <div class="json-input-body collapsed" id="jsonInputBody">
                     <textarea id="jsonInput" class="json-textarea" placeholder="粘贴JSON格式数据，自动提取shape字段进行面积测量
 
 支持的JSON格式示例：
 {
-    "data": {
-        "spec": {
-            "mining_shape": {
-                "shape": "119.687497,32.345709;119.690453,32.343734;..."
+    &quot;data&quot;: {
+        &quot;spec&quot;: {
+            &quot;mining_shape&quot;: {
+                &quot;shape&quot;: &quot;119.687497,32.345709;119.690453,32.343734;...&quot;
             }
         },
-        "base": {
-            "name": "企业名称"
+        &quot;base&quot;: {
+            &quot;name&quot;: &quot;企业名称&quot;
         }
     }
 }"></textarea>
@@ -1410,11 +1430,11 @@
                     <h5>
                         <i class="fas fa-map-pin"></i> 经纬度批量导入
                     </h5>
-                    <button class="toggle-coords-btn" id="toggleCoordsInput">
+                    <button class="toggle-coords-btn collapsed" id="toggleCoordsInput">
                         <i class="fas fa-chevron-down"></i> 展开
                     </button>
                 </div>
-                <div class="coords-input-body" id="coordsInputBody">
+                <div class="coords-input-body collapsed" id="coordsInputBody">
                     <textarea id="coordsInput" class="coords-textarea" placeholder="输入经纬度坐标，每行一组：
 
 119.398015,32.377528
@@ -1483,23 +1503,6 @@
                 </div>
             </div>
 
-            <!-- 使用说明 -->
-            <div class="instructions">
-                <strong><i class="fas fa-info-circle"></i> 使用说明</strong>
-                <ol>
-                    <li>搜索框定位到目标地点</li>
-                    <li>点击"绘制区域"开始测量</li>
-                    <li>单击添加点,双击完成绘制</li>
-                    <li><strong>新功能：</strong>JSON批量导入，自动提取shape字段</li>
-                    <li><strong>新功能：</strong>支持批量导入多个企业数据</li>
-                    <li>可重复绘制多个区域</li>
-                    <li>鼠标悬停可高亮对应区域</li>
-                    <li>支持撤销、删除、重命名</li>
-                    <li>点击"保存数据"可本地保存</li>
-                    <li>导出CSV获取详细报表</li>
-                </ol>
-            </div>
-
             <!-- 版权信息 -->
             <div class="copyright-info">
                 <div class="version">
@@ -1537,6 +1540,32 @@
 
 <div class="status-bar" id="statusBar">
     <i class="fas fa-info-circle"></i> <span id="statusText">准备就绪</span>
+</div>
+
+<!-- 使用说明模态框 -->
+<div class="modal fade" id="instructionsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-info-circle"></i> 使用说明</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ol>
+                    <li>搜索框定位到目标地点</li>
+                    <li>点击"绘制区域"开始测量</li>
+                    <li>单击添加点,双击完成绘制</li>
+                    <li><strong>新功能：</strong>JSON批量导入，自动提取shape字段</li>
+                    <li><strong>新功能：</strong>支持批量导入多个企业数据</li>
+                    <li>可重复绘制多个区域</li>
+                    <li>鼠标悬停可高亮对应区域</li>
+                    <li>支持撤销、删除、重命名</li>
+                    <li>点击"保存数据"可本地保存</li>
+                    <li>导出CSV获取详细报表</li>
+                </ol>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- 高德地图API -->
@@ -1668,6 +1697,12 @@
         document.getElementById('togglePanel').addEventListener('click', togglePanel);
         document.getElementById('tipinput').addEventListener('input', handleSearchInput);
 
+        // 帮助按钮
+        document.getElementById('helpBtn').addEventListener('click', function() {
+            var myModal = new bootstrap.Modal(document.getElementById('instructionsModal'));
+            myModal.show();
+        });
+
         // JSON输入相关事件
         document.getElementById('toggleJsonInput').addEventListener('click', toggleJsonInput);
         document.getElementById('previewJson').addEventListener('click', previewJsonOnMap);
@@ -1708,7 +1743,7 @@
 
     function togglePanel() {
         const content = document.querySelector('.panel-content');
-        const icon = document.querySelector('.toggle-panel i');
+        const icon = document.querySelector('#togglePanel i');
         content.classList.toggle('collapsed');
         icon.classList.toggle('fa-chevron-up');
         icon.classList.toggle('fa-chevron-down');
@@ -3021,3 +3056,4 @@ body {
 
 </body>
 </html>
+```
