@@ -775,6 +775,117 @@
 	                            </tr>
 	                        </tbody>
 	                    </table>
+
+	                    <h3>自动获取面积</h3>
+	                    <p>系统支持通过高德地图获取地块边界数据，自动解析地址并计算面积。本节介绍两种获取数据的方法。</p>
+
+	                    <h4>方法一：使用内置地址搜索（推荐）</h4>
+	                    <p>此方法适用于新打开的详情页面可以正常访问的情况。</p>
+	                    <div class="steps">
+	                        <div class="step">
+	                            <div class="step-number">1</div>
+	                            <div class="step-content">
+	                                <h4>搜索地址</h4>
+	                                <p>在系统顶部的搜索框内输入目标地址或企业名称。</p>
+	                            </div>
+	                        </div>
+	                        <div class="step">
+	                            <div class="step-number">2</div>
+	                            <div class="step-content">
+	                                <h4>选定地址</h4>
+	                                <p>在弹出的搜索提示列表中，点击选择目标地址。</p>
+	                            </div>
+	                        </div>
+	                        <div class="step">
+	                            <div class="step-number">3</div>
+	                            <div class="step-content">
+	                                <h4>复制JSON数据</h4>
+	                                <p>点击搜索结果中的"前往复制JSON"按钮，系统将新打开高德地图详情页面。</p>
+	                            </div>
+	                        </div>
+	                        <div class="step">
+	                            <div class="step-number">4</div>
+	                            <div class="step-content">
+	                                <h4>粘贴数据</h4>
+	                                <p>在新打开的页面中，复制全部内容（Ctrl+A 全选，Ctrl+C 复制）。</p>
+	                            </div>
+	                        </div>
+	                        <div class="step">
+	                            <div class="step-number">5</div>
+	                            <div class="step-content">
+	                                <h4>批量导入</h4>
+	                                <p>返回系统主界面，将复制的数据粘贴到"JSON数据批量导入"框内。</p>
+	                            </div>
+	                        </div>
+	                        <div class="step">
+	                            <div class="step-number">6</div>
+	                            <div class="step-content">
+	                                <h4>应用并测量</h4>
+	                                <p>点击"应用并测量"按钮，系统自动解析地址数据，在地图上标注地块边界，并实时计算面积。</p>
+	                            </div>
+	                        </div>
+	                    </div>
+
+	                    <h4>方法二：手动获取高德数据（备选方案）</h4>
+	                    <p>此方法适用于新打开的高德详情页面被浏览器安全策略限制的情况。</p>
+	                    <div class="info-box warning">
+	                        <svg class="info-box-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+	                        <div class="info-box-content">
+	                            <h4>适用场景</h4>
+	                            <p>当点击"前往复制JSON"按钮后，新页面被浏览器阻止或显示拒绝访问时，请使用此方法手动获取数据。</p>
+	                        </div>
+	                    </div>
+	                    <div class="steps">
+	                        <div class="step">
+	                            <div class="step-number">1</div>
+	                            <div class="step-content">
+	                                <h4>打开高德地图</h4>
+	                                <p>在浏览器中打开高德地图官网（https://www.amap.com）。</p>
+	                            </div>
+	                        </div>
+	                        <div class="step">
+	                            <div class="step-number">2</div>
+	                            <div class="step-content">
+	                                <h4>搜索目标地址</h4>
+	                                <p>在高德地图搜索框中输入想要查询的地址或企业名称。</p>
+	                            </div>
+	                        </div>
+	                        <div class="step">
+	                            <div class="step-number">3</div>
+	                            <div class="step-content">
+	                                <h4>打开开发者工具</h4>
+	                                <p>按F12键或右键点击页面选择"检查"，打开浏览器开发者工具。</p>
+	                            </div>
+	                        </div>
+	                        <div class="step">
+	                            <div class="step-number">4</div>
+	                            <div class="step-content">
+	                                <h4>切换到网络标签</h4>
+	                                <p>在开发者工具中点击"网络"（Network）标签，勾选"XHR"筛选器。</p>
+	                            </div>
+	                        </div>
+	                        <div class="step">
+	                            <div class="step-number">5</div>
+	                            <div class="step-content">
+	                                <h4>查找请求</h4>
+	                                <p>在搜索结果列表中点击目标地址，刷新网络请求，找到包含"DETAIL"字样的网络标签。</p>
+	                            </div>
+	                        </div>
+	                        <div class="step">
+	                            <div class="step-number">6</div>
+	                            <div class="step-content">
+	                                <h4>复制响应数据</h4>
+	                                <p>点击该请求标签，切换到"响应"（Response）面板，复制全部内容。</p>
+	                            </div>
+	                        </div>
+	                        <div class="step">
+	                            <div class="step-number">7</div>
+	                            <div class="step-content">
+	                                <h4>批量导入并测量</h4>
+	                                <p>将复制的响应数据粘贴到系统的"JSON数据批量导入"框内，点击"应用并测量"即可计算面积。</p>
+	                            </div>
+	                        </div>
+	                    </div>
 	                </section>
 	                <!-- API Reference Section - EXPANDED -->
 	                <section id="api-reference" class="doc-section">
