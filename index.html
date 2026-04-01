@@ -394,6 +394,43 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
+        /* 帮助文档按钮 - 新增样式 */
+        .help-doc-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(240, 147, 251, 0.4);
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+
+        .help-doc-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.6);
+        }
+
+        .help-doc-btn i {
+            font-size: 14px;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% {
+                box-shadow: 0 2px 8px rgba(240, 147, 251, 0.4);
+            }
+            50% {
+                box-shadow: 0 2px 16px rgba(240, 147, 251, 0.7);
+            }
+        }
+
         .panel-content {
             overflow-y: auto;
             flex-grow: 1;
@@ -1306,6 +1343,7 @@
             justify-content: center;
             font-size: 18px;
             color: #667eea;
+            text-decoration: none;
         }
 
         .toolbar-btn:hover {
@@ -1313,6 +1351,28 @@
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+        }
+
+        /* 帮助文档工具栏按钮 - 突出显示 */
+        .toolbar-btn.help-doc {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+            animation: toolbarGlow 2s ease-in-out infinite;
+        }
+
+        .toolbar-btn.help-doc:hover {
+            transform: scale(1.15);
+            box-shadow: 0 6px 20px rgba(240, 147, 251, 0.6);
+        }
+
+        @keyframes toolbarGlow {
+            0%, 100% {
+                box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 25px rgba(240, 147, 251, 0.7);
+            }
         }
 
         /* 响应式设计 */
@@ -1346,6 +1406,10 @@
 
             .progress-container {
                 width: 250px;
+            }
+
+            .help-doc-btn span {
+                display: none;
             }
         }
 
@@ -1497,6 +1561,11 @@
                     </div>
                 </div>
                 <div class="panel-header-actions">
+                    <!-- 新增：帮助文档按钮 -->
+                    <a href="ABOUT.HTML" target="_blank" class="help-doc-btn" title="打开帮助文档">
+                        <i class="fas fa-book-open"></i>
+                        <span>文档</span>
+                    </a>
                     <button class="toggle-panel" id="helpBtn" title="使用说明">
                         <i class="fas fa-question"></i>
                     </button>
@@ -1673,6 +1742,10 @@
 
         <!-- 右侧工具栏 -->
         <div class="toolbar">
+            <!-- 新增：帮助文档按钮（工具栏位置） -->
+            <a href="ABOUT.HTML" target="_blank" class="toolbar-btn help-doc" title="帮助文档">
+                <i class="fas fa-book-open"></i>
+            </a>
             <button class="toolbar-btn" id="loadData" title="加载数据">
                 <i class="fas fa-folder-open"></i>
             </button>
