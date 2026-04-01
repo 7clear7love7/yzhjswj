@@ -1,0 +1,1700 @@
+	<!DOCTYPE html>
+	<html lang="zh-CN">
+	<head>
+	    <meta charset="UTF-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <title>土地面积测量工具 - 技术文档中心</title>
+	    <script src="https://cdn.tailwindcss.com"></script>
+	    <link rel="preconnect" href="https://fonts.googleapis.com">
+	    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Serif:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+	    <style>
+	        :root {
+	            --bg-primary: #0a0a0f;
+	            --bg-secondary: #12121a;
+	            --bg-tertiary: #1a1a25;
+	            --fg-primary: #e8e8ed;
+	            --fg-secondary: #a0a0b0;
+	            --fg-muted: #606070;
+	            --accent: #d4a853;
+	            --accent-dim: rgba(212, 168, 83, 0.15);
+	            --border: #2a2a35;
+	            --code-bg: #16161f;
+	            --success: #4ade80;
+	            --warning: #fbbf24;
+	            --error: #f87171;
+	        }
+	        * {
+	            margin: 0;
+	            padding: 0;
+	            box-sizing: border-box;
+	        }
+	        html {
+	            scroll-behavior: smooth;
+	        }
+	        body {
+	            font-family: 'IBM Plex Sans', sans-serif;
+	            background: var(--bg-primary);
+	            color: var(--fg-primary);
+	            line-height: 1.7;
+	            overflow-x: hidden;
+	        }
+	        /* Background Effects */
+	        .bg-grid {
+	            position: fixed;
+	            top: 0;
+	            left: 0;
+	            right: 0;
+	            bottom: 0;
+	            background-image: 
+	                linear-gradient(rgba(212, 168, 83, 0.03) 1px, transparent 1px),
+	                linear-gradient(90deg, rgba(212, 168, 83, 0.03) 1px, transparent 1px);
+	            background-size: 60px 60px;
+	            pointer-events: none;
+	            z-index: 0;
+	        }
+	        .bg-glow {
+	            position: fixed;
+	            width: 600px;
+	            height: 600px;
+	            border-radius: 50%;
+	            filter: blur(150px);
+	            opacity: 0.4;
+	            pointer-events: none;
+	            z-index: 0;
+	        }
+	        .glow-1 {
+	            top: -200px;
+	            right: -200px;
+	            background: radial-gradient(circle, rgba(212, 168, 83, 0.2) 0%, transparent 70%);
+	        }
+	        .glow-2 {
+	            bottom: -300px;
+	            left: -200px;
+	            background: radial-gradient(circle, rgba(100, 120, 200, 0.15) 0%, transparent 70%);
+	        }
+	        h1, h2, h3, h4 {
+	            font-family: 'IBM Plex Serif', serif;
+	            font-weight: 700;
+	            color: var(--fg-primary);
+	        }
+	        h1 { font-size: 2.5rem; letter-spacing: -0.02em; }
+	        h2 { font-size: 1.75rem; letter-spacing: -0.01em; margin-bottom: 1rem; }
+	        h3 { font-size: 1.25rem; margin-bottom: 0.75rem; }
+	        h4 { font-size: 1rem; margin-bottom: 0.5rem; }
+	        p { color: var(--fg-secondary); margin-bottom: 1rem; }
+	        .doc-container {
+	            display: flex;
+	            min-height: 100vh;
+	            position: relative;
+	            z-index: 1;
+	        }
+	        .sidebar {
+	            width: 280px;
+	            background: var(--bg-secondary);
+	            border-right: 1px solid var(--border);
+	            position: fixed;
+	            top: 0;
+	            left: 0;
+	            height: 100vh;
+	            overflow-y: auto;
+	            z-index: 100;
+	            transition: transform 0.3s ease;
+	        }
+	        .sidebar-header {
+	            padding: 1.5rem;
+	            border-bottom: 1px solid var(--border);
+	            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+	        }
+	        .logo-text {
+	            font-family: 'IBM Plex Serif', serif;
+	            font-size: 1.1rem;
+	            font-weight: 700;
+	            color: var(--accent);
+	            display: flex;
+	            align-items: center;
+	            gap: 0.75rem;
+	        }
+	        .logo-badge {
+	            background: var(--accent-dim);
+	            color: var(--accent);
+	            padding: 0.25rem 0.5rem;
+	            border-radius: 4px;
+	            font-size: 0.7rem;
+	            font-weight: 600;
+	            font-family: 'IBM Plex Sans', sans-serif;
+	        }
+	        .sidebar-nav {
+	            padding: 1rem 0;
+	        }
+	        .nav-section {
+	            margin-bottom: 0.5rem;
+	        }
+	        .nav-section-title {
+	            padding: 0.5rem 1.5rem;
+	            font-size: 0.7rem;
+	            font-weight: 600;
+	            text-transform: uppercase;
+	            letter-spacing: 0.1em;
+	            color: var(--fg-muted);
+	        }
+	        .nav-link {
+	            display: flex;
+	            align-items: center;
+	            padding: 0.6rem 1.5rem;
+	            color: var(--fg-secondary);
+	            text-decoration: none;
+	            font-size: 0.875rem;
+	            transition: all 0.2s ease;
+	            border-left: 3px solid transparent;
+	        }
+	        .nav-link:hover {
+	            background: var(--bg-tertiary);
+	            color: var(--fg-primary);
+	        }
+	        .nav-link.active {
+	            background: var(--accent-dim);
+	            color: var(--accent);
+	            border-left-color: var(--accent);
+	        }
+	        .nav-link svg {
+	            width: 18px;
+	            height: 18px;
+	            margin-right: 0.75rem;
+	            opacity: 0.6;
+	        }
+	        .nav-link:hover svg,
+	        .nav-link.active svg {
+	            opacity: 1;
+	        }
+	        .main-content {
+	            flex: 1;
+	            margin-left: 280px;
+	            min-height: 100vh;
+	        }
+	        .content-header {
+	            position: sticky;
+	            top: 0;
+	            background: rgba(10, 10, 15, 0.9);
+	            backdrop-filter: blur(20px);
+	            border-bottom: 1px solid var(--border);
+	            padding: 1rem 2rem;
+	            z-index: 50;
+	        }
+	        .header-inner {
+	            display: flex;
+	            align-items: center;
+	            justify-content: space-between;
+	            max-width: 1200px;
+	            margin: 0 auto;
+	        }
+	        .breadcrumb {
+	            display: flex;
+	            align-items: center;
+	            gap: 0.5rem;
+	            font-size: 0.875rem;
+	            color: var(--fg-muted);
+	        }
+	        .breadcrumb a {
+	            color: var(--fg-secondary);
+	            text-decoration: none;
+	            transition: color 0.2s;
+	        }
+	        .breadcrumb a:hover {
+	            color: var(--accent);
+	        }
+	        .search-box {
+	            position: relative;
+	        }
+	        .search-input {
+	            background: var(--bg-tertiary);
+	            border: 1px solid var(--border);
+	            border-radius: 8px;
+	            padding: 0.5rem 1rem 0.5rem 2.5rem;
+	            color: var(--fg-primary);
+	            font-size: 0.875rem;
+	            width: 280px;
+	            transition: all 0.2s;
+	        }
+	        .search-input:focus {
+	            outline: none;
+	            border-color: var(--accent);
+	            background: var(--bg-secondary);
+	        }
+	        .search-input::placeholder {
+	            color: var(--fg-muted);
+	        }
+	        .search-icon {
+	            position: absolute;
+	            left: 0.75rem;
+	            top: 50%;
+	            transform: translateY(-50%);
+	            color: var(--fg-muted);
+	        }
+	        .content-body {
+	            max-width: 900px;
+	            margin: 0 auto;
+	            padding: 3rem 2rem;
+	        }
+	        .doc-section {
+	            margin-bottom: 4rem;
+	            padding-bottom: 3rem;
+	            border-bottom: 1px solid var(--border);
+	        }
+	        .doc-section:last-child {
+	            border-bottom: none;
+	        }
+	        .section-header {
+	            display: flex;
+	            align-items: center;
+	            gap: 1rem;
+	            margin-bottom: 1.5rem;
+	        }
+	        .section-icon {
+	            width: 40px;
+	            height: 40px;
+	            background: var(--accent-dim);
+	            border-radius: 10px;
+	            display: flex;
+	            align-items: center;
+	            justify-content: center;
+	            color: var(--accent);
+	        }
+	        .code-block {
+	            background: var(--code-bg);
+	            border: 1px solid var(--border);
+	            border-radius: 12px;
+	            overflow: hidden;
+	            margin: 1.5rem 0;
+	        }
+	        .code-header {
+	            background: var(--bg-tertiary);
+	            padding: 0.75rem 1rem;
+	            display: flex;
+	            align-items: center;
+	            justify-content: space-between;
+	            border-bottom: 1px solid var(--border);
+	        }
+	        .code-lang {
+	            font-size: 0.75rem;
+	            color: var(--accent);
+	            font-weight: 600;
+	            text-transform: uppercase;
+	            letter-spacing: 0.05em;
+	        }
+	        .code-copy {
+	            background: transparent;
+	            border: 1px solid var(--border);
+	            border-radius: 6px;
+	            padding: 0.25rem 0.75rem;
+	            color: var(--fg-secondary);
+	            font-size: 0.75rem;
+	            cursor: pointer;
+	            transition: all 0.2s;
+	            display: flex;
+	            align-items: center;
+	            gap: 0.5rem;
+	        }
+	        .code-copy:hover {
+	            background: var(--bg-secondary);
+	            color: var(--fg-primary);
+	            border-color: var(--accent);
+	        }
+	        .code-content {
+	            padding: 1.25rem;
+	            overflow-x: auto;
+	        }
+	        pre {
+	            font-family: 'JetBrains Mono', monospace;
+	            font-size: 0.85rem;
+	            line-height: 1.6;
+	            color: var(--fg-primary);
+	        }
+	        code {
+	            font-family: 'JetBrains Mono', monospace;
+	        }
+	        .inline-code {
+	            background: var(--bg-tertiary);
+	            padding: 0.2rem 0.5rem;
+	            border-radius: 4px;
+	            font-size: 0.85em;
+	            color: var(--accent);
+	        }
+	        /* Syntax Highlighting */
+	        .token-keyword { color: #c792ea; }
+	        .token-string { color: #c3e88d; }
+	        .token-number { color: #f78c6c; }
+	        .token-comment { color: #546e7a; font-style: italic; }
+	        .token-function { color: #82aaff; }
+	        .token-property { color: #ffcb6b; }
+	        .token-operator { color: #89ddff; }
+	        .info-box {
+	            background: var(--bg-secondary);
+	            border: 1px solid var(--border);
+	            border-radius: 12px;
+	            padding: 1.25rem 1.5rem;
+	            margin: 1.5rem 0;
+	            display: flex;
+	            gap: 1rem;
+	        }
+	        .info-box-icon {
+	            flex-shrink: 0;
+	            width: 24px;
+	            height: 24px;
+	            margin-top: 0.1rem;
+	        }
+	        .info-box.note {
+	            border-left: 3px solid var(--accent);
+	        }
+	        .info-box.note .info-box-icon { color: var(--accent); }
+	        .info-box.warning {
+	            border-left: 3px solid var(--warning);
+	        }
+	        .info-box.warning .info-box-icon { color: var(--warning); }
+	        .info-box.success {
+	            border-left: 3px solid var(--success);
+	        }
+	        .info-box.success .info-box-icon { color: var(--success); }
+	        .info-box-content h4 {
+	            font-size: 0.9rem;
+	            margin-bottom: 0.5rem;
+	        }
+	        .info-box-content p {
+	            margin: 0;
+	            font-size: 0.9rem;
+	        }
+	        .doc-table {
+	            width: 100%;
+	            border-collapse: collapse;
+	            margin: 1.5rem 0;
+	            font-size: 0.9rem;
+	        }
+	        .doc-table th {
+	            background: var(--bg-tertiary);
+	            padding: 0.75rem 1rem;
+	            text-align: left;
+	            font-weight: 600;
+	            color: var(--fg-primary);
+	            border-bottom: 1px solid var(--border);
+	        }
+	        .doc-table td {
+	            padding: 0.75rem 1rem;
+	            border-bottom: 1px solid var(--border);
+	            color: var(--fg-secondary);
+	        }
+	        .doc-table tr:hover td {
+	            background: var(--bg-secondary);
+	        }
+	        .feature-grid {
+	            display: grid;
+	            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	            gap: 1.25rem;
+	            margin: 1.5rem 0;
+	        }
+	        .feature-card {
+	            background: var(--bg-secondary);
+	            border: 1px solid var(--border);
+	            border-radius: 12px;
+	            padding: 1.5rem;
+	            transition: all 0.3s ease;
+	        }
+	        .feature-card:hover {
+	            border-color: var(--accent);
+	            transform: translateY(-2px);
+	        }
+	        .feature-card-icon {
+	            width: 48px;
+	            height: 48px;
+	            background: var(--accent-dim);
+	            border-radius: 10px;
+	            display: flex;
+	            align-items: center;
+	            justify-content: center;
+	            color: var(--accent);
+	            margin-bottom: 1rem;
+	        }
+	        .feature-card h4 {
+	            margin-bottom: 0.5rem;
+	        }
+	        .feature-card p {
+	            font-size: 0.875rem;
+	            margin: 0;
+	        }
+	        .accordion {
+	            margin: 1.5rem 0;
+	        }
+	        .accordion-item {
+	            background: var(--bg-secondary);
+	            border: 1px solid var(--border);
+	            border-radius: 10px;
+	            margin-bottom: 0.75rem;
+	            overflow: hidden;
+	        }
+	        .accordion-header {
+	            width: 100%;
+	            background: transparent;
+	            border: none;
+	            padding: 1rem 1.5rem;
+	            display: flex;
+	            align-items: center;
+	            justify-content: space-between;
+	            cursor: pointer;
+	            color: var(--fg-primary);
+	            font-size: 0.95rem;
+	            font-weight: 500;
+	            text-align: left;
+	            transition: background 0.2s;
+	        }
+	        .accordion-header:hover {
+	            background: var(--bg-tertiary);
+	        }
+	        .accordion-icon {
+	            transition: transform 0.3s;
+	        }
+	        .accordion-item.open .accordion-icon {
+	            transform: rotate(180deg);
+	        }
+	        .accordion-content {
+	            max-height: 0;
+	            overflow: hidden;
+	            transition: max-height 0.3s ease;
+	        }
+	        .accordion-item.open .accordion-content {
+	            max-height: 2000px;
+	        }
+	        .accordion-body {
+	            padding: 0 1.5rem 1.5rem;
+	        }
+	        .steps {
+	            margin: 1.5rem 0;
+	        }
+	        .step {
+	            display: flex;
+	            gap: 1.25rem;
+	            margin-bottom: 1.5rem;
+	            position: relative;
+	        }
+	        .step:not(:last-child)::after {
+	            content: '';
+	            position: absolute;
+	            left: 19px;
+	            top: 48px;
+	            width: 2px;
+	            height: calc(100% - 20px);
+	            background: var(--border);
+	        }
+	        .step-number {
+	            width: 40px;
+	            height: 40px;
+	            background: var(--accent-dim);
+	            border: 2px solid var(--accent);
+	            border-radius: 50%;
+	            display: flex;
+	            align-items: center;
+	            justify-content: center;
+	            font-weight: 700;
+	            color: var(--accent);
+	            flex-shrink: 0;
+	            font-size: 0.9rem;
+	        }
+	        .step-content h4 {
+	            margin-bottom: 0.5rem;
+	        }
+	        .step-content p {
+	            font-size: 0.9rem;
+	            margin: 0;
+	        }
+	        .toc {
+	            position: fixed;
+	            top: 100px;
+	            right: 2rem;
+	            width: 220px;
+	            background: var(--bg-secondary);
+	            border: 1px solid var(--border);
+	            border-radius: 12px;
+	            padding: 1rem;
+	            max-height: calc(100vh - 150px);
+	            overflow-y: auto;
+	        }
+	        .toc-title {
+	            font-size: 0.75rem;
+	            font-weight: 600;
+	            text-transform: uppercase;
+	            letter-spacing: 0.1em;
+	            color: var(--fg-muted);
+	            margin-bottom: 0.75rem;
+	        }
+	        .toc-list {
+	            list-style: none;
+	        }
+	        .toc-link {
+	            display: block;
+	            padding: 0.4rem 0;
+	            font-size: 0.8rem;
+	            color: var(--fg-secondary);
+	            text-decoration: none;
+	            transition: color 0.2s;
+	            border-left: 2px solid transparent;
+	            padding-left: 0.75rem;
+	        }
+	        .toc-link:hover,
+	        .toc-link.active {
+	            color: var(--accent);
+	            border-left-color: var(--accent);
+	        }
+	        .mobile-toggle {
+	            display: none;
+	            position: fixed;
+	            bottom: 1.5rem;
+	            right: 1.5rem;
+	            width: 50px;
+	            height: 50px;
+	            background: var(--accent);
+	            border: none;
+	            border-radius: 50%;
+	            color: var(--bg-primary);
+	            cursor: pointer;
+	            z-index: 200;
+	            box-shadow: 0 4px 20px rgba(212, 168, 83, 0.3);
+	        }
+	        .scroll-progress {
+	            position: fixed;
+	            top: 0;
+	            left: 0;
+	            height: 3px;
+	            background: linear-gradient(90deg, var(--accent), #e8c571);
+	            z-index: 1000;
+	            transition: width 0.1s;
+	        }
+	        /* API Specific Styles */
+	        .api-badge {
+	            display: inline-block;
+	            padding: 0.2rem 0.6rem;
+	            border-radius: 4px;
+	            font-size: 0.7rem;
+	            font-weight: 600;
+	            text-transform: uppercase;
+	            margin-left: 0.5rem;
+	        }
+	        .api-badge.core { background: rgba(99, 102, 241, 0.2); color: #818cf8; }
+	        .api-badge.overlay { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+	        .api-badge.plugin { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+	        .api-badge.event { background: rgba(236, 72, 153, 0.2); color: #f472b6; }
+	        .api-method {
+	            display: inline-block;
+	            padding: 0.15rem 0.5rem;
+	            border-radius: 4px;
+	            font-size: 0.75rem;
+	            font-weight: 600;
+	            margin-right: 0.5rem;
+	        }
+	        .api-method.constructor { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
+	        .api-method.method { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+	        .api-method.property { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+	        .api-method.static { background: rgba(244, 63, 94, 0.2); color: #fb7185; }
+	        @media (max-width: 1400px) {
+	            .toc {
+	                display: none;
+	            }
+	        }
+	        @media (max-width: 900px) {
+	            .sidebar {
+	                transform: translateX(-100%);
+	            }
+	            .sidebar.open {
+	                transform: translateX(0);
+	            }
+	            .main-content {
+	                margin-left: 0;
+	            }
+	            .mobile-toggle {
+	                display: flex;
+	                align-items: center;
+	                justify-content: center;
+	            }
+	            .search-input {
+	                width: 200px;
+	            }
+	            .content-body {
+	                padding: 2rem 1.5rem;
+	            }
+	        }
+	        @media (max-width: 600px) {
+	            .search-box {
+	                display: none;
+	            }
+	            h1 { font-size: 1.75rem; }
+	            h2 { font-size: 1.35rem; }
+	            .feature-grid {
+	                grid-template-columns: 1fr;
+	            }
+	        }
+	        @media (prefers-reduced-motion: reduce) {
+	            * {
+	                animation-duration: 0.01ms !important;
+	                animation-iteration-count: 1 !important;
+	                transition-duration: 0.01ms !important;
+	            }
+	        }
+	    </style>
+	</head>
+	<body>
+	    <div class="bg-grid"></div>
+	    <div class="bg-glow glow-1"></div>
+	    <div class="bg-glow glow-2"></div>
+	    <div class="scroll-progress" id="scrollProgress"></div>
+	    <div class="doc-container">
+	        <aside class="sidebar" id="sidebar">
+	            <div class="sidebar-header">
+	                <div class="logo-text">
+	                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+	                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+	                        <circle cx="12" cy="10" r="3"/>
+	                    </svg>
+	                    使用帮助
+	                    <span class="logo-badge">v2.1.0</span>
+	                </div>
+	            </div>
+	            <nav class="sidebar-nav">
+	                <div class="nav-section">
+	                    <div class="nav-section-title">快速开始</div>
+	                    <a href="#overview" class="nav-link active">
+	                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+	                        系统概述
+	                    </a>
+	                    <a href="#quickstart" class="nav-link">
+	                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+	                        快速入门
+	                    </a>
+	                </div>
+	                <div class="nav-section">
+	                    <div class="nav-section-title">开发文档</div>
+	                    <a href="#api-reference" class="nav-link">
+	                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+	                        API参考
+	                    </a>
+	                    <a href="#architecture" class="nav-link">
+	                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+	                        系统架构
+	                    </a>
+	                    <a href="#data-structure" class="nav-link">
+	                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+	                        数据结构
+	                    </a>
+	                </div>
+	                <div class="nav-section">
+	                    <div class="nav-section-title">附录</div>
+	                    <a href="#faq" class="nav-link">
+	                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+	                        常见问题
+	                    </a>
+	                </div>
+	            </nav>
+	        </aside>
+	        <main class="main-content">
+	            <header class="content-header">
+	                <div class="header-inner">
+	                    <div class="breadcrumb">
+	                        <a href="#">文档中心</a>
+	                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+	                        <span id="currentSection">系统概述</span>
+	                    </div>
+	                    <div class="search-box">
+	                        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+	                        <input type="text" class="search-input" placeholder="搜索文档..." id="searchInput">
+	                    </div>
+	                </div>
+	            </header>
+	            <div class="content-body">
+	                <!-- Overview Section -->
+	                <section id="overview" class="doc-section">
+	                    <div class="section-header">
+	                        <div class="section-icon">
+	                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+	                        </div>
+	                        <h1>系统概述</h1>
+	                    </div>
+	                    <p>土地面积测量工具是专为税务部门设计的高精度地理信息系统解决方案。系统集成高德地图API 2.0，提供多模式面积测量、批量数据导入导出、历史记录管理等专业功能，助力土地税收征管工作数字化转型。</p>
+	                    <div class="feature-grid">
+	                        <div class="feature-card">
+	                            <div class="feature-card-icon">
+	                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+	                            </div>
+	                            <h4>多源数据导入</h4>
+	                            <p>支持JSON格式批量导入、经纬度坐标直接输入、地图手动绘制三种数据采集方式</p>
+	                        </div>
+	                        <div class="feature-card">
+	                            <div class="feature-card-icon">
+	                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+	                            </div>
+	                            <h4>智能地址搜索</h4>
+	                            <p>集成高德地图POI搜索，快速定位目标地块，支持企业名称和地址模糊匹配</p>
+	                        </div>
+	                        <div class="feature-card">
+	                            <div class="feature-card-icon">
+	                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+	                            </div>
+	                            <h4>多单位换算</h4>
+	                            <p>实时计算面积，支持平方米、亩、公顷、平方千米四种计量单位自由切换</p>
+	                        </div>
+	                    </div>
+	                </section>
+	                <!-- Quick Start Section -->
+	                <section id="quickstart" class="doc-section">
+	                    <div class="section-header">
+	                        <div class="section-icon">
+	                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+	                        </div>
+	                        <h1>快速入门</h1>
+	                    </div>
+	                    <p>本章节将引导您在5分钟内完成系统的基础配置与首次测量操作。</p>
+	                    <h3>环境要求</h3>
+	                    <table class="doc-table">
+	                        <thead>
+	                            <tr>
+	                                <th>项目</th>
+	                                <th>要求</th>
+	                                <th>说明</th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+	                            <tr>
+	                                <td>浏览器</td>
+	                                <td>Chrome 90+ / Firefox 88+ / Edge 90+</td>
+	                                <td>推荐使用Chrome以获得最佳体验</td>
+	                            </tr>
+	                            <tr>
+	                                <td>网络</td>
+	                                <td>需访问高德地图API服务器</td>
+	                                <td>确保网络畅通，建议带宽10Mbps以上</td>
+	                            </tr>
+	                            <tr>
+	                                <td>分辨率</td>
+	                                <td>最低1366x768，推荐1920x1080</td>
+	                                <td>支持响应式布局，移动端可正常使用</td>
+	                            </tr>
+	                        </tbody>
+	                    </table>
+	                </section>
+	                <!-- API Reference Section - EXPANDED -->
+	                <section id="api-reference" class="doc-section">
+	                    <div class="section-header">
+	                        <div class="section-icon">
+	                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+	                        </div>
+	                        <h1>API参考</h1>
+	                    </div>
+	                    <p>本文档列出了系统中使用的所有高德地图JavaScript API 2.0接口，按照功能模块分类整理。每个API均标注了在本项目中的具体用途。</p>
+	                    <div class="info-box note">
+	                        <svg class="info-box-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+	                        <div class="info-box-content">
+	                            <h4>版本说明</h4>
+	                            <p>本项目基于高德地图 JS API 2.0 开发，部分接口与1.x版本不兼容。开发时需注意API Key的安全配置。</p>
+	                        </div>
+	                    </div>
+	                    <!-- 1. 核心类 -->
+	                    <h3>一、核心类 <span class="api-badge core">Core</span></h3>
+	                    <div class="accordion">
+	                        <div class="accordion-item open">
+	                            <button class="accordion-header" onclick="toggleAccordion(this)">
+	                                <span>AMap.Map - 地图核心类</span>
+	                                <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+	                            </button>
+	                            <div class="accordion-content">
+	                                <div class="accordion-body">
+	                                    <p>地图对象是最核心的类，用于创建并控制地图实例。</p>
+	                                    <table class="doc-table">
+	                                        <thead>
+	                                            <tr>
+	                                                <th style="width: 200px;">API接口</th>
+	                                                <th>类型</th>
+	                                                <th>功能说明</th>
+	                                            </tr>
+	                                        </thead>
+	                                        <tbody>
+	                                            <tr>
+	                                                <td><code>new AMap.Map(container, options)</code></td>
+	                                                <td><span class="api-method constructor">构造函数</span></td>
+	                                                <td>创建地图实例。项目中用于初始化地图，设置了zoom（缩放级别）、center（中心点）、mapStyle（地图样式）等参数。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>map.on(eventName, handler)</code></td>
+	                                                <td><span class="api-method method">方法</span></td>
+	                                                <td>注册事件监听器。项目中监听 <code>'complete'</code> 事件，在地图加载完成后初始化插件模块。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>map.setZoom(level)</code></td>
+	                                                <td><span class="api-method method">方法</span></td>
+	                                                <td>设置地图缩放级别。在搜索定位功能中，将地图缩放到17级以便清晰查看地块。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>map.setCenter(position)</code></td>
+	                                                <td><span class="api-method method">方法</span></td>
+	                                                <td>设置地图中心点。配合搜索功能，将地图中心移动到目标位置。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>map.setFitView(overlays)</code></td>
+	                                                <td><span class="api-method method">方法</span></td>
+	                                                <td>调整视野以适应覆盖物范围。在绘制完成、数据导入后自动调整视野，确保所有区域可见。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>map.setMapStyle(style)</code></td>
+	                                                <td><span class="api-method method">方法</span></td>
+	                                                <td>设置地图样式。实现11种地图样式的动态切换功能（标准、深色、卫星等）。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>map.add(overlay)</code></td>
+	                                                <td><span class="api-method method">方法</span></td>
+	                                                <td>添加覆盖物到地图。用于添加多边形、标记点、文本标签等。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>map.remove(overlay)</code></td>
+	                                                <td><span class="api-method method">方法</span></td>
+	                                                <td>从地图移除覆盖物。用于删除测量区域或清除预览标记。</td>
+	                                            </tr>
+	                                        </tbody>
+	                                    </table>
+	                                    <div class="code-block">
+	                                        <div class="code-header">
+	                                            <span class="code-lang">使用示例</span>
+	                                        </div>
+	                                        <div class="code-content">
+	<pre><span class="token-comment">// 初始化地图（项目源码）</span>
+	<span class="token-keyword">var</span> map = <span class="token-keyword">new</span> <span class="token-function">AMap.Map</span>(<span class="token-string">"container"</span>, {
+	    <span class="token-property">resizeEnable</span>: <span class="token-keyword">true</span>,
+	    <span class="token-property">zoom</span>: <span class="token-number">12</span>,
+	    <span class="token-property">center</span>: [<span class="token-number">119.398015</span>, <span class="token-number">32.377528</span>], <span class="token-comment">// 扬州市邗江区</span>
+	    <span class="token-property">mapStyle</span>: <span class="token-string">"amap://styles/light"</span>
+	});
+	<span class="token-comment">// 监听地图加载完成事件</span>
+	map.<span class="token-function">on</span>(<span class="token-string">'complete'</span>, <span class="token-keyword">function</span>() {
+	    <span class="token-function">initializePlugins</span>();
+	});</pre>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        <div class="accordion-item">
+	                            <button class="accordion-header" onclick="toggleAccordion(this)">
+	                                <span>AMap.LngLat - 经纬度对象</span>
+	                                <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+	                            </button>
+	                            <div class="accordion-content">
+	                                <div class="accordion-body">
+	                                    <p>经纬度坐标对象，用于表示地图上的一个点。</p>
+	                                    <table class="doc-table">
+	                                        <thead>
+	                                            <tr>
+	                                                <th style="width: 200px;">API接口</th>
+	                                                <th>类型</th>
+	                                                <th>功能说明</th>
+	                                            </tr>
+	                                        </thead>
+	                                        <tbody>
+	                                            <tr>
+	                                                <td><code>new AMap.LngLat(lng, lat)</code></td>
+	                                                <td><span class="api-method constructor">构造函数</span></td>
+	                                                <td>构造经纬度对象。在面积计算时，将坐标数组转换为LngLat对象数组。</td>
+	                                            </tr>
+	                                        </tbody>
+	                                    </table>
+	                                    <div class="code-block">
+	                                        <div class="code-header">
+	                                            <span class="code-lang">使用示例</span>
+	                                        </div>
+	                                        <div class="code-content">
+	<pre><span class="token-comment">// 坐标转换用于面积计算</span>
+	<span class="token-keyword">const</span> path = coords.<span class="token-function">map</span>(c => <span class="token-keyword">new</span> <span class="token-function">AMap.LngLat</span>(c[<span class="token-number">0</span>], c[<span class="token-number">1</span>]));
+	<span class="token-keyword">const</span> area = AMap.GeometryUtil.<span class="token-function">ringArea</span>(path);</pre>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        <div class="accordion-item">
+	                            <button class="accordion-header" onclick="toggleAccordion(this)">
+	                                <span>AMap.Pixel - 像素坐标对象</span>
+	                                <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+	                            </button>
+	                            <div class="accordion-content">
+	                                <div class="accordion-body">
+	                                    <p>像素坐标对象，用于设置覆盖物的偏移位置。</p>
+	                                    <table class="doc-table">
+	                                        <thead>
+	                                            <tr>
+	                                                <th style="width: 200px;">API接口</th>
+	                                                <th>类型</th>
+	                                                <th>功能说明</th>
+	                                            </tr>
+	                                        </thead>
+	                                        <tbody>
+	                                            <tr>
+	                                                <td><code>new AMap.Pixel(x, y)</code></td>
+	                                                <td><span class="api-method constructor">构造函数</span></td>
+	                                                <td>构造像素坐标。在创建预览标记点时，设置标记相对于锚点的偏移量。</td>
+	                                            </tr>
+	                                        </tbody>
+	                                    </table>
+	                                    <div class="code-block">
+	                                        <div class="code-header">
+	                                            <span class="code-lang">使用示例</span>
+	                                        </div>
+	                                        <div class="code-content">
+	<pre><span class="token-comment">// 创建带偏移的标记点</span>
+	<span class="token-keyword">const</span> marker = <span class="token-keyword">new</span> <span class="token-function">AMap.Marker</span>({
+	    <span class="token-property">position</span>: coord,
+	    <span class="token-property">content</span>: <span class="token-string">`&lt;div class="preview-marker"&gt;${index + 1}&lt;/div&gt;`</span>,
+	    <span class="token-property">offset</span>: <span class="token-keyword">new</span> <span class="token-function">AMap.Pixel</span>(-<span class="token-number">20</span>, -<span class="token-number">10</span>), <span class="token-comment">// 偏移定位</span>
+	    <span class="token-property">zIndex</span>: <span class="token-number">100</span>
+	});</pre>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <!-- 2. 覆盖物类 -->
+	                    <h3>二、覆盖物类 <span class="api-badge overlay">Overlay</span></h3>
+	                    <div class="accordion">
+	                        <div class="accordion-item">
+	                            <button class="accordion-header" onclick="toggleAccordion(this)">
+	                                <span>AMap.Polygon - 多边形覆盖物</span>
+	                                <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+	                            </button>
+	                            <div class="accordion-content">
+	                                <div class="accordion-body">
+	                                    <p>多边形覆盖物，用于在地图上绘制闭合区域，是本系统的核心可视化组件。</p>
+	                                    <table class="doc-table">
+	                                        <thead>
+	                                            <tr>
+	                                                <th style="width: 200px;">API接口</th>
+	                                                <th>类型</th>
+	                                                <th>功能说明</th>
+	                                            </tr>
+	                                        </thead>
+	                                        <tbody>
+	                                            <tr>
+	                                                <td><code>new AMap.Polygon(options)</code></td>
+	                                                <td><span class="api-method constructor">构造函数</span></td>
+	                                                <td>创建多边形。设置path（路径）、strokeColor（边框颜色）、fillColor（填充色）、extData（自定义数据）等属性。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>polygon.getPath()</code></td>
+	                                                <td><span class="api-method method">方法</span></td>
+	                                                <td>获取多边形路径坐标。在保存数据时导出坐标数组，在计算面积时获取路径。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>polygon.getBounds()</code></td>
+	                                                <td><span class="api-method method">方法</span></td>
+	                                                <td>获取多边形边界范围。用于计算多边形的中心点，以便放置文本标签。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>polygon.setOptions(options)</code></td>
+	                                                <td><span class="api-method method">方法</span></td>
+	                                                <td>修改多边形属性。在高亮显示区域时，动态修改边框粗细和填充透明度。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>polygon.getExtData()</code></td>
+	                                                <td><span class="api-method method">方法</span></td>
+	                                                <td>获取自定义数据。存储区域ID，用于关联历史记录和进行删除、高亮等操作。</td>
+	                                            </tr>
+	                                        </tbody>
+	                                    </table>
+	                                    <div class="code-block">
+	                                        <div class="code-header">
+	                                            <span class="code-lang">使用示例</span>
+	                                        </div>
+	                                        <div class="code-content">
+	<pre><span class="token-comment">// 创建测量区域多边形（项目源码）</span>
+	<span class="token-keyword">const</span> polygon = <span class="token-keyword">new</span> <span class="token-function">AMap.Polygon</span>({
+	    <span class="token-property">path</span>: path,                              <span class="token-comment">// 经纬度数组</span>
+	    <span class="token-property">strokeColor</span>: color,                      <span class="token-comment">// 边框颜色</span>
+	    <span class="token-property">strokeOpacity</span>: <span class="token-number">0.9</span>,                     <span class="token-comment">// 边框透明度</span>
+	    <span class="token-property">strokeWeight</span>: <span class="token-number">3</span>,                        <span class="token-comment">// 边框宽度</span>
+	    <span class="token-property">fillColor</span>: color,                        <span class="token-comment">// 填充颜色</span>
+	    <span class="token-property">fillOpacity</span>: <span class="token-number">0.3</span>,                       <span class="token-comment">// 填充透明度</span>
+	    <span class="token-property">extData</span>: {                               <span class="token-comment">// 自定义数据</span>
+	        <span class="token-property">id</span>: Date.<span class="token-function">now</span>(),
+	        <span class="token-property">source</span>: <span class="token-string">'draw'</span>
+	    }
+	});
+	<span class="token-comment">// 高亮显示区域</span>
+	<span class="token-keyword">function</span> <span class="token-function">highlightRegion</span>(id) {
+	    <span class="token-keyword">const</span> polygon = polygons.<span class="token-function">find</span>(p => p.<span class="token-function">getExtData</span>().id === id);
+	    <span class="token-keyword">if</span> (polygon) {
+	        polygon.<span class="token-function">setOptions</span>({
+	            <span class="token-property">strokeWeight</span>: <span class="token-number">5</span>,
+	            <span class="token-property">fillOpacity</span>: <span class="token-number">0.5</span>
+	        });
+	    }
+	}</pre>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        <div class="accordion-item">
+	                            <button class="accordion-header" onclick="toggleAccordion(this)">
+	                                <span>AMap.Marker - 点标记覆盖物</span>
+	                                <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+	                            </button>
+	                            <div class="accordion-content">
+	                                <div class="accordion-body">
+	                                    <p>点标记用于在地图上标注位置，项目中用于坐标预览功能。</p>
+	                                    <table class="doc-table">
+	                                        <thead>
+	                                            <tr>
+	                                                <th style="width: 200px;">API接口</th>
+	                                                <th>类型</th>
+	                                                <th>功能说明</th>
+	                                            </tr>
+	                                        </thead>
+	                                        <tbody>
+	                                            <tr>
+	                                                <td><code>new AMap.Marker(options)</code></td>
+	                                                <td><span class="api-method constructor">构造函数</span></td>
+	                                                <td>创建点标记。在经纬度预览时，为每个坐标点创建带序号的标记。</td>
+	                                            </tr>
+	                                        </tbody>
+	                                    </table>
+	                                    <div class="code-block">
+	                                        <div class="code-header">
+	                                            <span class="code-lang">使用示例</span>
+	                                        </div>
+	                                        <div class="code-content">
+	<pre><span class="token-comment">// 经纬度预览标记</span>
+	coords.<span class="token-function">forEach</span>((coord, index) => {
+	    <span class="token-keyword">const</span> marker = <span class="token-keyword">new</span> <span class="token-function">AMap.Marker</span>({
+	        <span class="token-property">position</span>: coord,
+	        <span class="token-property">content</span>: <span class="token-string">`&lt;div class="preview-marker"&gt;${index + 1}&lt;/div&gt;`</span>,
+	        <span class="token-property">offset</span>: <span class="token-keyword">new</span> <span class="token-function">AMap.Pixel</span>(-<span class="token-number">20</span>, -<span class="token-number">10</span>),
+	        <span class="token-property">zIndex</span>: <span class="token-number">100</span>
+	    });
+	    previewMarkers.<span class="token-function">push</span>(marker);
+	    map.<span class="token-function">add</span>(marker);
+	});</pre>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        <div class="accordion-item">
+	                            <button class="accordion-header" onclick="toggleAccordion(this)">
+	                                <span>AMap.Text - 文本标记覆盖物</span>
+	                                <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+	                            </button>
+	                            <div class="accordion-content">
+	                                <div class="accordion-body">
+	                                    <p>文本标记用于在地图上显示文字信息，项目中用于显示区域名称和面积。</p>
+	                                    <table class="doc-table">
+	                                        <thead>
+	                                            <tr>
+	                                                <th style="width: 200px;">API接口</th>
+	                                                <th>类型</th>
+	                                                <th>功能说明</th>
+	                                            </tr>
+	                                        </thead>
+	                                        <tbody>
+	                                            <tr>
+	                                                <td><code>new AMap.Text(options)</code></td>
+	                                                <td><span class="api-method constructor">构造函数</span></td>
+	                                                <td>创建文本标记。设置text（文本内容）、position（位置）、style（样式）等属性。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>text.setText(content)</code></td>
+	                                                <td><span class="api-method method">方法</span></td>
+	                                                <td>更新文本内容。在切换单位时更新面积显示文本。</td>
+	                                            </tr>
+	                                        </tbody>
+	                                    </table>
+	                                    <div class="code-block">
+	                                        <div class="code-header">
+	                                            <span class="code-lang">使用示例</span>
+	                                        </div>
+	                                        <div class="code-content">
+	<pre><span class="token-comment">// 在多边形中心添加面积标签</span>
+	<span class="token-keyword">function</span> <span class="token-function">addAreaMarker</span>(polygon, areaSqm, name) {
+	    <span class="token-keyword">const</span> text = <span class="token-keyword">new</span> <span class="token-function">AMap.Text</span>({
+	        <span class="token-property">text</span>: <span class="token-string">`${name}: ${formatArea(areaSqm, currentUnit)}`</span>,
+	        <span class="token-property">position</span>: polygon.<span class="token-function">getBounds</span>().<span class="token-function">getCenter</span>(),
+	        <span class="token-property">style</span>: {
+	            <span class="token-property">'background'</span>: <span class="token-string">'linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%)'</span>,
+	            <span class="token-property">'border'</span>: <span class="token-string">'none'</span>,
+	            <span class="token-property">'color'</span>: <span class="token-string">'white'</span>,
+	            <span class="token-property">'padding'</span>: <span class="token-string">'8px 12px'</span>,
+	            <span class="token-property">'border-radius'</span>: <span class="token-string">'8px'</span>,
+	            <span class="token-property">'font-size'</span>: <span class="token-string">'12px'</span>,
+	            <span class="token-property">'font-weight'</span>: <span class="token-string">'600'</span>
+	        },
+	        <span class="token-property">extData</span>: { <span class="token-property">polygonId</span>: polygon.<span class="token-function">getExtData</span>().id, <span class="token-property">areaSqm</span>: areaSqm }
+	    });
+	    markers.<span class="token-function">push</span>(text);
+	    map.<span class="token-function">add</span>(text);
+	}</pre>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <!-- 3. 插件类 -->
+	                    <h3>三、插件服务类 <span class="api-badge plugin">Plugin</span></h3>
+	                    <div class="accordion">
+	                        <div class="accordion-item">
+	                            <button class="accordion-header" onclick="toggleAccordion(this)">
+	                                <span>AMap.plugin - 插件加载器</span>
+	                                <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+	                            </button>
+	                            <div class="accordion-content">
+	                                <div class="accordion-body">
+	                                    <p>插件加载方法，用于按需加载高德地图的功能模块。</p>
+	                                    <table class="doc-table">
+	                                        <thead>
+	                                            <tr>
+	                                                <th style="width: 200px;">API接口</th>
+	                                                <th>类型</th>
+	                                                <th>功能说明</th>
+	                                            </tr>
+	                                        </thead>
+	                                        <tbody>
+	                                            <tr>
+	                                                <td><code>AMap.plugin(plugins, callback)</code></td>
+	                                                <td><span class="api-method static">静态方法</span></td>
+	                                                <td>加载指定插件。项目中一次性加载 PlaceSearch、AutoComplete、MouseTool、GeometryUtil 四个插件。</td>
+	                                            </tr>
+	                                        </tbody>
+	                                    </table>
+	                                    <div class="code-block">
+	                                        <div class="code-header">
+	                                            <span class="code-lang">使用示例</span>
+	                                        </div>
+	                                        <div class="code-content">
+	<pre><span class="token-comment">// 初始化插件（项目源码）</span>
+	<span class="token-keyword">function</span> <span class="token-function">initializePlugins</span>() {
+	    <span class="token-function">AMap.plugin</span>([
+	        <span class="token-string">'AMap.PlaceSearch'</span>,     <span class="token-comment">// POI搜索</span>
+	        <span class="token-string">'AMap.AutoComplete'</span>,    <span class="token-comment">// 输入提示</span>
+	        <span class="token-string">'AMap.MouseTool'</span>,       <span class="token-comment">// 鼠标工具</span>
+	        <span class="token-string">'AMap.GeometryUtil'</span>     <span class="token-comment">// 几何计算</span>
+	    ], <span class="token-keyword">function</span>() {
+	        <span class="token-comment">// 初始化各插件实例...</span>
+	    });
+	}</pre>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        <div class="accordion-item">
+	                            <button class="accordion-header" onclick="toggleAccordion(this)">
+	                                <span>AMap.PlaceSearch - 地点搜索服务</span>
+	                                <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+	                            </button>
+	                            <div class="accordion-content">
+	                                <div class="accordion-body">
+	                                    <p>地点搜索服务，用于根据关键词搜索POI信息。</p>
+	                                    <table class="doc-table">
+	                                        <thead>
+	                                            <tr>
+	                                                <th style="width: 200px;">API接口</th>
+	                                                <th>类型</th>
+	                                                <th>功能说明</th>
+	                                            </tr>
+	                                        </thead>
+	                                        <tbody>
+	                                            <tr>
+	                                                <td><code>new AMap.PlaceSearch(options)</code></td>
+	                                                <td><span class="api-method constructor">构造函数</span></td>
+	                                                <td>创建搜索实例。配置map（关联地图）、pageSize（结果数量）等参数。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>placeSearch.setCity(adcode)</code></td>
+	                                                <td><span class="api-method method">方法</span></td>
+	                                                <td>设置搜索城市区域。根据用户选择的城市行政区划代码限定搜索范围。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>placeSearch.search(keyword, callback)</code></td>
+	                                                <td><span class="api-method method">方法</span></td>
+	                                                <td>执行地点搜索。在用户选择自动完成提示后，执行精确搜索获取POI详情。</td>
+	                                            </tr>
+	                                        </tbody>
+	                                    </table>
+	                                    <div class="code-block">
+	                                        <div class="code-header">
+	                                            <span class="code-lang">使用示例</span>
+	                                        </div>
+	                                        <div class="code-content">
+	<pre><span class="token-comment">// 初始化搜索服务</span>
+	placeSearch = <span class="token-keyword">new</span> <span class="token-function">AMap.PlaceSearch</span>({
+	    <span class="token-property">map</span>: map,
+	    <span class="token-property">pageSize</span>: <span class="token-number">5</span>
+	});
+	<span class="token-comment">// 执行搜索并定位</span>
+	<span class="token-keyword">function</span> <span class="token-function">handleSearchSelect</span>(e) {
+	    placeSearch.<span class="token-function">setCity</span>(e.poi.adcode);
+	    placeSearch.<span class="token-function">search</span>(e.poi.name, (status, result) => {
+	        <span class="token-keyword">if</span> (status === <span class="token-string">'complete'</span> && result.poiList.pois.length > <span class="token-number">0</span>) {
+	            <span class="token-keyword">const</span> poi = result.poiList.pois[<span class="token-number">0</span>];
+	            map.<span class="token-function">setZoom</span>(<span class="token-number">17</span>);
+	            map.<span class="token-function">setCenter</span>(poi.location);
+	        }
+	    });
+	}</pre>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        <div class="accordion-item">
+	                            <button class="accordion-header" onclick="toggleAccordion(this)">
+	                                <span>AMap.AutoComplete - 输入提示服务</span>
+	                                <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+	                            </button>
+	                            <div class="accordion-content">
+	                                <div class="accordion-body">
+	                                    <p>输入提示服务，用于实现搜索框的关键词联想功能。</p>
+	                                    <table class="doc-table">
+	                                        <thead>
+	                                            <tr>
+	                                                <th style="width: 200px;">API接口</th>
+	                                                <th>类型</th>
+	                                                <th>功能说明</th>
+	                                            </tr>
+	                                        </thead>
+	                                        <tbody>
+	                                            <tr>
+	                                                <td><code>new AMap.AutoComplete(options)</code></td>
+	                                                <td><span class="api-method constructor">构造函数</span></td>
+	                                                <td>创建自动完成实例。绑定input（输入框DOM）、city（默认城市）、citylimit（是否限制城市）等参数。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>autoComplete.search(keyword, callback)</code></td>
+	                                                <td><span class="api-method method">方法</span></td>
+	                                                <td>根据输入关键字查询提示词。在输入框input事件中触发，获取匹配的地址列表。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>autoComplete.on(event, handler)</code></td>
+	                                                <td><span class="api-method method">方法</span></td>
+	                                                <td>监听选择事件。监听 <code>'select'</code> 事件，获取用户选择的提示项。</td>
+	                                            </tr>
+	                                        </tbody>
+	                                    </table>
+	                                    <div class="code-block">
+	                                        <div class="code-header">
+	                                            <span class="code-lang">使用示例</span>
+	                                        </div>
+	                                        <div class="code-content">
+	<pre><span class="token-comment">// 初始化自动完成</span>
+	autoComplete = <span class="token-keyword">new</span> <span class="token-function">AMap.AutoComplete</span>({
+	    <span class="token-property">input</span>: <span class="token-string">"tipinput"</span>,
+	    <span class="token-property">city</span>: <span class="token-string">"扬州"</span>,
+	    <span class="token-property">citylimit</span>: <span class="token-keyword">true</span>
+	});
+	<span class="token-comment">// 监听选择事件</span>
+	autoComplete.<span class="token-function">on</span>(<span class="token-string">"select"</span>, handleSearchSelect);
+	<span class="token-comment">// 手动触发搜索（项目中的自定义实现）</span>
+	<span class="token-keyword">function</span> <span class="token-function">handleSearchInput</span>(e) {
+	    <span class="token-keyword">const</span> keyword = e.target.value.trim();
+	    <span class="token-keyword">if</span> (keyword.length < <span class="token-number">2</span>) <span class="token-keyword">return</span>;
+	    autoComplete.<span class="token-function">search</span>(keyword, (status, result) => {
+	        <span class="token-keyword">if</span> (status === <span class="token-string">'complete'</span> && result.tips) {
+	            <span class="token-comment">// 渲染搜索结果下拉列表...</span>
+	        }
+	    });
+	}</pre>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        <div class="accordion-item">
+	                            <button class="accordion-header" onclick="toggleAccordion(this)">
+	                                <span>AMap.MouseTool - 鼠标绘图工具</span>
+	                                <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+	                            </button>
+	                            <div class="accordion-content">
+	                                <div class="accordion-body">
+	                                    <p>鼠标绘图工具，提供在地图上绘制覆盖物的交互能力。</p>
+	                                    <table class="doc-table">
+	                                        <thead>
+	                                            <tr>
+	                                                <th style="width: 200px;">API接口</th>
+	                                                <th>类型</th>
+	                                                <th>功能说明</th>
+	                                            </tr>
+	                                        </thead>
+	                                        <tbody>
+	                                            <tr>
+	                                                <td><code>new AMap.MouseTool(map)</code></td>
+	                                                <td><span class="api-method constructor">构造函数</span></td>
+	                                                <td>创建鼠标工具实例。绑定到当前地图对象。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>mouseTool.polygon(options)</code></td>
+	                                                <td><span class="api-method method">方法</span></td>
+	                                                <td>开启多边形绘制模式。用户点击地图添加顶点，双击完成绘制。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>mouseTool.close(clear)</code></td>
+	                                                <td><span class="api-method method">方法</span></td>
+	                                                <td>关闭绘图模式。参数为true时同时清除正在绘制的图形。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>mouseTool.on(event, handler)</code></td>
+	                                                <td><span class="api-method method">方法</span></td>
+	                                                <td>监听绘图事件。监听 <code>'draw'</code> 事件，在绘制完成时获取生成的多边形对象。</td>
+	                                            </tr>
+	                                        </tbody>
+	                                    </table>
+	                                    <div class="code-block">
+	                                        <div class="code-header">
+	                                            <span class="code-lang">使用示例</span>
+	                                        </div>
+	                                        <div class="code-content">
+	<pre><span class="token-comment">// 初始化鼠标工具</span>
+	mouseTool = <span class="token-keyword">new</span> <span class="token-function">AMap.MouseTool</span>(map);
+	<span class="token-comment">// 开始绘制</span>
+	<span class="token-keyword">function</span> <span class="token-function">startDrawing</span>() {
+	    <span class="token-keyword">const</span> color = regionColors[regionCounter % regionColors.length];
+	    mouseTool.<span class="token-function">polygon</span>({
+	        <span class="token-property">strokeColor</span>: color,
+	        <span class="token-property">strokeOpacity</span>: <span class="token-number">0.9</span>,
+	        <span class="token-property">strokeWeight</span>: <span class="token-number">3</span>,
+	        <span class="token-property">fillColor</span>: color,
+	        <span class="token-property">fillOpacity</span>: <span class="token-number">0.3</span>,
+	        <span class="token-property">extData</span>: { <span class="token-property">id</span>: Date.<span class="token-function">now</span>(), <span class="token-property">source</span>: <span class="token-string">'draw'</span> }
+	    });
+	}
+	<span class="token-comment">// 监听绘制完成</span>
+	mouseTool.<span class="token-function">on</span>(<span class="token-string">'draw'</span>, <span class="token-keyword">function</span>(event) {
+	    <span class="token-keyword">const</span> polygon = event.obj;
+	    mouseTool.<span class="token-function">close</span>();
+	    <span class="token-comment">// 处理绘制结果...</span>
+	});</pre>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        <div class="accordion-item">
+	                            <button class="accordion-header" onclick="toggleAccordion(this)">
+	                                <span>AMap.GeometryUtil - 几何计算工具</span>
+	                                <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+	                            </button>
+	                            <div class="accordion-content">
+	                                <div class="accordion-body">
+	                                    <p>几何计算工具类，提供空间运算能力。</p>
+	                                    <table class="doc-table">
+	                                        <thead>
+	                                            <tr>
+	                                                <th style="width: 200px;">API接口</th>
+	                                                <th>类型</th>
+	                                                <th>功能说明</th>
+	                                            </tr>
+	                                        </thead>
+	                                        <tbody>
+	                                            <tr>
+	                                                <td><code>AMap.GeometryUtil.ringArea(ring)</code></td>
+	                                                <td><span class="api-method static">静态方法</span></td>
+	                                                <td>计算闭合多边形的面积。接收LngLat对象数组，返回平方米单位的面积值。这是系统的核心计算方法。</td>
+	                                            </tr>
+	                                        </tbody>
+	                                    </table>
+	                                    <div class="info-box warning">
+	                                        <svg class="info-box-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+	                                        <div class="info-box-content">
+	                                            <h4>坐标要求</h4>
+	                                            <p>该方法需要传入 LngLat 对象数组，而非普通坐标数组。使用前需进行类型转换。</p>
+	                                        </div>
+	                                    </div>
+	                                    <div class="code-block">
+	                                        <div class="code-header">
+	                                            <span class="code-lang">使用示例</span>
+	                                        </div>
+	                                        <div class="code-content">
+	<pre><span class="token-comment">// 计算多边形面积（项目核心代码）</span>
+	<span class="token-keyword">const</span> path = coords.<span class="token-function">map</span>(c => <span class="token-keyword">new</span> <span class="token-function">AMap.LngLat</span>(c[<span class="token-number">0</span>], c[<span class="token-number">1</span>]));
+	<span class="token-keyword">const</span> area = AMap.GeometryUtil.<span class="token-function">ringArea</span>(path);
+	<span class="token-comment">// 单位换算</span>
+	<span class="token-keyword">function</span> <span class="token-function">convertArea</span>(areaSqm, unit) {
+	    <span class="token-keyword">switch</span>(unit) {
+	        <span class="token-keyword">case</span> <span class="token-string">'mu'</span>: <span class="token-keyword">return</span> areaSqm * <span class="token-number">0.0015</span>;      <span class="token-comment">// 亩</span>
+	        <span class="token-keyword">case</span> <span class="token-string">'hectare'</span>: <span class="token-keyword">return</span> areaSqm / <span class="token-number">10000</span>; <span class="token-comment">// 公顷</span>
+	        <span class="token-keyword">case</span> <span class="token-string">'sqkm'</span>: <span class="token-keyword">return</span> areaSqm / <span class="token-number">1000000</span>; <span class="token-comment">// 平方千米</span>
+	        <span class="token-keyword">default</span>: <span class="token-keyword">return</span> areaSqm;                   <span class="token-comment">// 平方米</span>
+	    }
+	}</pre>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <!-- 4. 事件系统 -->
+	                    <h3>四、事件系统 <span class="api-badge event">Event</span></h3>
+	                    <div class="accordion">
+	                        <div class="accordion-item">
+	                            <button class="accordion-header" onclick="toggleAccordion(this)">
+	                                <span>事件监听与回调</span>
+	                                <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+	                            </button>
+	                            <div class="accordion-content">
+	                                <div class="accordion-body">
+	                                    <p>高德地图API采用事件驱动模式，项目中使用了以下核心事件：</p>
+	                                    <table class="doc-table">
+	                                        <thead>
+	                                            <tr>
+	                                                <th style="width: 200px;">事件名称</th>
+	                                                <th>触发对象</th>
+	                                                <th>功能说明</th>
+	                                            </tr>
+	                                        </thead>
+	                                        <tbody>
+	                                            <tr>
+	                                                <td><code>'complete'</code></td>
+	                                                <td>AMap.Map</td>
+	                                                <td>地图资源加载完成。触发后初始化插件模块，隐藏加载遮罩。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>'draw'</code></td>
+	                                                <td>AMap.MouseTool</td>
+	                                                <td>绘制完成。获取用户绘制的多边形对象，计算面积并保存记录。</td>
+	                                            </tr>
+	                                            <tr>
+	                                                <td><code>'select'</code></td>
+	                                                <td>AMap.AutoComplete</td>
+	                                                <td>选择提示项。用户从搜索建议列表中选择一个结果。</td>
+	                                            </tr>
+	                                        </tbody>
+	                                    </table>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <!-- API使用汇总 -->
+	                    <h3>五、API使用汇总</h3>
+	                    <div class="code-block">
+	                        <div class="code-header">
+	                            <span class="code-lang">完整依赖列表</span>
+	                        </div>
+	                        <div class="code-content">
+	<pre><span class="token-comment">// 系统使用的高德地图API完整清单</span>
+	<span class="token-property">核心类</span>:
+	  - AMap.Map                  <span class="token-comment">// 地图实例</span>
+	  - AMap.LngLat               <span class="token-comment">// 经纬度坐标</span>
+	  - AMap.Pixel                <span class="token-comment">// 像素坐标</span>
+	<span class="token-property">覆盖物类</span>:
+	  - AMap.Polygon              <span class="token-comment">// 多边形（核心：测量区域）</span>
+	  - AMap.Marker               <span class="token-comment">// 点标记（预览功能）</span>
+	  - AMap.Text                 <span class="token-comment">// 文本标记（面积标签）</span>
+	<span class="token-property">插件服务</span>:
+	  - AMap.plugin               <span class="token-comment">// 插件加载器</span>
+	  - AMap.PlaceSearch          <span class="token-comment">// POI搜索</span>
+	  - AMap.AutoComplete         <span class="token-comment">// 输入提示</span>
+	  - AMap.MouseTool            <span class="token-comment">// 鼠标绘图</span>
+	  - AMap.GeometryUtil         <span class="token-comment">// 几何计算（ringArea方法）</span>
+	<span class="token-property">事件</span>:
+	  - complete                  <span class="token-comment">// 地图加载完成</span>
+	  - draw                      <span class="token-comment">// 绘制完成</span>
+	  - select                    <span class="token-comment">// 选择提示项</span></pre>
+	                        </div>
+	                    </div>
+	                </section>
+	                <!-- Architecture Section -->
+	                <section id="architecture" class="doc-section">
+	                    <div class="section-header">
+	                        <div class="section-icon">
+	                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+	                        </div>
+	                        <h1>系统架构</h1>
+	                    </div>
+	                    <h3>技术栈</h3>
+	                    <table class="doc-table">
+	                        <thead>
+	                            <tr>
+	                                <th>层级</th>
+	                                <th>技术</th>
+	                                <th>版本</th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+	                            <tr>
+	                                <td>UI框架</td>
+	                                <td>Bootstrap</td>
+	                                <td>5.3.0-alpha1</td>
+	                            </tr>
+	                            <tr>
+	                                <td>地图引擎</td>
+	                                <td>高德地图JS API</td>
+	                                <td>2.0</td>
+	                            </tr>
+	                            <tr>
+	                                <td>图标库</td>
+	                                <td>Font Awesome</td>
+	                                <td>6.0.0</td>
+	                            </tr>
+	                            <tr>
+	                                <td>逻辑层</td>
+	                                <td>Vanilla JavaScript</td>
+	                                <td>ES6+</td>
+	                            </tr>
+	                        </tbody>
+	                    </table>
+	                </section>
+	                <!-- Data Structure Section -->
+	                <section id="data-structure" class="doc-section">
+	                    <div class="section-header">
+	                        <div class="section-icon">
+	                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+	                        </div>
+	                        <h1>数据结构</h1>
+	                    </div>
+	                    <h3>historyItem 对象</h3>
+	                    <div class="code-block">
+	                        <div class="code-header">
+	                            <span class="code-lang">TypeScript</span>
+	                        </div>
+	                        <div class="code-content">
+	<pre><span class="token-keyword">interface</span> HistoryItem {
+	  <span class="token-property">id</span>: <span class="token-keyword">number</span>;        <span class="token-comment">// 唯一标识符</span>
+	  <span class="token-property">name</span>: <span class="token-keyword">string</span>;      <span class="token-comment">// 区域名称</span>
+	  <span class="token-property">areaSqm</span>: <span class="token-keyword">number</span>;   <span class="token-comment">// 面积（平方米）</span>
+	  <span class="token-property">remark</span>: <span class="token-keyword">string</span>;    <span class="token-comment">// 备注信息</span>
+	  <span class="token-property">color</span>: <span class="token-keyword">string</span>;      <span class="token-comment">// 显示颜色</span>
+	  <span class="token-property">coords</span>: <span class="token-keyword">number</span>[][]; <span class="token-comment">// 坐标点数组</span>
+	  <span class="token-property">source</span>: <span class="token-keyword">string</span>;    <span class="token-comment">// 数据来源: draw | json | coords</span>
+	}</pre>
+	                        </div>
+	                    </div>
+	                </section>
+	                <!-- FAQ Section -->
+	                <section id="faq" class="doc-section">
+	                    <div class="section-header">
+	                        <div class="section-icon">
+	                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+	                        </div>
+	                        <h1>常见问题</h1>
+	                    </div>
+	                    <div class="accordion">
+	                        <div class="accordion-item">
+	                            <button class="accordion-header" onclick="toggleAccordion(this)">
+	                                <span>地图加载缓慢或无法显示怎么办？</span>
+	                                <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+	                            </button>
+	                            <div class="accordion-content">
+	                                <div class="accordion-body">
+	                                    <p>请检查以下项目：</p>
+	                                    <ul>
+	                                        <li>确认网络连接正常，可访问外网</li>
+	                                        <li>清除浏览器缓存后刷新页面</li>
+	                                        <li>尝试切换至其他地图样式</li>
+	                                        <li>检查是否被企业防火墙拦截</li>
+	                                    </ul>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        <div class="accordion-item">
+	                            <button class="accordion-header" onclick="toggleAccordion(this)">
+	                                <span>测量面积与实际不符？</span>
+	                                <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+	                            </button>
+	                            <div class="accordion-content">
+	                                <div class="accordion-body">
+	                                    <p>可能原因：</p>
+	                                    <ul>
+	                                        <li>绘制边界不精确 - 放大地图后仔细核对各顶点位置</li>
+	                                        <li>坐标系差异 - 高德地图使用GCJ-02坐标系，与GPS坐标存在偏移</li>
+	                                        <li>地形因素 - 系统计算投影面积，未考虑地形起伏</li>
+	                                    </ul>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </section>
+	                <!-- Footer -->
+	                <footer style="text-align: center; padding: 3rem 0; color: var(--fg-muted); font-size: 0.875rem; border-top: 1px solid var(--border); margin-top: 3rem;">
+	                    <p>国家税务总局扬州市邗江区税务局</p>
+	                    <p style="margin-top: 0.5rem;">文档版本 v2.1.0 | 最后更新: 2026年4月</p>
+	                </footer>
+	            </div>
+	        </main>
+	        <aside class="toc" id="toc">
+	            <div class="toc-title">本页目录</div>
+	            <ul class="toc-list">
+	                <li><a href="#overview" class="toc-link">系统概述</a></li>
+	                <li><a href="#quickstart" class="toc-link">快速入门</a></li>
+	                <li><a href="#api-reference" class="toc-link active">API参考</a></li>
+	                <li><a href="#architecture" class="toc-link">系统架构</a></li>
+	                <li><a href="#data-structure" class="toc-link">数据结构</a></li>
+	                <li><a href="#faq" class="toc-link">常见问题</a></li>
+	            </ul>
+	        </aside>
+	    </div>
+	    <button class="mobile-toggle" id="mobileToggle" aria-label="打开菜单">
+	        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+	    </button>
+	    <script>
+	        const scrollProgress = document.getElementById('scrollProgress');
+	        const navLinks = document.querySelectorAll('.nav-link');
+	        const sections = document.querySelectorAll('.doc-section');
+	        const currentSection = document.getElementById('currentSection');
+	        function updateScrollProgress() {
+	            const scrollTop = window.scrollY;
+	            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+	            const progress = (scrollTop / docHeight) * 100;
+	            scrollProgress.style.width = progress + '%';
+	        }
+	        function updateActiveNav() {
+	            let current = '';
+	            sections.forEach(section => {
+	                const sectionTop = section.offsetTop;
+	                if (window.scrollY >= sectionTop - 200) {
+	                    current = section.getAttribute('id');
+	                }
+	            });
+	            navLinks.forEach(link => {
+	                link.classList.remove('active');
+	                if (link.getAttribute('href') === '#' + current) {
+	                    link.classList.add('active');
+	                    currentSection.textContent = link.textContent.trim();
+	                }
+	            });
+	            const tocLinks = document.querySelectorAll('.toc-link');
+	            tocLinks.forEach(link => {
+	                link.classList.remove('active');
+	                if (link.getAttribute('href') === '#' + current) {
+	                    link.classList.add('active');
+	                }
+	            });
+	        }
+	        function toggleAccordion(header) {
+	            const item = header.parentElement;
+	            const wasOpen = item.classList.contains('open');
+	            const accordion = item.parentElement;
+	            accordion.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open'));
+	            if (!wasOpen) item.classList.add('open');
+	        }
+	        const mobileToggle = document.getElementById('mobileToggle');
+	        const sidebar = document.getElementById('sidebar');
+	        mobileToggle.addEventListener('click', () => {
+	            sidebar.classList.toggle('open');
+	        });
+	        window.addEventListener('scroll', () => {
+	            updateScrollProgress();
+	            updateActiveNav();
+	        });
+	        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+	            anchor.addEventListener('click', function(e) {
+	                e.preventDefault();
+	                const target = document.querySelector(this.getAttribute('href'));
+	                if (target) {
+	                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+	                }
+	            });
+	        });
+	        updateScrollProgress();
+	        updateActiveNav();
+	    </script>
+	</body>
+	</html>
