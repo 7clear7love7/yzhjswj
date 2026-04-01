@@ -38,7 +38,6 @@
             justify-content: center;
             align-items: center;
             z-index: 99999;
-            /* 最高层级 */
         }
 
         .auth-container {
@@ -201,7 +200,6 @@
             margin-bottom: 40px;
         }
 
-        /* 进度条容器 */
         .progress-container {
             width: 300px;
             height: 6px;
@@ -212,7 +210,6 @@
             backdrop-filter: blur(10px);
         }
 
-        /* 进度条 */
         .progress-bar-loading {
             height: 100%;
             background: linear-gradient(90deg,
@@ -225,7 +222,6 @@
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
-        /* 加载文本 */
         .loading-text {
             margin-top: 20px;
             font-size: 13px;
@@ -233,7 +229,6 @@
             min-height: 20px;
         }
 
-        /* 加载动画 - 跳动的点 */
         .loading-dots {
             display: inline-block;
             margin-left: 5px;
@@ -286,23 +281,6 @@
             }
         }
 
-        /* 旋转的圆环 */
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.2);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
         #container {
             width: 100%;
             height: 100vh;
@@ -328,7 +306,6 @@
             backdrop-filter: blur(10px);
         }
 
-        /* 面板头部 */
         .panel-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -394,7 +371,6 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* 帮助文档按钮 - 新增样式 */
         .help-doc-btn {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             border: none;
@@ -435,6 +411,7 @@
             overflow-y: auto;
             flex-grow: 1;
             padding: 20px;
+            min-height: 0; /* 修复Flex布局下内容被截断的问题 */
         }
 
         .panel-content.collapsed {
@@ -469,6 +446,46 @@
             box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
         }
 
+        /* 新增：POI信息面板样式 */
+        .selected-poi-panel {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .selected-poi-panel.show {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .poi-info-row {
+            margin-bottom: 8px;
+            font-size: 13px;
+            display: flex;
+        }
+        .poi-info-row label {
+            width: 70px;
+            color: #6c757d;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        .poi-info-row span {
+            color: #333;
+            word-break: break-all;
+        }
+        .poi-info-row .poi-id {
+            font-family: 'Consolas', monospace;
+            color: #667eea;
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
         /* 按钮组优化 */
         .btn-group-custom {
             display: grid;
@@ -490,6 +507,7 @@
             position: relative;
             overflow: hidden;
             cursor: pointer;
+            color: white;
         }
 
         .btn-custom::before {
@@ -509,32 +527,18 @@
 
         .btn-primary-custom {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
         }
 
         .btn-success-custom {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
         }
 
         .btn-danger-custom {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
         }
 
         .btn-warning-custom {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-info-custom {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-purple-custom {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
         }
 
         .btn-custom:hover {
@@ -713,7 +717,7 @@
             display: block;
         }
 
-        /* JSON导入区域 - 新增样式 */
+        /* JSON导入区域 */
         .json-input-section {
             margin: 20px 0;
             padding: 15px;
@@ -892,7 +896,6 @@
             display: block;
         }
 
-        /* 解析结果预览 */
         .json-parse-result {
             margin-top: 12px;
             padding: 12px;
@@ -1169,6 +1172,9 @@
             display: none;
             background: white;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            width: 100%;
+            z-index: 100;
         }
 
         .search-item {
@@ -1196,6 +1202,11 @@
         .search-address {
             font-size: 12px;
             color: #6c757d;
+        }
+
+        /* 隐藏高德地图自带的搜索提示框 */
+        .amap-sug-result {
+            display: none !important;
         }
 
         /* 地图样式选择器 */
@@ -1353,7 +1364,6 @@
             color: white;
         }
 
-        /* 帮助文档工具栏按钮 - 突出显示 */
         .toolbar-btn.help-doc {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
@@ -1530,7 +1540,7 @@
                     <i class="fas fa-map-marked-alt" style="font-size: 60px; color: white;"></i>
                 </div>
                 <div class="loading-title">土地面积测量工具</div>
-                <div class="loading-subtitle">国家税务总局扬州市邗江区税务局</div>
+                <div class="loading-subtitle">扬州市邗江区税务局</div>
 
                 <div class="progress-container">
                     <div class="progress-bar-loading" id="progressBar"></div>
@@ -1554,14 +1564,13 @@
                 <div class="panel-header-left">
                     <img src="shuihui.png" class="map-icon" alt="税务徽标" onerror="this.style.display='none'">
                     <div>
-                        <h2>国家税务总局扬州市税务局<br>土地面积测量工具</h2>
+                        <h2>扬州市税务局<br>土地面积测量工具</h2>
                         <div class="version-badge">
                             <i class="fas fa-certificate"></i>v2.1.0
                         </div>
                     </div>
                 </div>
                 <div class="panel-header-actions">
-                    <!-- 新增：帮助文档按钮 -->
                     <a href="ABOUT.html" target="_blank" class="help-doc-btn" title="打开帮助文档">
                         <i class="fas fa-book-open"></i>
                         <span>文档</span>
@@ -1581,6 +1590,28 @@
                     <i class="fas fa-search search-icon"></i>
                     <input type="text" id="tipinput" class="form-control" placeholder="输入企业名称或地址搜索...">
                     <div class="search-results" id="searchResults"></div>
+                </div>
+
+                <!-- 新增：选中POI信息面板 -->
+                <div id="selectedPoiPanel" class="selected-poi-panel">
+                    <div style="font-weight: 700; color: #667eea; margin-bottom: 10px; font-size: 14px;">
+                        <i class="fas fa-map-marker-alt"></i> 当前选中位置
+                    </div>
+                    <div class="poi-info-row">
+                        <label>名称：</label>
+                        <span id="poiName">-</span>
+                    </div>
+                    <div class="poi-info-row">
+                        <label>地址：</label>
+                        <span id="poiAddress">-</span>
+                    </div>
+                    <div class="poi-info-row">
+                        <label>POI ID：</label>
+                        <span id="poiIdText" class="poi-id">-</span>
+                    </div>
+                    <a href="#" id="poiDetailBtn" class="btn-custom btn-primary-custom" target="_blank" style="text-decoration: none; margin-top: 12px; display: flex;">
+                        <i class="fas fa-external-link-alt"></i> 前往复制JSON
+                    </a>
                 </div>
 
                 <!-- 地图样式选择器 -->
@@ -1742,7 +1773,6 @@
 
         <!-- 右侧工具栏 -->
         <div class="toolbar">
-            <!-- 新增：帮助文档按钮（工具栏位置） -->
             <a href="ABOUT.HTML" target="_blank" class="toolbar-btn help-doc" title="帮助文档">
                 <i class="fas fa-book-open"></i>
             </a>
@@ -1806,12 +1836,8 @@
     <script type="text/javascript">
         // ========== 密码验证逻辑 ==========
 
-        // 默认密码: 123456
-        // SHA-256 哈希值 (生产环境请更改此哈希值)
         const CORRECT_PASSWORD_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
 
-        // 简单的 SHA-256 实现用于静态页面验证
-        // 这是一个精简版的实现，仅用于前端演示
         async function sha256(message) {
             const msgBuffer = new TextEncoder().encode(message);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -1835,7 +1861,7 @@
             if (inputHash === CORRECT_PASSWORD_HASH) {
                 authOverlay.style.display = 'none';
                 mainContent.style.display = 'block';
-                initializeApp(); // 密码正确后初始化应用
+                initializeApp();
             } else {
                 authError.classList.add('show');
                 passwordInput.value = '';
@@ -1848,17 +1874,15 @@
             if (e.key === 'Enter') verifyPassword();
         });
 
-        // 阻止通过控制台直接访问 (简单防护)
         window.addEventListener('keydown', (e) => {
             if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
-                // e.preventDefault(); // 可选：禁用F12
+                // e.preventDefault();
             }
         });
 
         // ========== 应用初始化逻辑 ==========
 
         function initializeApp() {
-            // ========== 加载进度管理 ==========
             let loadingProgress = 0;
             const loadingSteps = [
                 { progress: 20, text: '正在加载地图资源' },
@@ -1905,7 +1929,6 @@
 
             nextLoadingStep();
 
-            // --- 全局变量 ---
             var map = null;
             var mouseTool = null;
             var placeSearch = null;
@@ -1920,11 +1943,9 @@
             var regionCounter = 0;
             var highlightedPolygon = null;
 
-            // 经纬度预览相关变量
             var previewMarkers = [];
             var previewPolygon = null;
 
-            // JSON预览相关变量
             var jsonPreviewMarkers = [];
             var jsonPreviewPolygons = [];
 
@@ -1934,7 +1955,6 @@
                 '#a855f7', '#ec4899', '#f97316', '#84cc16', '#06b6d4', '#8b5cf6'
             ];
 
-            // --- 初始化地图 ---
             nextLoadingStep();
 
             map = new AMap.Map("container", {
@@ -1949,7 +1969,6 @@
                 initializePlugins();
             });
 
-            // --- 初始化插件 ---
             function initializePlugins() {
                 AMap.plugin(['AMap.PlaceSearch', 'AMap.AutoComplete', 'AMap.MouseTool', 'AMap.GeometryUtil'], function () {
                     placeSearch = new AMap.PlaceSearch({ map: map, pageSize: 5 });
@@ -1964,7 +1983,6 @@
                 });
             }
 
-            // --- 初始化UI ---
             function initializeUI() {
                 document.getElementById('drawArea').addEventListener('click', startDrawing);
                 document.getElementById('clearAll').addEventListener('click', clearAll);
@@ -1977,19 +1995,16 @@
                 document.getElementById('togglePanel').addEventListener('click', togglePanel);
                 document.getElementById('tipinput').addEventListener('input', handleSearchInput);
 
-                // 帮助按钮
                 document.getElementById('helpBtn').addEventListener('click', function () {
                     var myModal = new bootstrap.Modal(document.getElementById('instructionsModal'));
                     myModal.show();
                 });
 
-                // JSON输入相关事件
                 document.getElementById('toggleJsonInput').addEventListener('click', toggleJsonInput);
                 document.getElementById('previewJson').addEventListener('click', previewJsonOnMap);
                 document.getElementById('applyJson').addEventListener('click', applyJsonAndMeasure);
                 document.getElementById('clearJsonInput').addEventListener('click', clearJsonInput);
 
-                // 经纬度输入相关事件
                 document.getElementById('toggleCoordsInput').addEventListener('click', toggleCoordsInput);
                 document.getElementById('previewCoords').addEventListener('click', previewCoordsOnMap);
                 document.getElementById('applyCoords').addEventListener('click', applyCoordsAndMeasure);
@@ -2018,8 +2033,6 @@
                     showStatus("已就绪，可以开始测量！");
                 }, 800);
             }
-
-            // --- 功能函数 ---
 
             function togglePanel() {
                 const content = document.querySelector('.panel-content');
@@ -2277,8 +2290,29 @@
                 clearPreviewMarkers();
             }
 
+            // ========== 搜索功能修改 ==========
             function handleSearchSelect(e) {
                 document.getElementById('searchResults').style.display = 'none';
+                
+                // 获取POI信息并更新面板
+                const poiId = e.poi.id;
+                const poiName = e.poi.name;
+                const poiAddress = e.poi.address || e.poi.district || '未知地址';
+                
+                const panel = document.getElementById('selectedPoiPanel');
+                const btn = document.getElementById('poiDetailBtn');
+
+                if(poiId) {
+                    document.getElementById('poiName').textContent = poiName;
+                    document.getElementById('poiAddress').textContent = poiAddress;
+                    document.getElementById('poiIdText').textContent = poiId;
+                    btn.href = `https://www.amap.com/detail/get/detail?id=${poiId}`;
+                    panel.classList.add('show');
+                } else {
+                    panel.classList.remove('show');
+                }
+
+                // 原有的地图定位逻辑
                 placeSearch.setCity(e.poi.adcode);
                 placeSearch.search(e.poi.name, (status, result) => {
                     if (status === 'complete' && result.poiList.pois.length > 0) {
@@ -2295,10 +2329,25 @@
                 autoComplete.search(keyword, (status, result) => {
                     if (status === 'complete' && result.tips) {
                         let html = '';
-                        result.tips.forEach(tip => { html += `<div class="search-item" data-name="${tip.name}" data-adcode="${tip.adcode}"><div class="search-name">${tip.name}</div><div class="search-address">${tip.district || ''}</div></div>`; });
+                        // 增加 data-id 属性
+                        result.tips.forEach(tip => { 
+                            html += `<div class="search-item" data-name="${tip.name}" data-adcode="${tip.adcode}" data-id="${tip.id}" data-address="${tip.address || tip.district}">
+                                <div class="search-name">${tip.name}</div>
+                                <div class="search-address">${tip.district || ''} ${tip.address || ''}</div>
+                            </div>`; 
+                        });
                         searchResults.innerHTML = html; searchResults.style.display = 'block';
                         Array.from(searchResults.getElementsByClassName('search-item')).forEach(item => {
-                            item.addEventListener('click', function () { handleSearchSelect({ poi: { name: this.getAttribute('data-name'), adcode: this.getAttribute('data-adcode') } }); });
+                            item.addEventListener('click', function () { 
+                                handleSearchSelect({ 
+                                    poi: { 
+                                        name: this.getAttribute('data-name'), 
+                                        adcode: this.getAttribute('data-adcode'),
+                                        id: this.getAttribute('data-id'),
+                                        address: this.getAttribute('data-address')
+                                    } 
+                                }); 
+                            });
                         });
                     } else { searchResults.style.display = 'none'; }
                 });
@@ -2451,7 +2500,6 @@
             function captureMap() { showStatus("请使用系统截图工具"); }
             function toggleFullScreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
 
-            // --- 辅助函数 ---
             function convertArea(areaSqm, unit) { switch (unit) { case 'mu': return areaSqm * 0.0015; case 'hectare': return areaSqm / 10000; case 'sqkm': return areaSqm / 1000000; default: return areaSqm; } }
             function getUnitText(unit) { return { sqm: '平方米', mu: '亩', hectare: '公顷', sqkm: '平方千米' }[unit] || '平方米'; }
             function formatNumber(num) { return num === 0 ? '0' : num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 }); }
