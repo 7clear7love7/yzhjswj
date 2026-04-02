@@ -1,2512 +1,2282 @@
-<!doctype html>
-<html lang="zh-CN">
-
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
-    <title>邗江区税务局企业土地面积测量工具 (专业版)</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome 图标 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- 高德地图样式 -->
-    <link rel="stylesheet" href="https://cache.amap.com/lbs/static/main1119.css" />
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Microsoft YaHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
-            overflow: hidden;
-        }
-
-        /* ========== 密码验证层样式 ========== */
-        #authOverlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 99999;
-        }
-
-        .auth-container {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            width: 380px;
-            animation: slideDown 0.5s ease;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .auth-logo {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 20px;
-        }
-
-        .auth-title {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .auth-subtitle {
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 25px;
-        }
-
-        .auth-input-group {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .auth-input-group input {
-            width: 100%;
-            padding: 12px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s;
-            text-align: center;
-            letter-spacing: 2px;
-        }
-
-        .auth-input-group input:focus {
-            border-color: #667eea;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-        }
-
-        .auth-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .auth-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .auth-error {
-            color: #dc3545;
-            font-size: 13px;
-            margin-top: 15px;
-            display: none;
-        }
-
-        .auth-error.show {
-            display: block;
-            animation: shake 0.4s;
-        }
-
-        @keyframes shake {
-
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-
-            25% {
-                transform: translateX(-5px);
-            }
-
-            75% {
-                transform: translateX(5px);
-            }
-        }
-
-        /* 主内容区域默认隐藏 */
-        #mainContent {
-            display: none;
-        }
-
-        /* ========== 加载动画样式 ========== */
-        #loadingOverlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-
-        #loadingOverlay.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .loading-content {
-            text-align: center;
-            color: white;
-        }
-
-        .loading-logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 30px;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        .loading-title {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-
-        .loading-subtitle {
-            font-size: 14px;
-            opacity: 0.9;
-            margin-bottom: 40px;
-        }
-
-        .progress-container {
-            width: 300px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-            backdrop-filter: blur(10px);
-        }
-
-        .progress-bar-loading {
-            height: 100%;
-            background: linear-gradient(90deg,
-                    rgba(255, 255, 255, 0.8) 0%,
-                    rgba(255, 255, 255, 1) 50%,
-                    rgba(255, 255, 255, 0.8) 100%);
-            border-radius: 10px;
-            width: 0%;
-            transition: width 0.3s ease;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
-
-        .loading-text {
-            margin-top: 20px;
-            font-size: 13px;
-            opacity: 0.8;
-            min-height: 20px;
-        }
-
-        .loading-dots {
-            display: inline-block;
-            margin-left: 5px;
-        }
-
-        .loading-dots span {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: white;
-            margin: 0 2px;
-            animation: bounce 1.4s infinite ease-in-out both;
-        }
-
-        .loading-dots span:nth-child(1) {
-            animation-delay: -0.32s;
-        }
-
-        .loading-dots span:nth-child(2) {
-            animation-delay: -0.16s;
-        }
-
-        @keyframes bounce {
-
-            0%,
-            80%,
-            100% {
-                transform: scale(0);
-                opacity: 0.5;
-            }
-
-            40% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-
-            50% {
-                transform: scale(1.05);
-                opacity: 0.8;
-            }
-        }
-
-        #container {
-            width: 100%;
-            height: 100vh;
-            position: relative;
-        }
-
-        /* 控制面板样式优化 */
-        .control-panel {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            width: 400px;
-            background: rgba(255, 255, 255, 0.98);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            padding: 0;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            max-height: calc(100vh - 30px);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-        }
-
-        .panel-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-shrink: 0;
-            border-radius: 16px 16px 0 0;
-        }
-
-        .panel-header-left {
-            display: flex;
-            align-items: center;
-            flex: 1;
-        }
-
-        .panel-header .map-icon {
-            width: 48px;
-            height: 48px;
-            margin-right: 15px;
-            object-fit: contain;
-            filter: brightness(0) invert(1);
-        }
-
-        .panel-header h2 {
-            font-size: 16px;
-            font-weight: 600;
-            margin: 0;
-            line-height: 1.3;
-        }
-
-        .version-badge {
-            font-size: 10px;
-            opacity: 0.9;
-            margin-top: 4px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-weight: 500;
-        }
-
-        .panel-header-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .toggle-panel {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .toggle-panel:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .help-doc-btn {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            border: none;
-            color: white;
-            padding: 6px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            text-decoration: none;
-            box-shadow: 0 2px 8px rgba(240, 147, 251, 0.4);
-            animation: glowPulse 2s ease-in-out infinite;
-        }
-
-        .help-doc-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.6);
-        }
-
-        .help-doc-btn i {
-            font-size: 14px;
-        }
-
-        @keyframes glowPulse {
-            0%, 100% {
-                box-shadow: 0 2px 8px rgba(240, 147, 251, 0.4);
-            }
-            50% {
-                box-shadow: 0 2px 16px rgba(240, 147, 251, 0.7);
-            }
-        }
-
-        .panel-content {
-            overflow-y: auto;
-            flex-grow: 1;
-            padding: 20px;
-            min-height: 0; /* 修复Flex布局下内容被截断的问题 */
-        }
-
-        .panel-content.collapsed {
-            display: none;
-        }
-
-        /* 搜索框优化 */
-        .search-wrapper {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #667eea;
-            pointer-events: none;
-        }
-
-        #tipinput {
-            padding-left: 45px;
-            border-radius: 12px;
-            border: 2px solid #e0e0e0;
-            transition: all 0.3s;
-            height: 48px;
-        }
-
-        #tipinput:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
-        }
-
-        /* 新增：POI信息面板样式 */
-        .selected-poi-panel {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-        .selected-poi-panel.show {
-            display: block;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .poi-info-row {
-            margin-bottom: 8px;
-            font-size: 13px;
-            display: flex;
-        }
-        .poi-info-row label {
-            width: 70px;
-            color: #6c757d;
-            font-weight: 600;
-            flex-shrink: 0;
-        }
-        .poi-info-row span {
-            color: #333;
-            word-break: break-all;
-        }
-        .poi-info-row .poi-id {
-            font-family: 'Consolas', monospace;
-            color: #667eea;
-            background: #e9ecef;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        /* 按钮组优化 */
-        .btn-group-custom {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin: 20px 0;
-        }
-
-        .btn-custom {
-            border-radius: 12px;
-            padding: 12px 16px;
-            font-weight: 500;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            border: none;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            color: white;
-        }
-
-        .btn-custom::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            transition: left 0.3s;
-        }
-
-        .btn-custom:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary-custom {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .btn-success-custom {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .btn-danger-custom {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .btn-warning-custom {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .btn-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        /* 经纬度输入区域 */
-        .coords-input-section {
-            margin: 20px 0;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-            border-radius: 12px;
-            border: 2px solid #667eea30;
-        }
-
-        .coords-input-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-
-        .coords-input-header h5 {
-            font-size: 15px;
-            font-weight: 700;
-            color: #667eea;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .toggle-coords-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .toggle-coords-btn:hover {
-            background: #5a6fd6;
-        }
-
-        .toggle-coords-btn i {
-            transition: transform 0.3s;
-        }
-
-        .toggle-coords-btn.collapsed i {
-            transform: rotate(-90deg);
-        }
-
-        .coords-input-body {
-            overflow: hidden;
-            transition: max-height 0.3s ease, opacity 0.3s ease;
-            max-height: 500px;
-            opacity: 1;
-        }
-
-        .coords-input-body.collapsed {
-            max-height: 0;
-            opacity: 0;
-            margin-bottom: 0;
-        }
-
-        .coords-textarea {
-            width: 100%;
-            min-height: 120px;
-            border-radius: 10px;
-            border: 2px solid #e0e0e0;
-            padding: 12px;
-            font-size: 13px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            resize: vertical;
-            transition: all 0.3s;
-            line-height: 1.6;
-        }
-
-        .coords-textarea:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.2);
-            outline: none;
-        }
-
-        .coords-format-hint {
-            font-size: 11px;
-            color: #6c757d;
-            margin-top: 8px;
-            padding: 8px 10px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            line-height: 1.5;
-        }
-
-        .coords-format-hint code {
-            background: #e9ecef;
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-size: 10px;
-            color: #495057;
-        }
-
-        .coords-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .coords-actions .btn {
-            flex: 1;
-            padding: 10px 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 500;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .coords-actions .btn-apply {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .coords-actions .btn-apply:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
-
-        .coords-actions .btn-clear-input {
-            background: #f8f9fa;
-            color: #6c757d;
-            border: 2px solid #e0e0e0;
-        }
-
-        .coords-actions .btn-clear-input:hover {
-            background: #e9ecef;
-        }
-
-        .coords-error {
-            color: #dc3545;
-            font-size: 12px;
-            margin-top: 8px;
-            padding: 8px 10px;
-            background: #f8d7da;
-            border-radius: 6px;
-            display: none;
-        }
-
-        .coords-error.show {
-            display: block;
-        }
-
-        .coords-success {
-            color: #667eea;
-            font-size: 12px;
-            margin-top: 8px;
-            padding: 8px 10px;
-            background: #f0f3ff;
-            border-radius: 6px;
-            display: none;
-        }
-
-        .coords-success.show {
-            display: block;
-        }
-
-        /* JSON导入区域 */
-        .json-input-section {
-            margin: 20px 0;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-            border-radius: 12px;
-            border: 2px solid #667eea30;
-        }
-
-        .json-input-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-
-        .json-input-header h5 {
-            font-size: 15px;
-            font-weight: 700;
-            color: #667eea;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .toggle-json-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .toggle-json-btn:hover {
-            background: #5a6fd6;
-        }
-
-        .toggle-json-btn i {
-            transition: transform 0.3s;
-        }
-
-        .toggle-json-btn.collapsed i {
-            transform: rotate(-90deg);
-        }
-
-        .json-input-body {
-            overflow: hidden;
-            transition: max-height 0.3s ease, opacity 0.3s ease;
-            max-height: 600px;
-            opacity: 1;
-        }
-
-        .json-input-body.collapsed {
-            max-height: 0;
-            opacity: 0;
-            margin-bottom: 0;
-        }
-
-        .json-textarea {
-            width: 100%;
-            min-height: 200px;
-            border-radius: 10px;
-            border: 2px solid #e0e0e0;
-            padding: 12px;
-            font-size: 12px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            resize: vertical;
-            transition: all 0.3s;
-            line-height: 1.6;
-            background: #fafafa;
-        }
-
-        .json-textarea:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.2);
-            outline: none;
-        }
-
-        .json-format-hint {
-            font-size: 11px;
-            color: #6c757d;
-            margin-top: 8px;
-            padding: 8px 10px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            line-height: 1.5;
-        }
-
-        .json-format-hint code {
-            background: #e9ecef;
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-size: 10px;
-            color: #495057;
-        }
-
-        .json-format-hint .example-title {
-            color: #667eea;
-            font-weight: 600;
-            margin-top: 8px;
-            display: block;
-        }
-
-        .json-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .json-actions .btn {
-            flex: 1;
-            padding: 10px 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 500;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .json-actions .btn-apply {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .json-actions .btn-apply:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
-
-        .json-actions .btn-preview {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .json-actions .btn-preview:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
-
-        .json-error {
-            color: #dc3545;
-            font-size: 12px;
-            margin-top: 8px;
-            padding: 8px 10px;
-            background: #f8d7da;
-            border-radius: 6px;
-            display: none;
-        }
-
-        .json-error.show {
-            display: block;
-        }
-
-        .json-success {
-            color: #667eea;
-            font-size: 12px;
-            margin-top: 8px;
-            padding: 8px 10px;
-            background: #f0f3ff;
-            border-radius: 6px;
-            display: none;
-        }
-
-        .json-success.show {
-            display: block;
-        }
-
-        .json-parse-result {
-            margin-top: 12px;
-            padding: 12px;
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            max-height: 150px;
-            overflow-y: auto;
-            display: none;
-        }
-
-        .json-parse-result.show {
-            display: block;
-        }
-
-        .json-parse-result .result-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .json-parse-result .result-item:last-child {
-            border-bottom: none;
-        }
-
-        .json-parse-result .result-name {
-            font-weight: 600;
-            color: #333;
-            flex: 1;
-        }
-
-        .json-parse-result .result-area {
-            color: #667eea;
-            font-weight: 600;
-            margin-left: 10px;
-        }
-
-        /* 面积显示卡片 */
-        .area-info {
-            margin: 20px 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-            border-radius: 12px;
-            border: 2px solid #667eea30;
-        }
-
-        .area-info h5 {
-            font-size: 16px;
-            margin-bottom: 15px;
-            color: #667eea;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .area-display {
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-
-        .area-value {
-            font-size: 32px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .area-unit {
-            font-size: 14px;
-            color: #6c757d;
-            margin-left: 8px;
-        }
-
-        /* 单位选择器 */
-        .unit-selector {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-top: 15px;
-        }
-
-        .unit-btn {
-            padding: 8px 12px;
-            border-radius: 8px;
-            background: white;
-            border: 2px solid #e0e0e0;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 500;
-        }
-
-        .unit-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-color: transparent;
-        }
-
-        .unit-btn:hover:not(.active) {
-            border-color: #667eea;
-            background: #f8f9fa;
-        }
-
-        /* 历史记录卡片优化 */
-        .history-section {
-            margin-top: 20px;
-        }
-
-        .history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .history-header h5 {
-            font-size: 16px;
-            font-weight: 700;
-            color: #667eea;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin: 0;
-        }
-
-        #historyList {
-            max-height: 300px;
-            overflow-y: auto;
-            border-radius: 12px;
-            background-color: #f8f9fa;
-            padding: 10px;
-        }
-
-        #historyList::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        #historyList::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        #historyList::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 10px;
-        }
-
-        .history-item {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s;
-            border: 2px solid transparent;
-        }
-
-        .history-item:hover {
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-            border-color: #667eea30;
-            transform: translateX(5px);
-        }
-
-        .history-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .history-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .history-item-name {
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-            flex: 1;
-        }
-
-        .history-item-name input {
-            border: none;
-            background: transparent;
-            font-weight: 600;
-            color: #333;
-            width: 100%;
-            padding: 0;
-        }
-
-        .history-item-name input:focus {
-            outline: none;
-            border-bottom: 2px solid #667eea;
-        }
-
-        .history-item-area {
-            color: #667eea;
-            font-weight: 700;
-            font-size: 14px;
-            white-space: nowrap;
-            margin-left: 10px;
-        }
-
-        .history-item-actions {
-            display: flex;
-            gap: 5px;
-            margin-left: 10px;
-        }
-
-        .history-item-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-
-        .btn-highlight {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .btn-highlight:hover {
-            background: #ffc107;
-        }
-
-        .btn-delete {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .btn-delete:hover {
-            background: #dc3545;
-            color: white;
-        }
-
-        .history-item-remark {
-            margin-top: 10px;
-        }
-
-        .history-item-remark input {
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            padding: 8px 12px;
-            font-size: 12px;
-            transition: all 0.3s;
-            width: 100%;
-        }
-
-        .history-item-remark input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.15rem rgba(102, 126, 234, 0.15);
-        }
-
-        /* 搜索结果 */
-        .search-results {
-            margin-top: 8px;
-            max-height: 250px;
-            overflow-y: auto;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            display: none;
-            background: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            position: absolute;
-            width: 100%;
-            z-index: 100;
-        }
-
-        .search-item {
-            padding: 12px 15px;
-            border-bottom: 1px solid #f1f1f1;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .search-item:hover {
-            background: linear-gradient(90deg, #667eea10 0%, transparent 100%);
-            padding-left: 20px;
-        }
-
-        .search-item:last-child {
-            border-bottom: none;
-        }
-
-        .search-name {
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: #333;
-        }
-
-        .search-address {
-            font-size: 12px;
-            color: #6c757d;
-        }
-
-        /* 隐藏高德地图自带的搜索提示框 */
-        .amap-sug-result {
-            display: none !important;
-        }
-
-        /* 地图样式选择器 */
-        .form-select {
-            border-radius: 12px;
-            border: 2px solid #e0e0e0;
-            padding: 10px 15px;
-            transition: all 0.3s;
-            height: 48px;
-        }
-
-        .form-select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
-        }
-
-        .form-label {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #667eea;
-            font-size: 14px;
-        }
-
-        /* 版权信息样式 */
-        .copyright-info {
-            margin-top: 20px;
-            padding: 15px;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-radius: 10px;
-            text-align: center;
-            font-size: 12px;
-            color: #6c757d;
-            border-top: 2px solid #667eea30;
-        }
-
-        .copyright-info .version {
-            font-weight: 600;
-            color: #667eea;
-            margin-bottom: 5px;
-        }
-
-        .copyright-info .author {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            margin-top: 5px;
-        }
-
-        .copyright-info .author i {
-            color: #e74c3c;
-            animation: heartbeat 1.5s infinite;
-        }
-
-        @keyframes heartbeat {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.1);
-            }
-        }
-
-        .copyright-info .divider {
-            margin: 8px 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #667eea50, transparent);
-        }
-
-        /* 状态栏优化 */
-        .status-bar {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(33, 37, 41, 0.95);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 24px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            font-size: 14px;
-            z-index: 1000;
-            display: none;
-            backdrop-filter: blur(10px);
-            animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translate(-50%, 20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translate(-50%, 0);
-            }
-        }
-
-        /* 浮动水印 */
-        .watermark {
-            position: absolute;
-            bottom: 60px;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 11px;
-            color: #6c757d;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            z-index: 999;
-            backdrop-filter: blur(5px);
-        }
-
-        .watermark i {
-            color: #667eea;
-            margin-right: 5px;
-        }
-
-        /* 工具栏 */
-        .toolbar {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 999;
-        }
-
-        .toolbar-btn {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            background: white;
-            border: none;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        .toolbar-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .toolbar-btn.help-doc {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
-            animation: toolbarGlow 2s ease-in-out infinite;
-        }
-
-        .toolbar-btn.help-doc:hover {
-            transform: scale(1.15);
-            box-shadow: 0 6px 20px rgba(240, 147, 251, 0.6);
-        }
-
-        @keyframes toolbarGlow {
-            0%, 100% {
-                box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
-            }
-            50% {
-                box-shadow: 0 4px 25px rgba(240, 147, 251, 0.7);
-            }
-        }
-
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .control-panel {
-                width: calc(100% - 30px);
-                top: 10px;
-                left: 15px;
-            }
-
-            .btn-group-custom {
-                grid-template-columns: 1fr;
-            }
-
-            .toolbar {
-                flex-direction: row;
-                top: auto;
-                bottom: 80px;
-                right: 15px;
-                left: 15px;
-                justify-content: center;
-            }
-
-            .watermark {
-                display: none;
-            }
-
-            .loading-title {
-                font-size: 20px;
-            }
-
-            .progress-container {
-                width: 250px;
-            }
-
-            .help-doc-btn span {
-                display: none;
-            }
-        }
-
-        /* 空状态 */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #6c757d;
-        }
-
-        .empty-state i {
-            font-size: 48px;
-            margin-bottom: 15px;
-            opacity: 0.3;
-        }
-
-        .empty-state p {
-            margin: 0;
-            font-size: 14px;
-        }
-
-        /* 预览标记 */
-        .preview-marker {
-            background: #667eea;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        /* JSON预览标记 */
-        .json-preview-marker {
-            background: #667eea;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        /* 模态框样式 */
-        .modal-content {
-            border-radius: 16px;
-            border: none;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 16px 16px 0 0;
-            border-bottom: none;
-            padding: 15px 20px;
-        }
-
-        .modal-title {
-            font-weight: 600;
-        }
-
-        .btn-close {
-            filter: invert(1);
-            opacity: 0.8;
-        }
-
-        .btn-close:hover {
-            opacity: 1;
-        }
-
-        .modal-body {
-            padding: 20px;
-            color: #333;
-        }
-
-        .modal-body ol {
-            padding-left: 1.5em;
-            line-height: 1.8;
-        }
-
-        .modal-body li strong {
-            color: #667eea;
-        }
-    </style>
-</head>
-
-<body>
-
-    <!-- ========== 密码验证层 ========== -->
-    <div id="authOverlay">
-        <div class="auth-container">
-            <img src="shuihui.png" class="auth-logo" alt="Logo"
-                onerror="this.src='https://img.icons8.com/fluency/96/000000/landplot.png'">
-            <div class="auth-title">身份验证</div>
-            <div class="auth-subtitle">请输入访问密码以继续</div>
-
-            <div class="auth-input-group">
-                <input type="password" id="passwordInput" placeholder="请输入密码" autofocus>
-            </div>
-
-            <button class="auth-btn" id="loginBtn">
-                <i class="fas fa-unlock-alt"></i> 进入系统
-            </button>
-
-            <div class="auth-error" id="authError">
-                <i class="fas fa-exclamation-circle"></i> 密码错误，请重试
-            </div>
-        </div>
-    </div>
-
-    <!-- ========== 主内容区域 (默认隐藏) ========== -->
-    <div id="mainContent">
-        <!-- 加载动画遮罩层 -->
-        <div id="loadingOverlay">
-            <div class="loading-content">
-                <div class="loading-logo">
-                    <i class="fas fa-map-marked-alt" style="font-size: 60px; color: white;"></i>
-                </div>
-                <div class="loading-title">土地面积测量工具</div>
-                <div class="loading-subtitle">扬州市邗江区税务局</div>
-
-                <div class="progress-container">
-                    <div class="progress-bar-loading" id="progressBar"></div>
-                </div>
-
-                <div class="loading-text">
-                    <span id="loadingText">正在初始化</span>
-                    <span class="loading-dots">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <div id="container"></div>
-
-        <div class="control-panel">
-            <div class="panel-header">
-                <div class="panel-header-left">
-                    <img src="shuihui.png" class="map-icon" alt="税务徽标" onerror="this.style.display='none'">
-                    <div>
-                        <h2>扬州市税务局<br>土地面积测量工具</h2>
-                        <div class="version-badge">
-                            <i class="fas fa-certificate"></i>v2.1.0
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-header-actions">
-                    <a href="ABOUT.html" target="_blank" class="help-doc-btn" title="打开帮助文档">
-                        <i class="fas fa-book-open"></i>
-                        <span>文档</span>
-                    </a>
-                    <button class="toggle-panel" id="helpBtn" title="使用说明">
-                        <i class="fas fa-question"></i>
-                    </button>
-                    <button class="toggle-panel" id="togglePanel">
-                        <i class="fas fa-chevron-up"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="panel-content">
-                <!-- 搜索框 -->
-                <div class="search-wrapper">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="tipinput" class="form-control" placeholder="输入企业名称或地址搜索...">
-                    <div class="search-results" id="searchResults"></div>
-                </div>
-
-                <!-- 新增：选中POI信息面板 -->
-                <div id="selectedPoiPanel" class="selected-poi-panel">
-                    <div style="font-weight: 700; color: #667eea; margin-bottom: 10px; font-size: 14px;">
-                        <i class="fas fa-map-marker-alt"></i> 当前选中位置
-                    </div>
-                    <div class="poi-info-row">
-                        <label>名称：</label>
-                        <span id="poiName">-</span>
-                    </div>
-                    <div class="poi-info-row">
-                        <label>地址：</label>
-                        <span id="poiAddress">-</span>
-                    </div>
-                    <div class="poi-info-row">
-                        <label>POI ID：</label>
-                        <span id="poiIdText" class="poi-id">-</span>
-                    </div>
-                    <a href="#" id="poiDetailBtn" class="btn-custom btn-primary-custom" target="_blank" style="text-decoration: none; margin-top: 12px; display: flex;">
-                        <i class="fas fa-external-link-alt"></i> 前往复制JSON
-                    </a>
-                </div>
-
-                <!-- 地图样式选择器 -->
-                <div class="mb-3">
-                    <label for="mapStyleSelector" class="form-label">
-                        <i class="fas fa-palette"></i> 地图样式
-                    </label>
-                    <select class="form-select" id="mapStyleSelector">
-                        <option value="amap://styles/normal">标准地图</option>
-                        <option value="amap://styles/light" selected>银色风格 (推荐)</option>
-                        <option value="amap://styles/dark">深色模式</option>
-                        <option value="satellite">卫星地图</option>
-                        <option value="amap://styles/fresh">清新蓝调</option>
-                        <option value="amap://styles/darkblue">极夜蓝</option>
-                        <option value="amap://styles/blue">靛青蓝</option>
-                        <option value="amap://styles/macaron">马卡龙</option>
-                        <option value="amap://styles/graffiti">涂鸦风格</option>
-                        <option value="amap://styles/whitesmoke">远山黛</option>
-                        <option value="amap://styles/grey">锖青黑</option>
-                    </select>
-                </div>
-
-                <!-- 操作按钮组 -->
-                <div class="btn-group-custom">
-                    <button id="drawArea" class="btn-custom btn-primary-custom">
-                        <i class="fas fa-draw-polygon"></i> 绘制区域
-                    </button>
-                    <button id="undoLast" class="btn-custom btn-warning-custom">
-                        <i class="fas fa-undo"></i> 撤销上一步
-                    </button>
-                    <button id="saveData" class="btn-custom btn-success-custom">
-                        <i class="fas fa-save"></i> 保存数据
-                    </button>
-                    <button id="clearAll" class="btn-custom btn-danger-custom">
-                        <i class="fas fa-trash-alt"></i> 全部清除
-                    </button>
-                </div>
-
-                <!-- JSON批量导入区域 -->
-                <div class="json-input-section">
-                    <div class="json-input-header">
-                        <h5>
-                            <i class="fas fa-file-code"></i> JSON数据批量导入
-                        </h5>
-                        <button class="toggle-json-btn collapsed" id="toggleJsonInput">
-                            <i class="fas fa-chevron-down"></i> 展开
-                        </button>
-                    </div>
-                    <div class="json-input-body collapsed" id="jsonInputBody">
-                        <textarea id="jsonInput" class="json-textarea" placeholder="粘贴JSON格式数据..."></textarea>
-                        <div class="json-format-hint">
-                            <strong>功能说明：</strong><br>
-                            <code>自动提取</code> JSON中的 <code>spec.mining_shape.shape</code> 字段<br>
-                            <code>支持批量</code> 导入多个企业数据
-                        </div>
-                        <div class="json-error" id="jsonError"></div>
-                        <div class="json-success" id="jsonSuccess"></div>
-                        <div class="json-parse-result" id="jsonParseResult"></div>
-
-                        <div class="json-actions">
-                            <button id="previewJson" class="btn btn-preview">
-                                <i class="fas fa-eye"></i> 预览
-                            </button>
-                            <button id="applyJson" class="btn btn-apply">
-                                <i class="fas fa-check"></i> 应用并测量
-                            </button>
-                            <button id="clearJsonInput" class="btn btn-clear-input">
-                                <i class="fas fa-trash"></i> 清空
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 经纬度输入区域 -->
-                <div class="coords-input-section">
-                    <div class="coords-input-header">
-                        <h5>
-                            <i class="fas fa-map-pin"></i> 经纬度批量导入
-                        </h5>
-                        <button class="toggle-coords-btn collapsed" id="toggleCoordsInput">
-                            <i class="fas fa-chevron-down"></i> 展开
-                        </button>
-                    </div>
-                    <div class="coords-input-body collapsed" id="coordsInputBody">
-                        <textarea id="coordsInput" class="coords-textarea" placeholder="输入经纬度坐标，每行一组..."></textarea>
-                        <div class="coords-format-hint">
-                            <strong>格式说明：</strong><br>
-                            支持以下输入格式：<br>
-                            <code>经度,纬度</code> 每行一组 - 推荐格式<br>
-                            <code>经度,纬度;经度,纬度</code> 分号分隔
-                        </div>
-                        <div class="coords-error" id="coordsError"></div>
-                        <div class="coords-success" id="coordsSuccess"></div>
-                        <div class="coords-actions">
-                            <button id="previewCoords" class="btn btn-clear-input">
-                                <i class="fas fa-eye"></i> 预览
-                            </button>
-                            <button id="applyCoords" class="btn btn-apply">
-                                <i class="fas fa-check"></i> 应用并测量
-                            </button>
-                            <button id="clearCoordsInput" class="btn btn-clear-input">
-                                <i class="fas fa-trash"></i> 清空
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 总面积显示 -->
-                <div class="area-info" id="totalAreaInfo" style="display: none;">
-                    <h5>
-                        <i class="fas fa-chart-area"></i> 总面积统计
-                    </h5>
-                    <div class="area-display">
-                        <div>
-                            <span class="area-value" id="totalAreaValue">0</span>
-                            <span class="area-unit" id="totalAreaUnit">平方米</span>
-                        </div>
-                    </div>
-                    <div class="unit-selector">
-                        <button class="unit-btn active" data-unit="sqm">m²</button>
-                        <button class="unit-btn" data-unit="mu">亩</button>
-                        <button class="unit-btn" data-unit="hectare">公顷</button>
-                        <button class="unit-btn" data-unit="sqkm">km²</button>
-                    </div>
-                </div>
-
-                <!-- 历史记录 -->
-                <div class="history-section">
-                    <div class="history-header">
-                        <h5><i class="fas fa-history"></i> 测量记录</h5>
-                        <button id="exportHistory" class="btn-custom btn-success-custom"
-                            style="padding: 6px 12px; font-size: 12px;">
-                            <i class="fas fa-file-csv"></i> 导出
-                        </button>
-                    </div>
-                    <div id="historyList">
-                        <div class="empty-state">
-                            <i class="fas fa-inbox"></i>
-                            <p>暂无测量记录<br>点击"绘制区域"开始测量</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 版权信息 -->
-                <div class="copyright-info">
-                    <div class="version">
-                        <i class="fas fa-code-branch"></i> 版本 v2.1.0
-                    </div>
-                    <div class="divider"></div>
-                    <div class="author">
-                        测量数据仅供参考，如有错误请指正 <i class="fas fa-heart"></i>
-                    </div>
-                    <div style="margin-top: 8px; font-size: 11px; opacity: 0.7;">
-                        © 2025 扬州市邗江区税务局 · All Rights Reserved.
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 右侧工具栏 -->
-        <div class="toolbar">
-            <a href="ABOUT.HTML" target="_blank" class="toolbar-btn help-doc" title="帮助文档">
-                <i class="fas fa-book-open"></i>
-            </a>
-            <button class="toolbar-btn" id="loadData" title="加载数据">
-                <i class="fas fa-folder-open"></i>
-            </button>
-            <button class="toolbar-btn" id="captureMap" title="截图">
-                <i class="fas fa-camera"></i>
-            </button>
-            <button class="toolbar-btn" id="fullScreen" title="全屏">
-                <i class="fas fa-expand"></i>
-            </button>
-        </div>
-
-        <!-- 浮动水印 -->
-        <div class="watermark">
-            <i class="fas fa-code"></i> v2.1.0 Professional Edition
-        </div>
-
-        <div class="status-bar" id="statusBar">
-            <i class="fas fa-info-circle"></i> <span id="statusText">准备就绪</span>
-        </div>
-
-        <!-- 使用说明模态框 -->
-        <div class="modal fade" id="instructionsModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title"><i class="fas fa-info-circle"></i> 使用说明</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <ol>
-                            <li>搜索框定位到目标地点</li>
-                            <li>点击"绘制区域"开始测量</li>
-                            <li>单击添加点,双击完成绘制</li>
-                            <li><strong>新功能：</strong>JSON批量导入，自动提取shape字段</li>
-                            <li><strong>新功能：</strong>支持批量导入多个企业数据</li>
-                            <li>可重复绘制多个区域</li>
-                            <li>鼠标悬停可高亮对应区域</li>
-                            <li>支持撤销、删除、重命名</li>
-                            <li>点击"保存数据"可本地保存</li>
-                            <li>导出CSV获取详细报表</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 高德地图API -->
-    <script>
-        window._AMapSecurityConfig = {
-            securityJsCode: 'a048cfa884168ed8300bf427776c0b70',
-        }
-    </script>
-    <script type="text/javascript"
-        src="https://webapi.amap.com/maps?v=2.0&key=d7b7da2e7c5a6b2bd81fddd096a40713"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script type="text/javascript">
-        // ========== 密码验证逻辑 ==========
-
-        const CORRECT_PASSWORD_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
-
-        async function sha256(message) {
-            const msgBuffer = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            return hashHex;
-        }
-
-        const authOverlay = document.getElementById('authOverlay');
-        const mainContent = document.getElementById('mainContent');
-        const passwordInput = document.getElementById('passwordInput');
-        const loginBtn = document.getElementById('loginBtn');
-        const authError = document.getElementById('authError');
-
-        async function verifyPassword() {
-            const inputPass = passwordInput.value;
-            if (!inputPass) return;
-
-            const inputHash = await sha256(inputPass);
-
-            if (inputHash === CORRECT_PASSWORD_HASH) {
-                authOverlay.style.display = 'none';
-                mainContent.style.display = 'block';
-                initializeApp();
-            } else {
-                authError.classList.add('show');
-                passwordInput.value = '';
-                passwordInput.focus();
-            }
-        }
-
-        loginBtn.addEventListener('click', verifyPassword);
-        passwordInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') verifyPassword();
-        });
-
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
-                // e.preventDefault();
-            }
-        });
-
-        // ========== 应用初始化逻辑 ==========
-
-        function initializeApp() {
-            let loadingProgress = 0;
-            const loadingSteps = [
-                { progress: 20, text: '正在加载地图资源' },
-                { progress: 40, text: '正在初始化地图引擎' },
-                { progress: 60, text: '正在加载插件模块' },
-                { progress: 80, text: '正在配置界面组件' },
-                { progress: 100, text: '加载完成' }
-            ];
-
-            let currentStepIndex = 0;
-
-            function updateLoadingProgress(progress, text) {
-                const progressBar = document.getElementById('progressBar');
-                const loadingText = document.getElementById('loadingText');
-
-                if (progressBar) {
-                    progressBar.style.width = progress + '%';
-                }
-                if (loadingText && text) {
-                    loadingText.textContent = text;
-                }
-            }
-
-            function nextLoadingStep() {
-                if (currentStepIndex < loadingSteps.length) {
-                    const step = loadingSteps[currentStepIndex];
-                    updateLoadingProgress(step.progress, step.text);
-                    currentStepIndex++;
-                }
-            }
-
-            function hideLoadingOverlay() {
-                updateLoadingProgress(100, '加载完成');
-                setTimeout(() => {
-                    const overlay = document.getElementById('loadingOverlay');
-                    if (overlay) {
-                        overlay.classList.add('hidden');
-                        setTimeout(() => {
-                            overlay.remove();
-                        }, 500);
-                    }
-                }, 300);
-            }
-
-            nextLoadingStep();
-
-            var map = null;
-            var mouseTool = null;
-            var placeSearch = null;
-            var autoComplete = null;
-
-            var polygons = [];
-            var markers = [];
-            var historyData = [];
-
-            var currentUnit = 'sqm';
-            var totalAreaInSquareMeters = 0;
-            var regionCounter = 0;
-            var highlightedPolygon = null;
-
-            var previewMarkers = [];
-            var previewPolygon = null;
-
-            var jsonPreviewMarkers = [];
-            var jsonPreviewPolygons = [];
-
-            const regionColors = [
-                '#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe',
-                '#43e97b', '#38f9d7', '#fa709a', '#fee140', '#30cfd0', '#330867',
-                '#a855f7', '#ec4899', '#f97316', '#84cc16', '#06b6d4', '#8b5cf6'
-            ];
-
-            nextLoadingStep();
-
-            map = new AMap.Map("container", {
-                resizeEnable: true,
-                zoom: 12,
-                center: [119.398015, 32.377528],
-                mapStyle: "amap://styles/light"
-            });
-
-            map.on('complete', function () {
-                nextLoadingStep();
-                initializePlugins();
-            });
-
-            function initializePlugins() {
-                AMap.plugin(['AMap.PlaceSearch', 'AMap.AutoComplete', 'AMap.MouseTool', 'AMap.GeometryUtil'], function () {
-                    placeSearch = new AMap.PlaceSearch({ map: map, pageSize: 5 });
-                    autoComplete = new AMap.AutoComplete({ input: "tipinput", city: "扬州", citylimit: true });
-                    mouseTool = new AMap.MouseTool(map);
-
-                    autoComplete.on("select", handleSearchSelect);
-                    mouseTool.on('draw', handleDrawFinish);
-
-                    nextLoadingStep();
-                    initializeUI();
-                });
-            }
-
-            function initializeUI() {
-                document.getElementById('drawArea').addEventListener('click', startDrawing);
-                document.getElementById('clearAll').addEventListener('click', clearAll);
-                document.getElementById('undoLast').addEventListener('click', undoLast);
-                document.getElementById('saveData').addEventListener('click', saveData);
-                document.getElementById('loadData').addEventListener('click', loadData);
-                document.getElementById('exportHistory').addEventListener('click', exportHistoryToCSV);
-                document.getElementById('captureMap').addEventListener('click', captureMap);
-                document.getElementById('fullScreen').addEventListener('click', toggleFullScreen);
-                document.getElementById('togglePanel').addEventListener('click', togglePanel);
-                document.getElementById('tipinput').addEventListener('input', handleSearchInput);
-
-                document.getElementById('helpBtn').addEventListener('click', function () {
-                    var myModal = new bootstrap.Modal(document.getElementById('instructionsModal'));
-                    myModal.show();
-                });
-
-                document.getElementById('toggleJsonInput').addEventListener('click', toggleJsonInput);
-                document.getElementById('previewJson').addEventListener('click', previewJsonOnMap);
-                document.getElementById('applyJson').addEventListener('click', applyJsonAndMeasure);
-                document.getElementById('clearJsonInput').addEventListener('click', clearJsonInput);
-
-                document.getElementById('toggleCoordsInput').addEventListener('click', toggleCoordsInput);
-                document.getElementById('previewCoords').addEventListener('click', previewCoordsOnMap);
-                document.getElementById('applyCoords').addEventListener('click', applyCoordsAndMeasure);
-                document.getElementById('clearCoordsInput').addEventListener('click', clearCoordsInput);
-
-                document.addEventListener('click', (e) => {
-                    if (!e.target.closest('.control-panel')) {
-                        document.getElementById('searchResults').style.display = 'none';
-                    }
-                });
-
-                document.querySelectorAll('.unit-btn').forEach(button => {
-                    button.addEventListener('click', handleUnitChange);
-                });
-
-                document.getElementById('mapStyleSelector').addEventListener('change', function () {
-                    const selectedStyle = this.value;
-                    map.setMapStyle(selectedStyle);
-                    showStatus(`地图样式已切换`);
-                });
-
-                renderHistoryList();
-                hideLoadingOverlay();
-
-                setTimeout(() => {
-                    showStatus("已就绪，可以开始测量！");
-                }, 800);
-            }
-
-            function togglePanel() {
-                const content = document.querySelector('.panel-content');
-                const icon = document.querySelector('#togglePanel i');
-                content.classList.toggle('collapsed');
-                icon.classList.toggle('fa-chevron-up');
-                icon.classList.toggle('fa-chevron-down');
-            }
-
-            // ========== JSON批量导入相关功能 ==========
-
-            function toggleJsonInput() {
-                const body = document.getElementById('jsonInputBody');
-                const btn = document.getElementById('toggleJsonInput');
-                body.classList.toggle('collapsed');
-                btn.classList.toggle('collapsed');
-
-                if (btn.classList.contains('collapsed')) {
-                    btn.innerHTML = '<i class="fas fa-chevron-down"></i> 展开';
-                } else {
-                    btn.innerHTML = '<i class="fas fa-chevron-up"></i> 收起';
-                }
-            }
-
-            function parseJsonData(jsonString) {
-                const results = [];
-                const errors = [];
-                try {
-                    let jsonData;
-                    try {
-                        jsonData = JSON.parse(jsonString);
-                    } catch (e) {
-                        errors.push('JSON格式错误: ' + e.message);
-                        return { results, errors };
-                    }
-
-                    let items = [];
-                    if (Array.isArray(jsonData)) {
-                        items = jsonData;
-                    } else if (jsonData.data) {
-                        items = [jsonData];
-                    } else {
-                        items = [jsonData];
-                    }
-
-                    items.forEach((item, index) => {
-                        const data = item.data || item;
-                        let shape = null;
-
-                        if (data.spec && data.spec.mining_shape && data.spec.mining_shape.shape) {
-                            shape = data.spec.mining_shape.shape;
-                        } else if (data.spec && data.spec.shape) {
-                            shape = data.spec.shape;
-                        } else if (data.mining_shape && data.mining_shape.shape) {
-                            shape = data.mining_shape.shape;
-                        } else if (data.shape) {
-                            shape = data.shape;
-                        } else if (data.geometry && data.geometry.coordinates) {
-                            shape = data.geometry.coordinates;
-                        }
-
-                        let name = `区域 ${index + 1}`;
-                        if (data.base && data.base.name) {
-                            name = data.base.name;
-                        } else if (data.name) {
-                            name = data.name;
-                        } else if (data.title) {
-                            name = data.title;
-                        } else if (data.base && data.base.title) {
-                            name = data.base.title;
-                        }
-
-                        if (shape) {
-                            const coords = parseShapeString(shape);
-                            if (coords && coords.length >= 3) {
-                                results.push({ name: name, coords: coords, raw: item });
-                            } else if (coords && coords.length < 3) {
-                                errors.push(`"${name}" 的坐标点不足`);
-                            }
-                        } else {
-                            errors.push(`"${name}" 未找到shape字段`);
-                        }
-                    });
-                } catch (e) {
-                    errors.push('解析错误: ' + e.message);
-                }
-                return { results, errors };
-            }
-
-            function parseShapeString(shape) {
-                if (Array.isArray(shape)) {
-                    if (shape.length > 0 && Array.isArray(shape[0])) {
-                        if (typeof shape[0][0] === 'number') return shape;
-                        else if (Array.isArray(shape[0][0]) && typeof shape[0][0][0] === 'number') return shape[0];
-                    }
-                }
-                if (typeof shape === 'string') {
-                    const coords = [];
-                    const points = shape.split(';');
-                    for (const point of points) {
-                        const trimmed = point.trim();
-                        if (!trimmed) continue;
-                        const cleaned = trimmed.replace(/[()（）【】[\]]/g, '');
-                        const parts = cleaned.split(',');
-                        if (parts.length >= 2) {
-                            const lng = parseFloat(parts[0].trim());
-                            const lat = parseFloat(parts[1].trim());
-                            if (!isNaN(lng) && !isNaN(lat) && lng >= 73 && lng <= 135 && lat >= 3 && lat <= 54) {
-                                coords.push([lng, lat]);
-                            }
-                        }
-                    }
-                    return coords;
-                }
-                return null;
-            }
-
-            function clearJsonPreview() {
-                if (jsonPreviewMarkers.length > 0) { map.remove(jsonPreviewMarkers); jsonPreviewMarkers = []; }
-                if (jsonPreviewPolygons.length > 0) { map.remove(jsonPreviewPolygons); jsonPreviewPolygons = []; }
-            }
-
-            function previewJsonOnMap() {
-                const input = document.getElementById('jsonInput').value;
-                const errorEl = document.getElementById('jsonError');
-                const successEl = document.getElementById('jsonSuccess');
-                const resultEl = document.getElementById('jsonParseResult');
-                clearJsonPreview();
-                if (!input.trim()) { errorEl.textContent = '请输入JSON数据'; errorEl.classList.add('show'); successEl.classList.remove('show'); return; }
-                const { results, errors } = parseJsonData(input);
-                if (results.length === 0) { errorEl.innerHTML = errors.length > 0 ? '解析失败：<br>' + errors.slice(0, 3).join('<br>') : '无数据'; errorEl.classList.add('show'); return; }
-
-                let resultHtml = '<strong>解析结果：</strong>';
-                results.forEach((item, index) => {
-                    const area = AMap.GeometryUtil.ringArea(item.coords.map(c => new AMap.LngLat(c[0], c[1])));
-                    resultHtml += `<div class="result-item"><span class="result-name">${index + 1}. ${item.name}</span><span class="result-area">${formatArea(area, currentUnit)}</span></div>`;
-                });
-                resultEl.innerHTML = resultHtml;
-                resultEl.classList.add('show');
-
-                results.forEach((item, index) => {
-                    const color = regionColors[(regionCounter + index) % regionColors.length];
-                    const polygon = new AMap.Polygon({ path: item.coords, strokeColor: color, strokeOpacity: 0.6, strokeWeight: 2, fillColor: color, fillOpacity: 0.2, strokeDashStyle: 'dash', zIndex: 99 });
-                    jsonPreviewPolygons.push(polygon);
-                    map.add(polygon);
-                });
-                if (jsonPreviewPolygons.length > 0) map.setFitView(jsonPreviewPolygons);
-                successEl.innerHTML = `<i class="fas fa-check-circle"></i> 解析成功！共 ${results.length} 个区域`;
-                successEl.classList.add('show');
-                errorEl.classList.remove('show');
-            }
-
-            function applyJsonAndMeasure() {
-                const input = document.getElementById('jsonInput').value;
-                if (!input.trim()) return;
-                const { results, errors } = parseJsonData(input);
-                if (results.length === 0) return;
-                clearJsonPreview();
-                let totalAreas = 0;
-                results.forEach((item, index) => {
-                    const color = regionColors[regionCounter % regionColors.length];
-                    const path = item.coords.map(c => new AMap.LngLat(c[0], c[1]));
-                    const area = AMap.GeometryUtil.ringArea(path);
-                    const polygon = new AMap.Polygon({ path: path, strokeColor: color, strokeOpacity: 0.9, strokeWeight: 3, fillColor: color, fillOpacity: 0.3, extData: { id: Date.now() + index, source: 'json' } });
-                    map.add(polygon); polygons.push(polygon);
-                    totalAreaInSquareMeters += area; totalAreas += area; regionCounter++;
-                    const historyItem = { id: polygon.getExtData().id, name: item.name, areaSqm: area, remark: '', color: color, coords: item.coords, source: 'json' };
-                    historyData.push(historyItem);
-                    addAreaMarker(polygon, area, historyItem.name);
-                });
-                updateTotalAreaDisplay(); renderHistoryList();
-                if (polygons.length > 0) map.setFitView(polygons);
-                document.getElementById('jsonInput').value = '';
-                showStatus(`批量导入成功: ${results.length} 个区域`);
-            }
-
-            function clearJsonInput() {
-                document.getElementById('jsonInput').value = '';
-                document.getElementById('jsonError').classList.remove('show');
-                document.getElementById('jsonSuccess').classList.remove('show');
-                document.getElementById('jsonParseResult').classList.remove('show');
-                clearJsonPreview();
-            }
-
-            // ========== 经纬度输入相关功能 ==========
-            function toggleCoordsInput() {
-                const body = document.getElementById('coordsInputBody');
-                const btn = document.getElementById('toggleCoordsInput');
-                body.classList.toggle('collapsed'); btn.classList.toggle('collapsed');
-                btn.innerHTML = btn.classList.contains('collapsed') ? '<i class="fas fa-chevron-down"></i> 展开' : '<i class="fas fa-chevron-up"></i> 收起';
-            }
-
-            function parseCoordinates(input) {
-                const coords = []; const errors = [];
-                let cleanedInput = input.trim().replace(/;/g, '\n');
-                const lines = cleanedInput.split('\n');
-                for (let i = 0; i < lines.length; i++) {
-                    let line = lines[i].trim(); if (!line) continue;
-                    let lng, lat; line = line.replace(/[()（）【】[\]]/g, '');
-                    if (line.includes(',')) { const parts = line.split(','); lng = parseFloat(parts[0]); lat = parseFloat(parts[1]); }
-                    else if (line.includes(' ')) { const parts = line.split(/\s+/); lng = parseFloat(parts[0]); lat = parseFloat(parts[1]); }
-                    if (isNaN(lng) || isNaN(lat)) continue;
-                    if (lng >= 73 && lng <= 135 && lat >= 3 && lat <= 54) coords.push([lng, lat]);
-                }
-                return { coords, errors };
-            }
-
-            function clearPreviewMarkers() {
-                if (previewMarkers.length > 0) { map.remove(previewMarkers); previewMarkers = []; }
-                if (previewPolygon) { map.remove(previewPolygon); previewPolygon = null; }
-            }
-
-            function previewCoordsOnMap() {
-                const input = document.getElementById('coordsInput').value;
-                const errorEl = document.getElementById('coordsError');
-                const successEl = document.getElementById('coordsSuccess');
-                clearPreviewMarkers();
-                const { coords, errors } = parseCoordinates(input);
-                if (coords.length < 3) { errorEl.textContent = '至少需要3个坐标点'; errorEl.classList.add('show'); return; }
-
-                const color = regionColors[regionCounter % regionColors.length];
-                coords.forEach((coord, index) => {
-                    const marker = new AMap.Marker({ position: coord, content: `<div class="preview-marker">${index + 1}</div>`, offset: new AMap.Pixel(-20, -10), zIndex: 100 });
-                    previewMarkers.push(marker); map.add(marker);
-                });
-                previewPolygon = new AMap.Polygon({ path: coords, strokeColor: color, strokeOpacity: 0.6, strokeWeight: 2, fillColor: color, fillOpacity: 0.2, strokeDashStyle: 'dash', zIndex: 99 });
-                map.add(previewPolygon); map.setFitView(previewMarkers);
-                const area = AMap.GeometryUtil.ringArea(coords.map(c => new AMap.LngLat(c[0], c[1])));
-                successEl.innerHTML = `<i class="fas fa-check-circle"></i> 预览成功！预估面积：${formatArea(area, currentUnit)}`;
-                successEl.classList.add('show'); errorEl.classList.remove('show');
-            }
-
-            function applyCoordsAndMeasure() {
-                const input = document.getElementById('coordsInput').value;
-                const { coords } = parseCoordinates(input);
-                if (coords.length < 3) return;
-                clearPreviewMarkers();
-                const color = regionColors[regionCounter % regionColors.length];
-                const path = coords.map(c => new AMap.LngLat(c[0], c[1]));
-                const area = AMap.GeometryUtil.ringArea(path);
-                const polygon = new AMap.Polygon({ path: path, strokeColor: color, strokeOpacity: 0.9, strokeWeight: 3, fillColor: color, fillOpacity: 0.3, extData: { id: Date.now(), source: 'coords' } });
-                map.add(polygon); polygons.push(polygon); totalAreaInSquareMeters += area; regionCounter++;
-                const historyItem = { id: polygon.getExtData().id, name: `区域 ${regionCounter} (坐标)`, areaSqm: area, remark: '', color: color, coords: coords, source: 'coords' };
-                historyData.push(historyItem);
-                addAreaMarker(polygon, area, historyItem.name);
-                updateTotalAreaDisplay(); renderHistoryList(); map.setFitView([polygon]);
-                document.getElementById('coordsInput').value = '';
-                showStatus(`区域 ${regionCounter} 测量完成`);
-            }
-
-            function clearCoordsInput() {
-                document.getElementById('coordsInput').value = '';
-                document.getElementById('coordsError').classList.remove('show');
-                document.getElementById('coordsSuccess').classList.remove('show');
-                clearPreviewMarkers();
-            }
-
-            // ========== 搜索功能修改 ==========
-            function handleSearchSelect(e) {
-                document.getElementById('searchResults').style.display = 'none';
-                
-                // 获取POI信息并更新面板
-                const poiId = e.poi.id;
-                const poiName = e.poi.name;
-                const poiAddress = e.poi.address || e.poi.district || '未知地址';
-                
-                const panel = document.getElementById('selectedPoiPanel');
-                const btn = document.getElementById('poiDetailBtn');
-
-                if(poiId) {
-                    document.getElementById('poiName').textContent = poiName;
-                    document.getElementById('poiAddress').textContent = poiAddress;
-                    document.getElementById('poiIdText').textContent = poiId;
-                    btn.href = `https://www.amap.com/detail/get/detail?id=${poiId}`;
-                    panel.classList.add('show');
-                } else {
-                    panel.classList.remove('show');
-                }
-
-                // 原有的地图定位逻辑
-                placeSearch.setCity(e.poi.adcode);
-                placeSearch.search(e.poi.name, (status, result) => {
-                    if (status === 'complete' && result.poiList.pois.length > 0) {
-                        const poi = result.poiList.pois[0];
-                        if (poi && poi.location) { map.setZoom(17); map.setCenter(poi.location); showStatus(`已定位到: ${poi.name}`); }
-                    }
-                });
-            }
-
-            function handleSearchInput(e) {
-                const keyword = e.target.value.trim();
-                const searchResults = document.getElementById('searchResults');
-                if (keyword.length < 2) { searchResults.style.display = 'none'; return; }
-                autoComplete.search(keyword, (status, result) => {
-                    if (status === 'complete' && result.tips) {
-                        let html = '';
-                        // 增加 data-id 属性
-                        result.tips.forEach(tip => { 
-                            html += `<div class="search-item" data-name="${tip.name}" data-adcode="${tip.adcode}" data-id="${tip.id}" data-address="${tip.address || tip.district}">
-                                <div class="search-name">${tip.name}</div>
-                                <div class="search-address">${tip.district || ''} ${tip.address || ''}</div>
-                            </div>`; 
-                        });
-                        searchResults.innerHTML = html; searchResults.style.display = 'block';
-                        Array.from(searchResults.getElementsByClassName('search-item')).forEach(item => {
-                            item.addEventListener('click', function () { 
-                                handleSearchSelect({ 
-                                    poi: { 
-                                        name: this.getAttribute('data-name'), 
-                                        adcode: this.getAttribute('data-adcode'),
-                                        id: this.getAttribute('data-id'),
-                                        address: this.getAttribute('data-address')
-                                    } 
-                                }); 
-                            });
-                        });
-                    } else { searchResults.style.display = 'none'; }
-                });
-            }
-
-            function startDrawing() {
-                clearPreviewMarkers(); clearJsonPreview();
-                const color = regionColors[regionCounter % regionColors.length];
-                mouseTool.polygon({ strokeColor: color, strokeOpacity: 0.9, strokeWeight: 3, fillColor: color, fillOpacity: 0.3, extData: { id: Date.now(), source: 'draw' } });
-                showStatus("开始绘制，单击添加点，双击完成");
-            }
-
-            function handleDrawFinish(event) {
-                const polygon = event.obj; mouseTool.close();
-                const area = AMap.GeometryUtil.ringArea(polygon.getPath());
-                if (area === 0) { map.remove(polygon); showStatus("绘制无效"); return; }
-                regionCounter++; polygons.push(polygon); totalAreaInSquareMeters += area;
-                const coords = polygon.getPath().map(p => [p.lng, p.lat]);
-                const historyItem = { id: polygon.getExtData().id, name: `区域 ${regionCounter}`, areaSqm: area, remark: '', color: regionColors[(regionCounter - 1) % regionColors.length], coords: coords, source: 'draw' };
-                historyData.push(historyItem);
-                addAreaMarker(polygon, area, historyItem.name);
-                updateTotalAreaDisplay(); renderHistoryList();
-                showStatus(`区域 ${regionCounter} 测量完成: ${formatArea(area, currentUnit)}`);
-            }
-
-            function undoLast() {
-                if (polygons.length === 0) return;
-                const lastPolygon = polygons.pop(); const lastMarker = markers.pop(); const lastHistory = historyData.pop();
-                map.remove(lastPolygon); map.remove(lastMarker);
-                totalAreaInSquareMeters -= lastHistory.areaSqm; regionCounter--;
-                updateTotalAreaDisplay(); renderHistoryList(); showStatus("已撤销");
-            }
-
-            function clearAll() {
-                if (polygons.length === 0) return;
-                if (!confirm('确定要清除所有测量数据吗？')) return;
-                mouseTool.close(true); map.remove(polygons); map.remove(markers); clearPreviewMarkers(); clearJsonPreview();
-                polygons = []; markers = []; historyData = []; totalAreaInSquareMeters = 0; regionCounter = 0;
-                updateTotalAreaDisplay(); renderHistoryList(); showStatus("已清除所有数据");
-            }
-
-            function deleteRegion(id) {
-                const index = historyData.findIndex(h => h.id === id); if (index === -1) return;
-                const item = historyData[index];
-                const polygon = polygons.find(p => p.getExtData().id === id);
-                const marker = markers.find(m => m.getExtData().polygonId === id);
-                if (polygon) { map.remove(polygon); polygons = polygons.filter(p => p.getExtData().id !== id); }
-                if (marker) { map.remove(marker); markers = markers.filter(m => m.getExtData().polygonId !== id); }
-                totalAreaInSquareMeters -= item.areaSqm; historyData.splice(index, 1);
-                updateTotalAreaDisplay(); renderHistoryList(); showStatus(`已删除 ${item.name}`);
-            }
-
-            function highlightRegion(id) {
-                const polygon = polygons.find(p => p.getExtData().id === id); if (!polygon) return;
-                if (highlightedPolygon) { highlightedPolygon.setOptions({ strokeWeight: 3, fillOpacity: 0.3 }); }
-                polygon.setOptions({ strokeWeight: 5, fillOpacity: 0.5 });
-                highlightedPolygon = polygon; map.setFitView([polygon]);
-            }
-
-            function unhighlightRegion() { if (highlightedPolygon) { highlightedPolygon.setOptions({ strokeWeight: 3, fillOpacity: 0.3 }); highlightedPolygon = null; } }
-
-            function handleUnitChange() {
-                document.querySelectorAll('.unit-btn').forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active'); currentUnit = this.getAttribute('data-unit');
-                updateTotalAreaDisplay(); updateAllMarkers(); renderHistoryList();
-            }
-
-            function addAreaMarker(polygon, areaSqm, name) {
-                const text = new AMap.Text({
-                    text: `${name}: ${formatArea(areaSqm, currentUnit)}`, position: polygon.getBounds().getCenter(),
-                    style: { 'background': 'linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%)', 'border': 'none', 'color': 'white', 'padding': '8px 12px', 'border-radius': '8px', 'font-size': '12px', 'font-weight': '600', 'box-shadow': '0 2px 8px rgba(0,0,0,0.2)' },
-                    extData: { polygonId: polygon.getExtData().id, areaSqm: areaSqm }
-                });
-                markers.push(text); map.add(text);
-            }
-
-            function updateAllMarkers() { markers.forEach(marker => { const historyItem = historyData.find(h => h.id === marker.getExtData().polygonId); if (historyItem) marker.setText(`${historyItem.name}: ${formatArea(marker.getExtData().areaSqm, currentUnit)}`); }); }
-
-            function updateTotalAreaDisplay() {
-                document.getElementById('totalAreaValue').textContent = formatNumber(convertArea(totalAreaInSquareMeters, currentUnit));
-                document.getElementById('totalAreaUnit').textContent = getUnitText(currentUnit);
-                document.getElementById('totalAreaInfo').style.display = totalAreaInSquareMeters > 0 ? 'block' : 'none';
-            }
-
-            function renderHistoryList() {
-                const listEl = document.getElementById('historyList');
-                if (historyData.length === 0) { listEl.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><p>暂无测量记录</p></div>`; return; }
-                listEl.innerHTML = '';
-                historyData.forEach((item) => {
-                    const itemEl = document.createElement('div'); itemEl.className = 'history-item';
-                    itemEl.innerHTML = `
-                        <div class="history-item-header">
-                            <div class="history-item-name"><input type="text" value="${item.name}" data-id="${item.id}" class="name-input"></div>
-                            <div class="history-item-area">${formatArea(item.areaSqm, currentUnit)}</div>
-                            <div class="history-item-actions">
-                                <button class="history-item-btn btn-highlight" data-id="${item.id}" title="高亮"><i class="fas fa-eye"></i></button>
-                                <button class="history-item-btn btn-delete" data-id="${item.id}" title="删除"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </div>`;
-                    listEl.appendChild(itemEl);
-                });
-                listEl.querySelectorAll('.name-input').forEach(input => { input.addEventListener('change', (e) => { const item = historyData.find(h => h.id === parseInt(e.target.dataset.id)); if (item) { item.name = e.target.value; updateAllMarkers(); } }); });
-                listEl.querySelectorAll('.btn-highlight').forEach(btn => { btn.addEventListener('click', (e) => { highlightRegion(parseInt(e.currentTarget.dataset.id)); }); });
-                listEl.querySelectorAll('.btn-delete').forEach(btn => { btn.addEventListener('click', (e) => { if (confirm('确定删除?')) deleteRegion(parseInt(e.currentTarget.dataset.id)); }); });
-                listEl.querySelectorAll('.history-item').forEach(item => {
-                    const btns = item.querySelectorAll('.history-item-btn');
-                    if (btns.length > 0) { const id = parseInt(btns[0].dataset.id); item.addEventListener('mouseenter', () => highlightRegion(id)); item.addEventListener('mouseleave', () => unhighlightRegion()); }
-                });
-            }
-
-            function saveData() {
-                if (historyData.length === 0) return;
-                const data = { version: '2.1.0', timestamp: new Date().toISOString(), totalArea: totalAreaInSquareMeters, regionCounter: regionCounter, regions: historyData, polygonPaths: polygons.map(p => ({ id: p.getExtData().id, path: p.getPath().map(point => [point.lng, point.lat]) })) };
-                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `data.json`; link.click();
-            }
-
-            function loadData() {
-                const input = document.createElement('input'); input.type = 'file'; input.accept = '.json';
-                input.onchange = (e) => {
-                    const file = e.target.files[0]; if (!file) return;
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        try {
-                            const data = JSON.parse(event.target.result); clearAll();
-                            totalAreaInSquareMeters = data.totalArea; regionCounter = data.regionCounter; historyData = data.regions || [];
-                            if (data.polygonPaths) {
-                                data.polygonPaths.forEach((pathData, index) => {
-                                    const historyItem = historyData.find(h => h.id === pathData.id); if (!historyItem) return;
-                                    const polygon = new AMap.Polygon({ path: pathData.path, strokeColor: historyItem.color, strokeOpacity: 0.9, strokeWeight: 3, fillColor: historyItem.color, fillOpacity: 0.3, extData: { id: pathData.id, source: historyItem.source } });
-                                    map.add(polygon); polygons.push(polygon); addAreaMarker(polygon, historyItem.areaSqm, historyItem.name);
-                                });
-                            }
-                            updateTotalAreaDisplay(); renderHistoryList(); map.setFitView();
-                        } catch (err) { alert("文件格式错误"); }
-                    };
-                    reader.readAsText(file);
-                };
-                input.click();
-            }
-
-            function exportHistoryToCSV() {
-                if (historyData.length === 0) return;
-                let csv = "名称,面积(平方米),面积(亩)\r\n";
-                historyData.forEach(item => { csv += `${item.name},${item.areaSqm.toFixed(2)},${convertArea(item.areaSqm, 'mu').toFixed(4)}\r\n`; });
-                const blob = new Blob([csv], { type: 'text/csv' });
-                const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'report.csv'; link.click();
-            }
-
-            function captureMap() { showStatus("请使用系统截图工具"); }
-            function toggleFullScreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
-
-            function convertArea(areaSqm, unit) { switch (unit) { case 'mu': return areaSqm * 0.0015; case 'hectare': return areaSqm / 10000; case 'sqkm': return areaSqm / 1000000; default: return areaSqm; } }
-            function getUnitText(unit) { return { sqm: '平方米', mu: '亩', hectare: '公顷', sqkm: '平方千米' }[unit] || '平方米'; }
-            function formatNumber(num) { return num === 0 ? '0' : num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 }); }
-            function formatArea(areaSqm, unit) { return `${formatNumber(convertArea(areaSqm, unit))} ${getUnitText(unit)}`; }
-            function showStatus(message, duration = 3000) { const statusBar = document.getElementById('statusBar'); document.getElementById('statusText').textContent = message; statusBar.style.display = 'block'; setTimeout(() => { statusBar.style.display = 'none'; }, duration); }
-        }
-    </script>
-</body>
-
-</html>
+	<!doctype html>
+	<html lang="zh-CN">
+	<head>
+	    <meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+	    <title>邗江区税务局企业土地面积测量工具 (专业版)</title>
+	    <!-- Bootstrap 5 CSS -->
+	    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+	    <!-- Font Awesome 图标 -->
+	    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+	    <!-- 高德地图样式 -->
+	    <link rel="stylesheet" href="https://cache.amap.com/lbs/static/main1119.css" />
+	    <style>
+	        * {
+	            margin: 0;
+	            padding: 0;
+	            box-sizing: border-box;
+	        }
+	        body {
+	            font-family: 'Microsoft YaHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	            color: #333;
+	            overflow: hidden;
+	        }
+	        /* ========== 密码验证层样式 ========== */
+	        #authOverlay {
+	            position: fixed;
+	            top: 0;
+	            left: 0;
+	            width: 100%;
+	            height: 100%;
+	            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	            display: flex;
+	            justify-content: center;
+	            align-items: center;
+	            z-index: 99999;
+	        }
+	        .auth-container {
+	            background: white;
+	            padding: 40px;
+	            border-radius: 20px;
+	            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+	            text-align: center;
+	            width: 380px;
+	            animation: slideDown 0.5s ease;
+	        }
+	        @keyframes slideDown {
+	            from {
+	                opacity: 0;
+	                transform: translateY(-30px);
+	            }
+	            to {
+	                opacity: 1;
+	                transform: translateY(0);
+	            }
+	        }
+	        .auth-logo {
+	            width: 60px;
+	            height: 60px;
+	            margin-bottom: 20px;
+	        }
+	        .auth-title {
+	            font-size: 20px;
+	            font-weight: 700;
+	            margin-bottom: 10px;
+	            color: #333;
+	        }
+	        .auth-subtitle {
+	            font-size: 13px;
+	            color: #666;
+	            margin-bottom: 25px;
+	        }
+	        .auth-input-group {
+	            position: relative;
+	            margin-bottom: 20px;
+	        }
+	        .auth-input-group input {
+	            width: 100%;
+	            padding: 12px 20px;
+	            border: 2px solid #e0e0e0;
+	            border-radius: 10px;
+	            font-size: 16px;
+	            transition: all 0.3s;
+	            text-align: center;
+	            letter-spacing: 2px;
+	        }
+	        .auth-input-group input:focus {
+	            border-color: #667eea;
+	            outline: none;
+	            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+	        }
+	        .auth-btn {
+	            width: 100%;
+	            padding: 12px;
+	            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	            color: white;
+	            border: none;
+	            border-radius: 10px;
+	            font-size: 16px;
+	            font-weight: 600;
+	            cursor: pointer;
+	            transition: all 0.3s;
+	        }
+	        .auth-btn:hover {
+	            transform: translateY(-2px);
+	            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+	        }
+	        .auth-error {
+	            color: #dc3545;
+	            font-size: 13px;
+	            margin-top: 15px;
+	            display: none;
+	        }
+	        .auth-error.show {
+	            display: block;
+	            animation: shake 0.4s;
+	        }
+	        @keyframes shake {
+	            0%,
+	            100% {
+	                transform: translateX(0);
+	            }
+	            25% {
+	                transform: translateX(-5px);
+	            }
+	            75% {
+	                transform: translateX(5px);
+	            }
+	        }
+	        /* 主内容区域默认隐藏 */
+	        #mainContent {
+	            display: none;
+	        }
+	        /* ========== 加载动画样式 ========== */
+	        #loadingOverlay {
+	            position: fixed;
+	            top: 0;
+	            left: 0;
+	            width: 100%;
+	            height: 100%;
+	            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	            display: flex;
+	            flex-direction: column;
+	            justify-content: center;
+	            align-items: center;
+	            z-index: 9999;
+	            transition: opacity 0.5s ease, visibility 0.5s ease;
+	        }
+	        #loadingOverlay.hidden {
+	            opacity: 0;
+	            visibility: hidden;
+	        }
+	        .loading-content {
+	            text-align: center;
+	            color: white;
+	        }
+	        .loading-logo {
+	            width: 80px;
+	            height: 80px;
+	            margin-bottom: 30px;
+	            animation: pulse 2s ease-in-out infinite;
+	        }
+	        .loading-title {
+	            font-size: 24px;
+	            font-weight: 600;
+	            margin-bottom: 10px;
+	            letter-spacing: 1px;
+	        }
+	        .loading-subtitle {
+	            font-size: 14px;
+	            opacity: 0.9;
+	            margin-bottom: 40px;
+	        }
+	        .progress-container {
+	            width: 300px;
+	            height: 6px;
+	            background: rgba(255, 255, 255, 0.2);
+	            border-radius: 10px;
+	            overflow: hidden;
+	            position: relative;
+	            backdrop-filter: blur(10px);
+	        }
+	        .progress-bar-loading {
+	            height: 100%;
+	            background: linear-gradient(90deg,
+	                    rgba(255, 255, 255, 0.8) 0%,
+	                    rgba(255, 255, 255, 1) 50%,
+	                    rgba(255, 255, 255, 0.8) 100%);
+	            border-radius: 10px;
+	            width: 0%;
+	            transition: width 0.3s ease;
+	            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+	        }
+	        .loading-text {
+	            margin-top: 20px;
+	            font-size: 13px;
+	            opacity: 0.8;
+	            min-height: 20px;
+	        }
+	        .loading-dots {
+	            display: inline-block;
+	            margin-left: 5px;
+	        }
+	        .loading-dots span {
+	            display: inline-block;
+	            width: 6px;
+	            height: 6px;
+	            border-radius: 50%;
+	            background: white;
+	            margin: 0 2px;
+	            animation: bounce 1.4s infinite ease-in-out both;
+	        }
+	        .loading-dots span:nth-child(1) {
+	            animation-delay: -0.32s;
+	        }
+	        .loading-dots span:nth-child(2) {
+	            animation-delay: -0.16s;
+	        }
+	        @keyframes bounce {
+	            0%,
+	            80%,
+	            100% {
+	                transform: scale(0);
+	                opacity: 0.5;
+	            }
+	            40% {
+	                transform: scale(1);
+	                opacity: 1;
+	            }
+	        }
+	        @keyframes pulse {
+	            0%,
+	            100% {
+	                transform: scale(1);
+	                opacity: 1;
+	            }
+	            50% {
+	                transform: scale(1.05);
+	                opacity: 0.8;
+	            }
+	        }
+	        #container {
+	            width: 100%;
+	            height: 100vh;
+	            position: relative;
+	        }
+	        /* 控制面板样式优化 */
+	        .control-panel {
+	            position: absolute;
+	            top: 15px;
+	            left: 15px;
+	            width: 400px;
+	            background: rgba(255, 255, 255, 0.98);
+	            border-radius: 16px;
+	            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+	            padding: 0;
+	            z-index: 1000;
+	            transition: all 0.3s ease;
+	            max-height: calc(100vh - 30px);
+	            display: flex;
+	            flex-direction: column;
+	            overflow: hidden;
+	            backdrop-filter: blur(10px);
+	        }
+	        .panel-header {
+	            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	            color: white;
+	            padding: 20px;
+	            display: flex;
+	            align-items: center;
+	            justify-content: space-between;
+	            flex-shrink: 0;
+	            border-radius: 16px 16px 0 0;
+	        }
+	        .panel-header-left {
+	            display: flex;
+	            align-items: center;
+	            flex: 1;
+	        }
+	        .panel-header .map-icon {
+	            width: 48px;
+	            height: 48px;
+	            margin-right: 15px;
+	            object-fit: contain;
+	            filter: brightness(0) invert(1);
+	        }
+	        .panel-header h2 {
+	            font-size: 16px;
+	            font-weight: 600;
+	            margin: 0;
+	            line-height: 1.3;
+	        }
+	        .version-badge {
+	            font-size: 10px;
+	            opacity: 0.9;
+	            margin-top: 4px;
+	            display: flex;
+	            align-items: center;
+	            gap: 4px;
+	            font-weight: 500;
+	        }
+	        .panel-header-actions {
+	            display: flex;
+	            gap: 8px;
+	        }
+	        .toggle-panel {
+	            background: rgba(255, 255, 255, 0.2);
+	            border: none;
+	            color: white;
+	            width: 32px;
+	            height: 32px;
+	            border-radius: 8px;
+	            cursor: pointer;
+	            transition: all 0.3s;
+	            display: flex;
+	            align-items: center;
+	            justify-content: center;
+	        }
+	        .toggle-panel:hover {
+	            background: rgba(255, 255, 255, 0.3);
+	        }
+	        .help-doc-btn {
+	            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+	            border: none;
+	            color: white;
+	            padding: 6px 14px;
+	            border-radius: 8px;
+	            cursor: pointer;
+	            transition: all 0.3s;
+	            display: flex;
+	            align-items: center;
+	            gap: 6px;
+	            font-size: 12px;
+	            font-weight: 600;
+	            text-decoration: none;
+	            box-shadow: 0 2px 8px rgba(240, 147, 251, 0.4);
+	            animation: glowPulse 2s ease-in-out infinite;
+	        }
+	        .help-doc-btn:hover {
+	            transform: translateY(-2px);
+	            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.6);
+	        }
+	        .help-doc-btn i {
+	            font-size: 14px;
+	        }
+	        @keyframes glowPulse {
+	            0%, 100% {
+	                box-shadow: 0 2px 8px rgba(240, 147, 251, 0.4);
+	            }
+	            50% {
+	                box-shadow: 0 2px 16px rgba(240, 147, 251, 0.7);
+	            }
+	        }
+	        .panel-content {
+	            overflow-y: auto;
+	            flex-grow: 1;
+	            padding: 20px;
+	            min-height: 0; /* 修复Flex布局下内容被截断的问题 */
+	        }
+	        .panel-content.collapsed {
+	            display: none;
+	        }
+	        /* 搜索框优化 */
+	        .search-wrapper {
+	            position: relative;
+	            margin-bottom: 20px;
+	        }
+	        .search-icon {
+	            position: absolute;
+	            left: 15px;
+	            top: 50%;
+	            transform: translateY(-50%);
+	            color: #667eea;
+	            pointer-events: none;
+	        }
+	        #tipinput {
+	            padding-left: 45px;
+	            border-radius: 12px;
+	            border: 2px solid #e0e0e0;
+	            transition: all 0.3s;
+	            height: 48px;
+	        }
+	        #tipinput:focus {
+	            border-color: #667eea;
+	            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
+	        }
+	        /* 新增：POI信息面板样式 */
+	        .selected-poi-panel {
+	            background: #f8f9fa;
+	            border: 1px solid #e9ecef;
+	            border-radius: 12px;
+	            padding: 15px;
+	            margin-bottom: 20px;
+	            display: none;
+	            animation: fadeIn 0.3s ease;
+	        }
+	        .selected-poi-panel.show {
+	            display: block;
+	        }
+	        @keyframes fadeIn {
+	            from { opacity: 0; transform: translateY(-10px); }
+	            to { opacity: 1; transform: translateY(0); }
+	        }
+	        .poi-info-row {
+	            margin-bottom: 8px;
+	            font-size: 13px;
+	            display: flex;
+	        }
+	        .poi-info-row label {
+	            width: 70px;
+	            color: #6c757d;
+	            font-weight: 600;
+	            flex-shrink: 0;
+	        }
+	        .poi-info-row span {
+	            color: #333;
+	            word-break: break-all;
+	        }
+	        .poi-info-row .poi-id {
+	            font-family: 'Consolas', monospace;
+	            color: #667eea;
+	            background: #e9ecef;
+	            padding: 2px 6px;
+	            border-radius: 4px;
+	        }
+	        /* 按钮组优化 */
+	        .btn-group-custom {
+	            display: grid;
+	            grid-template-columns: 1fr 1fr;
+	            gap: 12px;
+	            margin: 20px 0;
+	        }
+	        .btn-custom {
+	            border-radius: 12px;
+	            padding: 12px 16px;
+	            font-weight: 500;
+	            transition: all 0.3s;
+	            display: flex;
+	            align-items: center;
+	            justify-content: center;
+	            gap: 8px;
+	            border: none;
+	            position: relative;
+	            overflow: hidden;
+	            cursor: pointer;
+	            color: white;
+	        }
+	        .btn-custom::before {
+	            content: '';
+	            position: absolute;
+	            top: 0;
+	            left: -100%;
+	            width: 100%;
+	            height: 100%;
+	            background: rgba(255, 255, 255, 0.2);
+	            transition: left 0.3s;
+	        }
+	        .btn-custom:hover::before {
+	            left: 100%;
+	        }
+	        .btn-primary-custom {
+	            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	        }
+	        .btn-success-custom {
+	            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	        }
+	        .btn-danger-custom {
+	            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	        }
+	        .btn-warning-custom {
+	            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	        }
+	        .btn-custom:hover {
+	            transform: translateY(-2px);
+	            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	        }
+	        /* 经纬度输入区域 */
+	        .coords-input-section {
+	            margin: 20px 0;
+	            padding: 15px;
+	            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+	            border-radius: 12px;
+	            border: 2px solid #667eea30;
+	        }
+	        .coords-input-header {
+	            display: flex;
+	            align-items: center;
+	            justify-content: space-between;
+	            margin-bottom: 12px;
+	        }
+	        .coords-input-header h5 {
+	            font-size: 15px;
+	            font-weight: 700;
+	            color: #667eea;
+	            margin: 0;
+	            display: flex;
+	            align-items: center;
+	            gap: 8px;
+	        }
+	        .toggle-coords-btn {
+	            background: #667eea;
+	            color: white;
+	            border: none;
+	            padding: 4px 10px;
+	            border-radius: 6px;
+	            font-size: 12px;
+	            cursor: pointer;
+	            transition: all 0.3s;
+	            display: flex;
+	            align-items: center;
+	            gap: 4px;
+	        }
+	        .toggle-coords-btn:hover {
+	            background: #5a6fd6;
+	        }
+	        .toggle-coords-btn i {
+	            transition: transform 0.3s;
+	        }
+	        .toggle-coords-btn.collapsed i {
+	            transform: rotate(-90deg);
+	        }
+	        .coords-input-body {
+	            overflow: hidden;
+	            transition: max-height 0.3s ease, opacity 0.3s ease;
+	            max-height: 500px;
+	            opacity: 1;
+	        }
+	        .coords-input-body.collapsed {
+	            max-height: 0;
+	            opacity: 0;
+	            margin-bottom: 0;
+	        }
+	        .coords-textarea {
+	            width: 100%;
+	            min-height: 120px;
+	            border-radius: 10px;
+	            border: 2px solid #e0e0e0;
+	            padding: 12px;
+	            font-size: 13px;
+	            font-family: 'Consolas', 'Monaco', monospace;
+	            resize: vertical;
+	            transition: all 0.3s;
+	            line-height: 1.6;
+	        }
+	        .coords-textarea:focus {
+	            border-color: #667eea;
+	            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.2);
+	            outline: none;
+	        }
+	        .coords-format-hint {
+	            font-size: 11px;
+	            color: #6c757d;
+	            margin-top: 8px;
+	            padding: 8px 10px;
+	            background: #f8f9fa;
+	            border-radius: 6px;
+	            line-height: 1.5;
+	        }
+	        .coords-format-hint code {
+	            background: #e9ecef;
+	            padding: 2px 5px;
+	            border-radius: 3px;
+	            font-size: 10px;
+	            color: #495057;
+	        }
+	        .coords-actions {
+	            display: flex;
+	            gap: 8px;
+	            margin-top: 12px;
+	        }
+	        .coords-actions .btn {
+	            flex: 1;
+	            padding: 10px 12px;
+	            border-radius: 10px;
+	            font-size: 13px;
+	            font-weight: 500;
+	            border: none;
+	            cursor: pointer;
+	            transition: all 0.3s;
+	            display: flex;
+	            align-items: center;
+	            justify-content: center;
+	            gap: 6px;
+	        }
+	        .coords-actions .btn-apply {
+	            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	            color: white;
+	        }
+	        .coords-actions .btn-apply:hover {
+	            transform: translateY(-2px);
+	            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+	        }
+	        .coords-actions .btn-clear-input {
+	            background: #f8f9fa;
+	            color: #6c757d;
+	            border: 2px solid #e0e0e0;
+	        }
+	        .coords-actions .btn-clear-input:hover {
+	            background: #e9ecef;
+	        }
+	        .coords-error {
+	            color: #dc3545;
+	            font-size: 12px;
+	            margin-top: 8px;
+	            padding: 8px 10px;
+	            background: #f8d7da;
+	            border-radius: 6px;
+	            display: none;
+	        }
+	        .coords-error.show {
+	            display: block;
+	        }
+	        .coords-success {
+	            color: #667eea;
+	            font-size: 12px;
+	            margin-top: 8px;
+	            padding: 8px 10px;
+	            background: #f0f3ff;
+	            border-radius: 6px;
+	            display: none;
+	        }
+	        .coords-success.show {
+	            display: block;
+	        }
+	        /* JSON导入区域 */
+	        .json-input-section {
+	            margin: 20px 0;
+	            padding: 15px;
+	            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+	            border-radius: 12px;
+	            border: 2px solid #667eea30;
+	        }
+	        .json-input-header {
+	            display: flex;
+	            align-items: center;
+	            justify-content: space-between;
+	            margin-bottom: 12px;
+	        }
+	        .json-input-header h5 {
+	            font-size: 15px;
+	            font-weight: 700;
+	            color: #667eea;
+	            margin: 0;
+	            display: flex;
+	            align-items: center;
+	            gap: 8px;
+	        }
+	        .toggle-json-btn {
+	            background: #667eea;
+	            color: white;
+	            border: none;
+	            padding: 4px 10px;
+	            border-radius: 6px;
+	            font-size: 12px;
+	            cursor: pointer;
+	            transition: all 0.3s;
+	            display: flex;
+	            align-items: center;
+	            gap: 4px;
+	        }
+	        .toggle-json-btn:hover {
+	            background: #5a6fd6;
+	        }
+	        .toggle-json-btn i {
+	            transition: transform 0.3s;
+	        }
+	        .toggle-json-btn.collapsed i {
+	            transform: rotate(-90deg);
+	        }
+	        .json-input-body {
+	            overflow: hidden;
+	            transition: max-height 0.3s ease, opacity 0.3s ease;
+	            max-height: 600px;
+	            opacity: 1;
+	        }
+	        .json-input-body.collapsed {
+	            max-height: 0;
+	            opacity: 0;
+	            margin-bottom: 0;
+	        }
+	        .json-textarea {
+	            width: 100%;
+	            min-height: 200px;
+	            border-radius: 10px;
+	            border: 2px solid #e0e0e0;
+	            padding: 12px;
+	            font-size: 12px;
+	            font-family: 'Consolas', 'Monaco', monospace;
+	            resize: vertical;
+	            transition: all 0.3s;
+	            line-height: 1.6;
+	            background: #fafafa;
+	        }
+	        .json-textarea:focus {
+	            border-color: #667eea;
+	            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.2);
+	            outline: none;
+	        }
+	        .json-format-hint {
+	            font-size: 11px;
+	            color: #6c757d;
+	            margin-top: 8px;
+	            padding: 8px 10px;
+	            background: #f8f9fa;
+	            border-radius: 6px;
+	            line-height: 1.5;
+	        }
+	        .json-format-hint code {
+	            background: #e9ecef;
+	            padding: 2px 5px;
+	            border-radius: 3px;
+	            font-size: 10px;
+	            color: #495057;
+	        }
+	        .json-format-hint .example-title {
+	            color: #667eea;
+	            font-weight: 600;
+	            margin-top: 8px;
+	            display: block;
+	        }
+	        .json-actions {
+	            display: flex;
+	            gap: 8px;
+	            margin-top: 12px;
+	        }
+	        .json-actions .btn {
+	            flex: 1;
+	            padding: 10px 12px;
+	            border-radius: 10px;
+	            font-size: 13px;
+	            font-weight: 500;
+	            border: none;
+	            cursor: pointer;
+	            transition: all 0.3s;
+	            display: flex;
+	            align-items: center;
+	            justify-content: center;
+	            gap: 6px;
+	        }
+	        .json-actions .btn-apply {
+	            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	            color: white;
+	        }
+	        .json-actions .btn-apply:hover {
+	            transform: translateY(-2px);
+	            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+	        }
+	        .json-actions .btn-preview {
+	            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	            color: white;
+	        }
+	        .json-actions .btn-preview:hover {
+	            transform: translateY(-2px);
+	            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+	        }
+	        .json-error {
+	            color: #dc3545;
+	            font-size: 12px;
+	            margin-top: 8px;
+	            padding: 8px 10px;
+	            background: #f8d7da;
+	            border-radius: 6px;
+	            display: none;
+	        }
+	        .json-error.show {
+	            display: block;
+	        }
+	        .json-success {
+	            color: #667eea;
+	            font-size: 12px;
+	            margin-top: 8px;
+	            padding: 8px 10px;
+	            background: #f0f3ff;
+	            border-radius: 6px;
+	            display: none;
+	        }
+	        .json-success.show {
+	            display: block;
+	        }
+	        .json-parse-result {
+	            margin-top: 12px;
+	            padding: 12px;
+	            background: white;
+	            border-radius: 8px;
+	            border: 1px solid #e0e0e0;
+	            max-height: 150px;
+	            overflow-y: auto;
+	            display: none;
+	        }
+	        .json-parse-result.show {
+	            display: block;
+	        }
+	        .json-parse-result .result-item {
+	            display: flex;
+	            justify-content: space-between;
+	            align-items: center;
+	            padding: 8px 0;
+	            border-bottom: 1px solid #f0f0f0;
+	        }
+	        .json-parse-result .result-item:last-child {
+	            border-bottom: none;
+	        }
+	        .json-parse-result .result-name {
+	            font-weight: 600;
+	            color: #333;
+	            flex: 1;
+	        }
+	        .json-parse-result .result-area {
+	            color: #667eea;
+	            font-weight: 600;
+	            margin-left: 10px;
+	        }
+	        /* 面积显示卡片 */
+	        .area-info {
+	            margin: 20px 0;
+	            padding: 20px;
+	            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+	            border-radius: 12px;
+	            border: 2px solid #667eea30;
+	        }
+	        .area-info h5 {
+	            font-size: 16px;
+	            margin-bottom: 15px;
+	            color: #667eea;
+	            font-weight: 700;
+	            display: flex;
+	            align-items: center;
+	            gap: 8px;
+	        }
+	        .area-display {
+	            display: flex;
+	            align-items: baseline;
+	            justify-content: space-between;
+	            margin-bottom: 15px;
+	        }
+	        .area-value {
+	            font-size: 32px;
+	            font-weight: 700;
+	            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	            -webkit-background-clip: text;
+	            -webkit-text-fill-color: transparent;
+	            background-clip: text;
+	        }
+	        .area-unit {
+	            font-size: 14px;
+	            color: #6c757d;
+	            margin-left: 8px;
+	        }
+	        /* 单位选择器 */
+	        .unit-selector {
+	            display: grid;
+	            grid-template-columns: repeat(4, 1fr);
+	            gap: 8px;
+	            margin-top: 15px;
+	        }
+	        .unit-btn {
+	            padding: 8px 12px;
+	            border-radius: 8px;
+	            background: white;
+	            border: 2px solid #e0e0e0;
+	            font-size: 12px;
+	            cursor: pointer;
+	            transition: all 0.3s;
+	            font-weight: 500;
+	        }
+	        .unit-btn.active {
+	            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	            color: white;
+	            border-color: transparent;
+	        }
+	        .unit-btn:hover:not(.active) {
+	            border-color: #667eea;
+	            background: #f8f9fa;
+	        }
+	        /* 历史记录卡片优化 */
+	        .history-section {
+	            margin-top: 20px;
+	        }
+	        .history-header {
+	            display: flex;
+	            justify-content: space-between;
+	            align-items: center;
+	            margin-bottom: 15px;
+	        }
+	        .history-header h5 {
+	            font-size: 16px;
+	            font-weight: 700;
+	            color: #667eea;
+	            display: flex;
+	            align-items: center;
+	            gap: 8px;
+	            margin: 0;
+	        }
+	        #historyList {
+	            max-height: 300px;
+	            overflow-y: auto;
+	            border-radius: 12px;
+	            background-color: #f8f9fa;
+	            padding: 10px;
+	        }
+	        #historyList::-webkit-scrollbar {
+	            width: 6px;
+	        }
+	        #historyList::-webkit-scrollbar-track {
+	            background: #f1f1f1;
+	            border-radius: 10px;
+	        }
+	        #historyList::-webkit-scrollbar-thumb {
+	            background: #667eea;
+	            border-radius: 10px;
+	        }
+	        .history-item {
+	            background: white;
+	            padding: 15px;
+	            border-radius: 10px;
+	            margin-bottom: 10px;
+	            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+	            transition: all 0.3s;
+	            border: 2px solid transparent;
+	        }
+	        .history-item:hover {
+	            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+	            border-color: #667eea30;
+	            transform: translateX(5px);
+	        }
+	        .history-item:last-child {
+	            margin-bottom: 0;
+	        }
+	        .history-item-header {
+	            display: flex;
+	            justify-content: space-between;
+	            align-items: center;
+	            margin-bottom: 12px;
+	        }
+	        .history-item-name {
+	            font-weight: 600;
+	            color: #333;
+	            font-size: 14px;
+	            flex: 1;
+	        }
+	        .history-item-name input {
+	            border: none;
+	            background: transparent;
+	            font-weight: 600;
+	            color: #333;
+	            width: 100%;
+	            padding: 0;
+	        }
+	        .history-item-name input:focus {
+	            outline: none;
+	            border-bottom: 2px solid #667eea;
+	        }
+	        .history-item-area {
+	            color: #667eea;
+	            font-weight: 700;
+	            font-size: 14px;
+	            white-space: nowrap;
+	            margin-left: 10px;
+	        }
+	        .history-item-actions {
+	            display: flex;
+	            gap: 5px;
+	            margin-left: 10px;
+	        }
+	        .history-item-btn {
+	            width: 28px;
+	            height: 28px;
+	            border-radius: 6px;
+	            border: none;
+	            cursor: pointer;
+	            transition: all 0.3s;
+	            display: flex;
+	            align-items: center;
+	            justify-content: center;
+	            font-size: 12px;
+	        }
+	        .btn-highlight {
+	            background: #fff3cd;
+	            color: #856404;
+	        }
+	        .btn-highlight:hover {
+	            background: #ffc107;
+	        }
+	        .btn-delete {
+	            background: #f8d7da;
+	            color: #721c24;
+	        }
+	        .btn-delete:hover {
+	            background: #dc3545;
+	            color: white;
+	        }
+	        .history-item-remark {
+	            margin-top: 10px;
+	        }
+	        .history-item-remark input {
+	            border-radius: 8px;
+	            border: 1px solid #e0e0e0;
+	            padding: 8px 12px;
+	            font-size: 12px;
+	            transition: all 0.3s;
+	            width: 100%;
+	        }
+	        .history-item-remark input:focus {
+	            border-color: #667eea;
+	            box-shadow: 0 0 0 0.15rem rgba(102, 126, 234, 0.15);
+	        }
+	        /* 搜索结果 */
+	        .search-results {
+	            margin-top: 8px;
+	            max-height: 250px;
+	            overflow-y: auto;
+	            border: 2px solid #e0e0e0;
+	            border-radius: 12px;
+	            display: none;
+	            background: white;
+	            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	            position: absolute;
+	            width: 100%;
+	            z-index: 100;
+	        }
+	        .search-item {
+	            padding: 12px 15px;
+	            border-bottom: 1px solid #f1f1f1;
+	            cursor: pointer;
+	            transition: all 0.3s;
+	        }
+	        .search-item:hover {
+	            background: linear-gradient(90deg, #667eea10 0%, transparent 100%);
+	            padding-left: 20px;
+	        }
+	        .search-item:last-child {
+	            border-bottom: none;
+	        }
+	        .search-name {
+	            font-weight: 600;
+	            margin-bottom: 4px;
+	            color: #333;
+	        }
+	        .search-address {
+	            font-size: 12px;
+	            color: #6c757d;
+	        }
+	        /* 隐藏高德地图自带的搜索提示框 */
+	        .amap-sug-result {
+	            display: none !important;
+	        }
+	        /* 地图样式选择器 */
+	        .form-select {
+	            border-radius: 12px;
+	            border: 2px solid #e0e0e0;
+	            padding: 10px 15px;
+	            transition: all 0.3s;
+	            height: 48px;
+	        }
+	        .form-select:focus {
+	            border-color: #667eea;
+	            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
+	        }
+	        .form-label {
+	            font-weight: 600;
+	            margin-bottom: 8px;
+	            color: #667eea;
+	            font-size: 14px;
+	        }
+	        /* 版权信息样式 */
+	        .copyright-info {
+	            margin-top: 20px;
+	            padding: 15px;
+	            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+	            border-radius: 10px;
+	            text-align: center;
+	            font-size: 12px;
+	            color: #6c757d;
+	            border-top: 2px solid #667eea30;
+	        }
+	        .copyright-info .version {
+	            font-weight: 600;
+	            color: #667eea;
+	            margin-bottom: 5px;
+	        }
+	        .copyright-info .author {
+	            display: flex;
+	            align-items: center;
+	            justify-content: center;
+	            gap: 5px;
+	            margin-top: 5px;
+	        }
+	        .copyright-info .author i {
+	            color: #e74c3c;
+	            animation: heartbeat 1.5s infinite;
+	        }
+	        @keyframes heartbeat {
+	            0%,
+	            100% {
+	                transform: scale(1);
+	            }
+	            50% {
+	                transform: scale(1.1);
+	            }
+	        }
+	        .copyright-info .divider {
+	            margin: 8px 0;
+	            height: 1px;
+	            background: linear-gradient(90deg, transparent, #667eea50, transparent);
+	        }
+	        /* 状态栏优化 */
+	        .status-bar {
+	            position: absolute;
+	            bottom: 20px;
+	            left: 50%;
+	            transform: translateX(-50%);
+	            background: rgba(33, 37, 41, 0.95);
+	            color: white;
+	            padding: 12px 24px;
+	            border-radius: 24px;
+	            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+	            font-size: 14px;
+	            z-index: 1000;
+	            display: none;
+	            backdrop-filter: blur(10px);
+	            animation: slideUp 0.3s ease;
+	        }
+	        @keyframes slideUp {
+	            from {
+	                opacity: 0;
+	                transform: translate(-50%, 20px);
+	            }
+	            to {
+	                opacity: 1;
+	                transform: translate(-50%, 0);
+	            }
+	        }
+	        /* 浮动水印 */
+	        .watermark {
+	            position: absolute;
+	            bottom: 60px;
+	            right: 15px;
+	            background: rgba(255, 255, 255, 0.95);
+	            padding: 8px 12px;
+	            border-radius: 8px;
+	            font-size: 11px;
+	            color: #6c757d;
+	            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	            z-index: 999;
+	            backdrop-filter: blur(5px);
+	        }
+	        .watermark i {
+	            color: #667eea;
+	            margin-right: 5px;
+	        }
+	        /* 工具栏 */
+	        .toolbar {
+	            position: absolute;
+	            top: 15px;
+	            right: 15px;
+	            display: flex;
+	            flex-direction: column;
+	            gap: 10px;
+	            z-index: 999;
+	        }
+	        .toolbar-btn {
+	            width: 48px;
+	            height: 48px;
+	            border-radius: 12px;
+	            background: white;
+	            border: none;
+	            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	            cursor: pointer;
+	            transition: all 0.3s;
+	            display: flex;
+	            align-items: center;
+	            justify-content: center;
+	            font-size: 18px;
+	            color: #667eea;
+	            text-decoration: none;
+	        }
+	        .toolbar-btn:hover {
+	            transform: scale(1.1);
+	            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+	            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	            color: white;
+	        }
+	        .toolbar-btn.help-doc {
+	            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+	            color: white;
+	            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+	            animation: toolbarGlow 2s ease-in-out infinite;
+	        }
+	        .toolbar-btn.help-doc:hover {
+	            transform: scale(1.15);
+	            box-shadow: 0 6px 20px rgba(240, 147, 251, 0.6);
+	        }
+	        @keyframes toolbarGlow {
+	            0%, 100% {
+	                box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+	            }
+	            50% {
+	                box-shadow: 0 4px 25px rgba(240, 147, 251, 0.7);
+	            }
+	        }
+	        /* 响应式设计 */
+	        @media (max-width: 768px) {
+	            .control-panel {
+	                width: calc(100% - 30px);
+	                top: 10px;
+	                left: 15px;
+	            }
+	            .btn-group-custom {
+	                grid-template-columns: 1fr;
+	            }
+	            .toolbar {
+	                flex-direction: row;
+	                top: auto;
+	                bottom: 80px;
+	                right: 15px;
+	                left: 15px;
+	                justify-content: center;
+	            }
+	            .watermark {
+	                display: none;
+	            }
+	            .loading-title {
+	                font-size: 20px;
+	            }
+	            .progress-container {
+	                width: 250px;
+	            }
+	            .help-doc-btn span {
+	                display: none;
+	            }
+	        }
+	        /* 空状态 */
+	        .empty-state {
+	            text-align: center;
+	            padding: 40px 20px;
+	            color: #6c757d;
+	        }
+	        .empty-state i {
+	            font-size: 48px;
+	            margin-bottom: 15px;
+	            opacity: 0.3;
+	        }
+	        .empty-state p {
+	            margin: 0;
+	            font-size: 14px;
+	        }
+	        /* 预览标记 */
+	        .preview-marker {
+	            background: #667eea;
+	            color: white;
+	            padding: 4px 8px;
+	            border-radius: 4px;
+	            font-size: 11px;
+	            font-weight: 600;
+	            white-space: nowrap;
+	        }
+	        /* JSON预览标记 */
+	        .json-preview-marker {
+	            background: #667eea;
+	            color: white;
+	            padding: 4px 8px;
+	            border-radius: 4px;
+	            font-size: 11px;
+	            font-weight: 600;
+	            white-space: nowrap;
+	        }
+	        /* 模态框样式 */
+	        .modal-content {
+	            border-radius: 16px;
+	            border: none;
+	            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+	        }
+	        .modal-header {
+	            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	            color: white;
+	            border-radius: 16px 16px 0 0;
+	            border-bottom: none;
+	            padding: 15px 20px;
+	        }
+	        .modal-title {
+	            font-weight: 600;
+	        }
+	        .btn-close {
+	            filter: invert(1);
+	            opacity: 0.8;
+	        }
+	        .btn-close:hover {
+	            opacity: 1;
+	        }
+	        .modal-body {
+	            padding: 20px;
+	            color: #333;
+	        }
+	        .modal-body ol {
+	            padding-left: 1.5em;
+	            line-height: 1.8;
+	        }
+	        .modal-body li strong {
+	            color: #667eea;
+	        }
+	        /* ========== 新增：JSON预览弹窗样式 ========== */
+	        #jsonPreviewModal {
+	            display: none;
+	            position: fixed;
+	            top: 0;
+	            left: 0;
+	            width: 100%;
+	            height: 100%;
+	            background: rgba(0, 0, 0, 0.5);
+	            z-index: 10001;
+	            justify-content: center;
+	            align-items: center;
+	        }
+	        .json-modal-content {
+	            background: white;
+	            width: 80%;
+	            max-width: 900px;
+	            height: 70%;
+	            border-radius: 16px;
+	            position: relative;
+	            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+	            display: flex;
+	            flex-direction: column;
+	            overflow: hidden;
+	        }
+	        .json-modal-header {
+	            padding: 15px 20px;
+	            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	            color: white;
+	            font-weight: 600;
+	            display: flex;
+	            justify-content: space-between;
+	            align-items: center;
+	            flex-shrink: 0;
+	        }
+	        .json-modal-close {
+	            background: rgba(255,255,255,0.2);
+	            border: none;
+	            color: white;
+	            font-size: 20px;
+	            width: 32px;
+	            height: 32px;
+	            border-radius: 50%;
+	            cursor: pointer;
+	            transition: background 0.3s;
+	            display: flex;
+	            justify-content: center;
+	            align-items: center;
+	        }
+	        .json-modal-close:hover {
+	            background: rgba(255,255,255,0.4);
+	        }
+	        .json-modal-body {
+	            flex: 1;
+	            background: white;
+	            position: relative;
+	        }
+	        .json-modal-body iframe {
+	            width: 100%;
+	            height: 100%;
+	            border: none;
+	        }
+	    </style>
+	</head>
+	<body>
+	    <!-- ========== 密码验证层 ========== -->
+	    <div id="authOverlay">
+	        <div class="auth-container">
+	            <img src="shuihui.png" class="auth-logo" alt="Logo"
+	                onerror="this.src='https://img.icons8.com/fluency/96/000000/landplot.png'">
+	            <div class="auth-title">身份验证</div>
+	            <div class="auth-subtitle">请输入访问密码以继续</div>
+	            <div class="auth-input-group">
+	                <input type="password" id="passwordInput" placeholder="请输入密码" autofocus>
+	            </div>
+	            <button class="auth-btn" id="loginBtn">
+	                <i class="fas fa-unlock-alt"></i> 进入系统
+	            </button>
+	            <div class="auth-error" id="authError">
+	                <i class="fas fa-exclamation-circle"></i> 密码错误，请重试
+	            </div>
+	        </div>
+	    </div>
+	    <!-- ========== 主内容区域 (默认隐藏) ========== -->
+	    <div id="mainContent">
+	        <!-- 加载动画遮罩层 -->
+	        <div id="loadingOverlay">
+	            <div class="loading-content">
+	                <div class="loading-logo">
+	                    <i class="fas fa-map-marked-alt" style="font-size: 60px; color: white;"></i>
+	                </div>
+	                <div class="loading-title">土地面积测量工具</div>
+	                <div class="loading-subtitle">扬州市邗江区税务局</div>
+	                <div class="progress-container">
+	                    <div class="progress-bar-loading" id="progressBar"></div>
+	                </div>
+	                <div class="loading-text">
+	                    <span id="loadingText">正在初始化</span>
+	                    <span class="loading-dots">
+	                        <span></span>
+	                        <span></span>
+	                        <span></span>
+	                    </span>
+	                </div>
+	            </div>
+	        </div>
+	        <div id="container"></div>
+	        <div class="control-panel">
+	            <div class="panel-header">
+	                <div class="panel-header-left">
+	                    <img src="shuihui.png" class="map-icon" alt="税务徽标" onerror="this.style.display='none'">
+	                    <div>
+	                        <h2>扬州市税务局<br>土地面积测量工具</h2>
+	                        <div class="version-badge">
+	                            <i class="fas fa-certificate"></i>v2.1.0
+	                        </div>
+	                    </div>
+	                </div>
+	                <div class="panel-header-actions">
+	                    <a href="ABOUT.html" target="_blank" class="help-doc-btn" title="打开帮助文档">
+	                        <i class="fas fa-book-open"></i>
+	                        <span>文档</span>
+	                    </a>
+	                    <button class="toggle-panel" id="helpBtn" title="使用说明">
+	                        <i class="fas fa-question"></i>
+	                    </button>
+	                    <button class="toggle-panel" id="togglePanel">
+	                        <i class="fas fa-chevron-up"></i>
+	                    </button>
+	                </div>
+	            </div>
+	            <div class="panel-content">
+	                <!-- 搜索框 -->
+	                <div class="search-wrapper">
+	                    <i class="fas fa-search search-icon"></i>
+	                    <input type="text" id="tipinput" class="form-control" placeholder="输入企业名称或地址搜索...">
+	                    <div class="search-results" id="searchResults"></div>
+	                </div>
+	                <!-- 新增：选中POI信息面板 -->
+	                <div id="selectedPoiPanel" class="selected-poi-panel">
+	                    <div style="font-weight: 700; color: #667eea; margin-bottom: 10px; font-size: 14px;">
+	                        <i class="fas fa-map-marker-alt"></i> 当前选中位置
+	                    </div>
+	                    <div class="poi-info-row">
+	                        <label>名称：</label>
+	                        <span id="poiName">-</span>
+	                    </div>
+	                    <div class="poi-info-row">
+	                        <label>地址：</label>
+	                        <span id="poiAddress">-</span>
+	                    </div>
+	                    <div class="poi-info-row">
+	                        <label>POI ID：</label>
+	                        <span id="poiIdText" class="poi-id">-</span>
+	                    </div>
+	                    <!-- 修改点：按钮不再跳转，改为触发弹窗 -->
+	                    <button id="poiDetailBtn" class="btn-custom btn-primary-custom" style="text-decoration: none; margin-top: 12px; display: flex; width: 100%;">
+	                        <i class="fas fa-external-link-alt"></i> 前往复制JSON
+	                    </button>
+	                </div>
+	                <!-- 地图样式选择器 -->
+	                <div class="mb-3">
+	                    <label for="mapStyleSelector" class="form-label">
+	                        <i class="fas fa-palette"></i> 地图样式
+	                    </label>
+	                    <select class="form-select" id="mapStyleSelector">
+	                        <option value="amap://styles/normal">标准地图</option>
+	                        <option value="amap://styles/light" selected>银色风格 (推荐)</option>
+	                        <option value="amap://styles/dark">深色模式</option>
+	                        <option value="satellite">卫星地图</option>
+	                        <option value="amap://styles/fresh">清新蓝调</option>
+	                        <option value="amap://styles/darkblue">极夜蓝</option>
+	                        <option value="amap://styles/blue">靛青蓝</option>
+	                        <option value="amap://styles/macaron">马卡龙</option>
+	                        <option value="amap://styles/graffiti">涂鸦风格</option>
+	                        <option value="amap://styles/whitesmoke">远山黛</option>
+	                        <option value="amap://styles/grey">锖青黑</option>
+	                    </select>
+	                </div>
+	                <!-- 操作按钮组 -->
+	                <div class="btn-group-custom">
+	                    <button id="drawArea" class="btn-custom btn-primary-custom">
+	                        <i class="fas fa-draw-polygon"></i> 绘制区域
+	                    </button>
+	                    <button id="undoLast" class="btn-custom btn-warning-custom">
+	                        <i class="fas fa-undo"></i> 撤销上一步
+	                    </button>
+	                    <button id="saveData" class="btn-custom btn-success-custom">
+	                        <i class="fas fa-save"></i> 保存数据
+	                    </button>
+	                    <button id="clearAll" class="btn-custom btn-danger-custom">
+	                        <i class="fas fa-trash-alt"></i> 全部清除
+	                    </button>
+	                </div>
+	                <!-- JSON批量导入区域 -->
+	                <div class="json-input-section">
+	                    <div class="json-input-header">
+	                        <h5>
+	                            <i class="fas fa-file-code"></i> JSON数据批量导入
+	                        </h5>
+	                        <button class="toggle-json-btn collapsed" id="toggleJsonInput">
+	                            <i class="fas fa-chevron-down"></i> 展开
+	                        </button>
+	                    </div>
+	                    <div class="json-input-body collapsed" id="jsonInputBody">
+	                        <textarea id="jsonInput" class="json-textarea" placeholder="粘贴JSON格式数据..."></textarea>
+	                        <div class="json-format-hint">
+	                            <strong>功能说明：</strong><br>
+	                            <code>自动提取</code> JSON中的 <code>spec.mining_shape.shape</code> 字段<br>
+	                            <code>支持批量</code> 导入多个企业数据
+	                        </div>
+	                        <div class="json-error" id="jsonError"></div>
+	                        <div class="json-success" id="jsonSuccess"></div>
+	                        <div class="json-parse-result" id="jsonParseResult"></div>
+	                        <div class="json-actions">
+	                            <button id="previewJson" class="btn btn-preview">
+	                                <i class="fas fa-eye"></i> 预览
+	                            </button>
+	                            <button id="applyJson" class="btn btn-apply">
+	                                <i class="fas fa-check"></i> 应用并测量
+	                            </button>
+	                            <button id="clearJsonInput" class="btn btn-clear-input">
+	                                <i class="fas fa-trash"></i> 清空
+	                            </button>
+	                        </div>
+	                    </div>
+	                </div>
+	                <!-- 经纬度输入区域 -->
+	                <div class="coords-input-section">
+	                    <div class="coords-input-header">
+	                        <h5>
+	                            <i class="fas fa-map-pin"></i> 经纬度批量导入
+	                        </h5>
+	                        <button class="toggle-coords-btn collapsed" id="toggleCoordsInput">
+	                            <i class="fas fa-chevron-down"></i> 展开
+	                        </button>
+	                    </div>
+	                    <div class="coords-input-body collapsed" id="coordsInputBody">
+	                        <textarea id="coordsInput" class="coords-textarea" placeholder="输入经纬度坐标，每行一组..."></textarea>
+	                        <div class="coords-format-hint">
+	                            <strong>格式说明：</strong><br>
+	                            支持以下输入格式：<br>
+	                            <code>经度,纬度</code> 每行一组 - 推荐格式<br>
+	                            <code>经度,纬度;经度,纬度</code> 分号分隔
+	                        </div>
+	                        <div class="coords-error" id="coordsError"></div>
+	                        <div class="coords-success" id="coordsSuccess"></div>
+	                        <div class="coords-actions">
+	                            <button id="previewCoords" class="btn btn-clear-input">
+	                                <i class="fas fa-eye"></i> 预览
+	                            </button>
+	                            <button id="applyCoords" class="btn btn-apply">
+	                                <i class="fas fa-check"></i> 应用并测量
+	                            </button>
+	                            <button id="clearCoordsInput" class="btn btn-clear-input">
+	                                <i class="fas fa-trash"></i> 清空
+	                            </button>
+	                        </div>
+	                    </div>
+	                </div>
+	                <!-- 总面积显示 -->
+	                <div class="area-info" id="totalAreaInfo" style="display: none;">
+	                    <h5>
+	                        <i class="fas fa-chart-area"></i> 总面积统计
+	                    </h5>
+	                    <div class="area-display">
+	                        <div>
+	                            <span class="area-value" id="totalAreaValue">0</span>
+	                            <span class="area-unit" id="totalAreaUnit">平方米</span>
+	                        </div>
+	                    </div>
+	                    <div class="unit-selector">
+	                        <button class="unit-btn active" data-unit="sqm">m²</button>
+	                        <button class="unit-btn" data-unit="mu">亩</button>
+	                        <button class="unit-btn" data-unit="hectare">公顷</button>
+	                        <button class="unit-btn" data-unit="sqkm">km²</button>
+	                    </div>
+	                </div>
+	                <!-- 历史记录 -->
+	                <div class="history-section">
+	                    <div class="history-header">
+	                        <h5><i class="fas fa-history"></i> 测量记录</h5>
+	                        <button id="exportHistory" class="btn-custom btn-success-custom"
+	                            style="padding: 6px 12px; font-size: 12px;">
+	                            <i class="fas fa-file-csv"></i> 导出
+	                        </button>
+	                    </div>
+	                    <div id="historyList">
+	                        <div class="empty-state">
+	                            <i class="fas fa-inbox"></i>
+	                            <p>暂无测量记录<br>点击"绘制区域"开始测量</p>
+	                        </div>
+	                    </div>
+	                </div>
+	                <!-- 版权信息 -->
+	                <div class="copyright-info">
+	                    <div class="version">
+	                        <i class="fas fa-code-branch"></i> 版本 v2.1.0
+	                    </div>
+	                    <div class="divider"></div>
+	                    <div class="author">
+	                        测量数据仅供参考，如有错误请指正 <i class="fas fa-heart"></i>
+	                    </div>
+	                    <div style="margin-top: 8px; font-size: 11px; opacity: 0.7;">
+	                        © 2025 扬州市邗江区税务局 · All Rights Reserved.
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	        <!-- 右侧工具栏 -->
+	        <div class="toolbar">
+	            <a href="ABOUT.HTML" target="_blank" class="toolbar-btn help-doc" title="帮助文档">
+	                <i class="fas fa-book-open"></i>
+	            </a>
+	            <button class="toolbar-btn" id="loadData" title="加载数据">
+	                <i class="fas fa-folder-open"></i>
+	            </button>
+	            <button class="toolbar-btn" id="captureMap" title="截图">
+	                <i class="fas fa-camera"></i>
+	            </button>
+	            <button class="toolbar-btn" id="fullScreen" title="全屏">
+	                <i class="fas fa-expand"></i>
+	            </button>
+	        </div>
+	        <!-- 浮动水印 -->
+	        <div class="watermark">
+	            <i class="fas fa-code"></i> v2.1.0 Professional Edition
+	        </div>
+	        <div class="status-bar" id="statusBar">
+	            <i class="fas fa-info-circle"></i> <span id="statusText">准备就绪</span>
+	        </div>
+	        <!-- 使用说明模态框 -->
+	        <div class="modal fade" id="instructionsModal" tabindex="-1" aria-hidden="true">
+	            <div class="modal-dialog modal-dialog-centered">
+	                <div class="modal-content">
+	                    <div class="modal-header">
+	                        <h5 class="modal-title"><i class="fas fa-info-circle"></i> 使用说明</h5>
+	                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	                    </div>
+	                    <div class="modal-body">
+	                        <ol>
+	                            <li>搜索框定位到目标地点</li>
+	                            <li>点击"绘制区域"开始测量</li>
+	                            <li>单击添加点,双击完成绘制</li>
+	                            <li><strong>新功能：</strong>JSON批量导入，自动提取shape字段</li>
+	                            <li><strong>新功能：</strong>支持批量导入多个企业数据</li>
+	                            <li>可重复绘制多个区域</li>
+	                            <li>鼠标悬停可高亮对应区域</li>
+	                            <li>支持撤销、删除、重命名</li>
+	                            <li>点击"保存数据"可本地保存</li>
+	                            <li>导出CSV获取详细报表</li>
+	                        </ol>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	        <!-- 新增：JSON预览弹窗结构 -->
+	        <div id="jsonPreviewModal">
+	            <div class="json-modal-content">
+	                <div class="json-modal-header">
+	                    <span><i class="fas fa-file-code"></i> POI详情数据</span>
+	                    <button class="json-modal-close" id="closeJsonModal">&times;</button>
+	                </div>
+	                <div class="json-modal-body">
+	                    <iframe id="jsonIframe" src="about:blank"></iframe>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	    <!-- 高德地图API -->
+	    <script>
+	        window._AMapSecurityConfig = {
+	            securityJsCode: 'a048cfa884168ed8300bf427776c0b70',
+	        }
+	    </script>
+	    <script type="text/javascript"
+	        src="https://webapi.amap.com/maps?v=2.0&key=d7b7da2e7c5a6b2bd81fddd096a40713"></script>
+	    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+	    <script type="text/javascript">
+	        // ========== 密码验证逻辑 ==========
+	        const CORRECT_PASSWORD_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
+	        async function sha256(message) {
+	            const msgBuffer = new TextEncoder().encode(message);
+	            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+	            const hashArray = Array.from(new Uint8Array(hashBuffer));
+	            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+	            return hashHex;
+	        }
+	        const authOverlay = document.getElementById('authOverlay');
+	        const mainContent = document.getElementById('mainContent');
+	        const passwordInput = document.getElementById('passwordInput');
+	        const loginBtn = document.getElementById('loginBtn');
+	        const authError = document.getElementById('authError');
+	        async function verifyPassword() {
+	            const inputPass = passwordInput.value;
+	            if (!inputPass) return;
+	            const inputHash = await sha256(inputPass);
+	            if (inputHash === CORRECT_PASSWORD_HASH) {
+	                authOverlay.style.display = 'none';
+	                mainContent.style.display = 'block';
+	                initializeApp();
+	            } else {
+	                authError.classList.add('show');
+	                passwordInput.value = '';
+	                passwordInput.focus();
+	            }
+	        }
+	        loginBtn.addEventListener('click', verifyPassword);
+	        passwordInput.addEventListener('keypress', (e) => {
+	            if (e.key === 'Enter') verifyPassword();
+	        });
+	        window.addEventListener('keydown', (e) => {
+	            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+	                // e.preventDefault();
+	            }
+	        });
+	        // ========== 应用初始化逻辑 ==========
+	        function initializeApp() {
+	            let loadingProgress = 0;
+	            const loadingSteps = [
+	                { progress: 20, text: '正在加载地图资源' },
+	                { progress: 40, text: '正在初始化地图引擎' },
+	                { progress: 60, text: '正在加载插件模块' },
+	                { progress: 80, text: '正在配置界面组件' },
+	                { progress: 100, text: '加载完成' }
+	            ];
+	            let currentStepIndex = 0;
+	            function updateLoadingProgress(progress, text) {
+	                const progressBar = document.getElementById('progressBar');
+	                const loadingText = document.getElementById('loadingText');
+	                if (progressBar) {
+	                    progressBar.style.width = progress + '%';
+	                }
+	                if (loadingText && text) {
+	                    loadingText.textContent = text;
+	                }
+	            }
+	            function nextLoadingStep() {
+	                if (currentStepIndex < loadingSteps.length) {
+	                    const step = loadingSteps[currentStepIndex];
+	                    updateLoadingProgress(step.progress, step.text);
+	                    currentStepIndex++;
+	                }
+	            }
+	            function hideLoadingOverlay() {
+	                updateLoadingProgress(100, '加载完成');
+	                setTimeout(() => {
+	                    const overlay = document.getElementById('loadingOverlay');
+	                    if (overlay) {
+	                        overlay.classList.add('hidden');
+	                        setTimeout(() => {
+	                            overlay.remove();
+	                        }, 500);
+	                    }
+	                }, 300);
+	            }
+	            nextLoadingStep();
+	            var map = null;
+	            var mouseTool = null;
+	            var placeSearch = null;
+	            var autoComplete = null;
+	            var polygons = [];
+	            var markers = [];
+	            var historyData = [];
+	            var currentUnit = 'sqm';
+	            var totalAreaInSquareMeters = 0;
+	            var regionCounter = 0;
+	            var highlightedPolygon = null;
+	            var previewMarkers = [];
+	            var previewPolygon = null;
+	            var jsonPreviewMarkers = [];
+	            var jsonPreviewPolygons = [];
+	            const regionColors = [
+	                '#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe',
+	                '#43e97b', '#38f9d7', '#fa709a', '#fee140', '#30cfd0', '#330867',
+	                '#a855f7', '#ec4899', '#f97316', '#84cc16', '#06b6d4', '#8b5cf6'
+	            ];
+	            nextLoadingStep();
+	            map = new AMap.Map("container", {
+	                resizeEnable: true,
+	                zoom: 12,
+	                center: [119.398015, 32.377528],
+	                mapStyle: "amap://styles/light"
+	            });
+	            map.on('complete', function () {
+	                nextLoadingStep();
+	                initializePlugins();
+	            });
+	            function initializePlugins() {
+	                AMap.plugin(['AMap.PlaceSearch', 'AMap.AutoComplete', 'AMap.MouseTool', 'AMap.GeometryUtil'], function () {
+	                    placeSearch = new AMap.PlaceSearch({ map: map, pageSize: 5 });
+	                    autoComplete = new AMap.AutoComplete({ input: "tipinput", city: "扬州", citylimit: true });
+	                    mouseTool = new AMap.MouseTool(map);
+	                    autoComplete.on("select", handleSearchSelect);
+	                    mouseTool.on('draw', handleDrawFinish);
+	                    nextLoadingStep();
+	                    initializeUI();
+	                });
+	            }
+	            function initializeUI() {
+	                document.getElementById('drawArea').addEventListener('click', startDrawing);
+	                document.getElementById('clearAll').addEventListener('click', clearAll);
+	                document.getElementById('undoLast').addEventListener('click', undoLast);
+	                document.getElementById('saveData').addEventListener('click', saveData);
+	                document.getElementById('loadData').addEventListener('click', loadData);
+	                document.getElementById('exportHistory').addEventListener('click', exportHistoryToCSV);
+	                document.getElementById('captureMap').addEventListener('click', captureMap);
+	                document.getElementById('fullScreen').addEventListener('click', toggleFullScreen);
+	                document.getElementById('togglePanel').addEventListener('click', togglePanel);
+	                document.getElementById('tipinput').addEventListener('input', handleSearchInput);
+	                document.getElementById('helpBtn').addEventListener('click', function () {
+	                    var myModal = new bootstrap.Modal(document.getElementById('instructionsModal'));
+	                    myModal.show();
+	                });
+	                document.getElementById('toggleJsonInput').addEventListener('click', toggleJsonInput);
+	                document.getElementById('previewJson').addEventListener('click', previewJsonOnMap);
+	                document.getElementById('applyJson').addEventListener('click', applyJsonAndMeasure);
+	                document.getElementById('clearJsonInput').addEventListener('click', clearJsonInput);
+	                document.getElementById('toggleCoordsInput').addEventListener('click', toggleCoordsInput);
+	                document.getElementById('previewCoords').addEventListener('click', previewCoordsOnMap);
+	                document.getElementById('applyCoords').addEventListener('click', applyCoordsAndMeasure);
+	                document.getElementById('clearCoordsInput').addEventListener('click', clearCoordsInput);
+	                // 新增：关闭弹窗事件
+	                document.getElementById('closeJsonModal').addEventListener('click', function() {
+	                    document.getElementById('jsonPreviewModal').style.display = 'none';
+	                    document.getElementById('jsonIframe').src = 'about:blank';
+	                });
+	                document.addEventListener('click', (e) => {
+	                    if (!e.target.closest('.control-panel')) {
+	                        document.getElementById('searchResults').style.display = 'none';
+	                    }
+	                });
+	                document.querySelectorAll('.unit-btn').forEach(button => {
+	                    button.addEventListener('click', handleUnitChange);
+	                });
+	                document.getElementById('mapStyleSelector').addEventListener('change', function () {
+	                    const selectedStyle = this.value;
+	                    map.setMapStyle(selectedStyle);
+	                    showStatus(`地图样式已切换`);
+	                });
+	                renderHistoryList();
+	                hideLoadingOverlay();
+	                setTimeout(() => {
+	                    showStatus("已就绪，可以开始测量！");
+	                }, 800);
+	            }
+	            function togglePanel() {
+	                const content = document.querySelector('.panel-content');
+	                const icon = document.querySelector('#togglePanel i');
+	                content.classList.toggle('collapsed');
+	                icon.classList.toggle('fa-chevron-up');
+	                icon.classList.toggle('fa-chevron-down');
+	            }
+	            // ========== JSON批量导入相关功能 ==========
+	            function toggleJsonInput() {
+	                const body = document.getElementById('jsonInputBody');
+	                const btn = document.getElementById('toggleJsonInput');
+	                body.classList.toggle('collapsed');
+	                btn.classList.toggle('collapsed');
+	                if (btn.classList.contains('collapsed')) {
+	                    btn.innerHTML = '<i class="fas fa-chevron-down"></i> 展开';
+	                } else {
+	                    btn.innerHTML = '<i class="fas fa-chevron-up"></i> 收起';
+	                }
+	            }
+	            function parseJsonData(jsonString) {
+	                const results = [];
+	                const errors = [];
+	                try {
+	                    let jsonData;
+	                    try {
+	                        jsonData = JSON.parse(jsonString);
+	                    } catch (e) {
+	                        errors.push('JSON格式错误: ' + e.message);
+	                        return { results, errors };
+	                    }
+	                    let items = [];
+	                    if (Array.isArray(jsonData)) {
+	                        items = jsonData;
+	                    } else if (jsonData.data) {
+	                        items = [jsonData];
+	                    } else {
+	                        items = [jsonData];
+	                    }
+	                    items.forEach((item, index) => {
+	                        const data = item.data || item;
+	                        let shape = null;
+	                        if (data.spec && data.spec.mining_shape && data.spec.mining_shape.shape) {
+	                            shape = data.spec.mining_shape.shape;
+	                        } else if (data.spec && data.spec.shape) {
+	                            shape = data.spec.shape;
+	                        } else if (data.mining_shape && data.mining_shape.shape) {
+	                            shape = data.mining_shape.shape;
+	                        } else if (data.shape) {
+	                            shape = data.shape;
+	                        } else if (data.geometry && data.geometry.coordinates) {
+	                            shape = data.geometry.coordinates;
+	                        }
+	                        let name = `区域 ${index + 1}`;
+	                        if (data.base && data.base.name) {
+	                            name = data.base.name;
+	                        } else if (data.name) {
+	                            name = data.name;
+	                        } else if (data.title) {
+	                            name = data.title;
+	                        } else if (data.base && data.base.title) {
+	                            name = data.base.title;
+	                        }
+	                        if (shape) {
+	                            const coords = parseShapeString(shape);
+	                            if (coords && coords.length >= 3) {
+	                                results.push({ name: name, coords: coords, raw: item });
+	                            } else if (coords && coords.length < 3) {
+	                                errors.push(`"${name}" 的坐标点不足`);
+	                            }
+	                        } else {
+	                            errors.push(`"${name}" 未找到shape字段`);
+	                        }
+	                    });
+	                } catch (e) {
+	                    errors.push('解析错误: ' + e.message);
+	                }
+	                return { results, errors };
+	            }
+	            function parseShapeString(shape) {
+	                if (Array.isArray(shape)) {
+	                    if (shape.length > 0 && Array.isArray(shape[0])) {
+	                        if (typeof shape[0][0] === 'number') return shape;
+	                        else if (Array.isArray(shape[0][0]) && typeof shape[0][0][0] === 'number') return shape[0];
+	                    }
+	                }
+	                if (typeof shape === 'string') {
+	                    const coords = [];
+	                    const points = shape.split(';');
+	                    for (const point of points) {
+	                        const trimmed = point.trim();
+	                        if (!trimmed) continue;
+	                        const cleaned = trimmed.replace(/[()（）【】[\]]/g, '');
+	                        const parts = cleaned.split(',');
+	                        if (parts.length >= 2) {
+	                            const lng = parseFloat(parts[0].trim());
+	                            const lat = parseFloat(parts[1].trim());
+	                            if (!isNaN(lng) && !isNaN(lat) && lng >= 73 && lng <= 135 && lat >= 3 && lat <= 54) {
+	                                coords.push([lng, lat]);
+	                            }
+	                        }
+	                    }
+	                    return coords;
+	                }
+	                return null;
+	            }
+	            function clearJsonPreview() {
+	                if (jsonPreviewMarkers.length > 0) { map.remove(jsonPreviewMarkers); jsonPreviewMarkers = []; }
+	                if (jsonPreviewPolygons.length > 0) { map.remove(jsonPreviewPolygons); jsonPreviewPolygons = []; }
+	            }
+	            function previewJsonOnMap() {
+	                const input = document.getElementById('jsonInput').value;
+	                const errorEl = document.getElementById('jsonError');
+	                const successEl = document.getElementById('jsonSuccess');
+	                const resultEl = document.getElementById('jsonParseResult');
+	                clearJsonPreview();
+	                if (!input.trim()) { errorEl.textContent = '请输入JSON数据'; errorEl.classList.add('show'); successEl.classList.remove('show'); return; }
+	                const { results, errors } = parseJsonData(input);
+	                if (results.length === 0) { errorEl.innerHTML = errors.length > 0 ? '解析失败：<br>' + errors.slice(0, 3).join('<br>') : '无数据'; errorEl.classList.add('show'); return; }
+	                let resultHtml = '<strong>解析结果：</strong>';
+	                results.forEach((item, index) => {
+	                    const area = AMap.GeometryUtil.ringArea(item.coords.map(c => new AMap.LngLat(c[0], c[1])));
+	                    resultHtml += `<div class="result-item"><span class="result-name">${index + 1}. ${item.name}</span><span class="result-area">${formatArea(area, currentUnit)}</span></div>`;
+	                });
+	                resultEl.innerHTML = resultHtml;
+	                resultEl.classList.add('show');
+	                results.forEach((item, index) => {
+	                    const color = regionColors[(regionCounter + index) % regionColors.length];
+	                    const polygon = new AMap.Polygon({ path: item.coords, strokeColor: color, strokeOpacity: 0.6, strokeWeight: 2, fillColor: color, fillOpacity: 0.2, strokeDashStyle: 'dash', zIndex: 99 });
+	                    jsonPreviewPolygons.push(polygon);
+	                    map.add(polygon);
+	                });
+	                if (jsonPreviewPolygons.length > 0) map.setFitView(jsonPreviewPolygons);
+	                successEl.innerHTML = `<i class="fas fa-check-circle"></i> 解析成功！共 ${results.length} 个区域`;
+	                successEl.classList.add('show');
+	                errorEl.classList.remove('show');
+	            }
+	            function applyJsonAndMeasure() {
+	                const input = document.getElementById('jsonInput').value;
+	                if (!input.trim()) return;
+	                const { results, errors } = parseJsonData(input);
+	                if (results.length === 0) return;
+	                clearJsonPreview();
+	                let totalAreas = 0;
+	                results.forEach((item, index) => {
+	                    const color = regionColors[regionCounter % regionColors.length];
+	                    const path = item.coords.map(c => new AMap.LngLat(c[0], c[1]));
+	                    const area = AMap.GeometryUtil.ringArea(path);
+	                    const polygon = new AMap.Polygon({ path: path, strokeColor: color, strokeOpacity: 0.9, strokeWeight: 3, fillColor: color, fillOpacity: 0.3, extData: { id: Date.now() + index, source: 'json' } });
+	                    map.add(polygon); polygons.push(polygon);
+	                    totalAreaInSquareMeters += area; totalAreas += area; regionCounter++;
+	                    const historyItem = { id: polygon.getExtData().id, name: item.name, areaSqm: area, remark: '', color: color, coords: item.coords, source: 'json' };
+	                    historyData.push(historyItem);
+	                    addAreaMarker(polygon, area, historyItem.name);
+	                });
+	                updateTotalAreaDisplay(); renderHistoryList();
+	                if (polygons.length > 0) map.setFitView(polygons);
+	                document.getElementById('jsonInput').value = '';
+	                showStatus(`批量导入成功: ${results.length} 个区域`);
+	            }
+	            function clearJsonInput() {
+	                document.getElementById('jsonInput').value = '';
+	                document.getElementById('jsonError').classList.remove('show');
+	                document.getElementById('jsonSuccess').classList.remove('show');
+	                document.getElementById('jsonParseResult').classList.remove('show');
+	                clearJsonPreview();
+	            }
+	            // ========== 经纬度输入相关功能 ==========
+	            function toggleCoordsInput() {
+	                const body = document.getElementById('coordsInputBody');
+	                const btn = document.getElementById('toggleCoordsInput');
+	                body.classList.toggle('collapsed'); btn.classList.toggle('collapsed');
+	                btn.innerHTML = btn.classList.contains('collapsed') ? '<i class="fas fa-chevron-down"></i> 展开' : '<i class="fas fa-chevron-up"></i> 收起';
+	            }
+	            function parseCoordinates(input) {
+	                const coords = []; const errors = [];
+	                let cleanedInput = input.trim().replace(/;/g, '\n');
+	                const lines = cleanedInput.split('\n');
+	                for (let i = 0; i < lines.length; i++) {
+	                    let line = lines[i].trim(); if (!line) continue;
+	                    let lng, lat; line = line.replace(/[()（）【】[\]]/g, '');
+	                    if (line.includes(',')) { const parts = line.split(','); lng = parseFloat(parts[0]); lat = parseFloat(parts[1]); }
+	                    else if (line.includes(' ')) { const parts = line.split(/\s+/); lng = parseFloat(parts[0]); lat = parseFloat(parts[1]); }
+	                    if (isNaN(lng) || isNaN(lat)) continue;
+	                    if (lng >= 73 && lng <= 135 && lat >= 3 && lat <= 54) coords.push([lng, lat]);
+	                }
+	                return { coords, errors };
+	            }
+	            function clearPreviewMarkers() {
+	                if (previewMarkers.length > 0) { map.remove(previewMarkers); previewMarkers = []; }
+	                if (previewPolygon) { map.remove(previewPolygon); previewPolygon = null; }
+	            }
+	            function previewCoordsOnMap() {
+	                const input = document.getElementById('coordsInput').value;
+	                const errorEl = document.getElementById('coordsError');
+	                const successEl = document.getElementById('coordsSuccess');
+	                clearPreviewMarkers();
+	                const { coords, errors } = parseCoordinates(input);
+	                if (coords.length < 3) { errorEl.textContent = '至少需要3个坐标点'; errorEl.classList.add('show'); return; }
+	                const color = regionColors[regionCounter % regionColors.length];
+	                coords.forEach((coord, index) => {
+	                    const marker = new AMap.Marker({ position: coord, content: `<div class="preview-marker">${index + 1}</div>`, offset: new AMap.Pixel(-20, -10), zIndex: 100 });
+	                    previewMarkers.push(marker); map.add(marker);
+	                });
+	                previewPolygon = new AMap.Polygon({ path: coords, strokeColor: color, strokeOpacity: 0.6, strokeWeight: 2, fillColor: color, fillOpacity: 0.2, strokeDashStyle: 'dash', zIndex: 99 });
+	                map.add(previewPolygon); map.setFitView(previewMarkers);
+	                const area = AMap.GeometryUtil.ringArea(coords.map(c => new AMap.LngLat(c[0], c[1])));
+	                successEl.innerHTML = `<i class="fas fa-check-circle"></i> 预览成功！预估面积：${formatArea(area, currentUnit)}`;
+	                successEl.classList.add('show'); errorEl.classList.remove('show');
+	            }
+	            function applyCoordsAndMeasure() {
+	                const input = document.getElementById('coordsInput').value;
+	                const { coords } = parseCoordinates(input);
+	                if (coords.length < 3) return;
+	                clearPreviewMarkers();
+	                const color = regionColors[regionCounter % regionColors.length];
+	                const path = coords.map(c => new AMap.LngLat(c[0], c[1]));
+	                const area = AMap.GeometryUtil.ringArea(path);
+	                const polygon = new AMap.Polygon({ path: path, strokeColor: color, strokeOpacity: 0.9, strokeWeight: 3, fillColor: color, fillOpacity: 0.3, extData: { id: Date.now(), source: 'coords' } });
+	                map.add(polygon); polygons.push(polygon); totalAreaInSquareMeters += area; regionCounter++;
+	                const historyItem = { id: polygon.getExtData().id, name: `区域 ${regionCounter} (坐标)`, areaSqm: area, remark: '', color: color, coords: coords, source: 'coords' };
+	                historyData.push(historyItem);
+	                addAreaMarker(polygon, area, historyItem.name);
+	                updateTotalAreaDisplay(); renderHistoryList(); map.setFitView([polygon]);
+	                document.getElementById('coordsInput').value = '';
+	                showStatus(`区域 ${regionCounter} 测量完成`);
+	            }
+	            function clearCoordsInput() {
+	                document.getElementById('coordsInput').value = '';
+	                document.getElementById('coordsError').classList.remove('show');
+	                document.getElementById('coordsSuccess').classList.remove('show');
+	                clearPreviewMarkers();
+	            }
+	            // ========== 搜索功能修改 ==========
+	            function handleSearchSelect(e) {
+	                document.getElementById('searchResults').style.display = 'none';
+	                // 获取POI信息并更新面板
+	                const poiId = e.poi.id;
+	                const poiName = e.poi.name;
+	                const poiAddress = e.poi.address || e.poi.district || '未知地址';
+	                const panel = document.getElementById('selectedPoiPanel');
+	                // 修改点：获取按钮元素而非链接
+	                const btn = document.getElementById('poiDetailBtn');
+	                if(poiId) {
+	                    document.getElementById('poiName').textContent = poiName;
+	                    document.getElementById('poiAddress').textContent = poiAddress;
+	                    document.getElementById('poiIdText').textContent = poiId;
+	                    // 修改点：绑定点击事件打开弹窗
+	                    btn.onclick = function() {
+	                        const url = `https://www.amap.com/detail/get/detail?id=${poiId}`;
+	                        document.getElementById('jsonIframe').src = url;
+	                        document.getElementById('jsonPreviewModal').style.display = 'flex';
+	                    };
+	                    panel.classList.add('show');
+	                } else {
+	                    panel.classList.remove('show');
+	                }
+	                // 原有的地图定位逻辑
+	                placeSearch.setCity(e.poi.adcode);
+	                placeSearch.search(e.poi.name, (status, result) => {
+	                    if (status === 'complete' && result.poiList.pois.length > 0) {
+	                        const poi = result.poiList.pois[0];
+	                        if (poi && poi.location) { map.setZoom(17); map.setCenter(poi.location); showStatus(`已定位到: ${poi.name}`); }
+	                    }
+	                });
+	            }
+	            function handleSearchInput(e) {
+	                const keyword = e.target.value.trim();
+	                const searchResults = document.getElementById('searchResults');
+	                if (keyword.length < 2) { searchResults.style.display = 'none'; return; }
+	                autoComplete.search(keyword, (status, result) => {
+	                    if (status === 'complete' && result.tips) {
+	                        let html = '';
+	                        // 增加 data-id 属性
+	                        result.tips.forEach(tip => { 
+	                            html += `<div class="search-item" data-name="${tip.name}" data-adcode="${tip.adcode}" data-id="${tip.id}" data-address="${tip.address || tip.district}">
+	                                <div class="search-name">${tip.name}</div>
+	                                <div class="search-address">${tip.district || ''} ${tip.address || ''}</div>
+	                            </div>`; 
+	                        });
+	                        searchResults.innerHTML = html; searchResults.style.display = 'block';
+	                        Array.from(searchResults.getElementsByClassName('search-item')).forEach(item => {
+	                            item.addEventListener('click', function () { 
+	                                handleSearchSelect({ 
+	                                    poi: { 
+	                                        name: this.getAttribute('data-name'), 
+	                                        adcode: this.getAttribute('data-adcode'),
+	                                        id: this.getAttribute('data-id'),
+	                                        address: this.getAttribute('data-address')
+	                                    } 
+	                                }); 
+	                            });
+	                        });
+	                    } else { searchResults.style.display = 'none'; }
+	                });
+	            }
+	            function startDrawing() {
+	                clearPreviewMarkers(); clearJsonPreview();
+	                const color = regionColors[regionCounter % regionColors.length];
+	                mouseTool.polygon({ strokeColor: color, strokeOpacity: 0.9, strokeWeight: 3, fillColor: color, fillOpacity: 0.3, extData: { id: Date.now(), source: 'draw' } });
+	                showStatus("开始绘制，单击添加点，双击完成");
+	            }
+	            function handleDrawFinish(event) {
+	                const polygon = event.obj; mouseTool.close();
+	                const area = AMap.GeometryUtil.ringArea(polygon.getPath());
+	                if (area === 0) { map.remove(polygon); showStatus("绘制无效"); return; }
+	                regionCounter++; polygons.push(polygon); totalAreaInSquareMeters += area;
+	                const coords = polygon.getPath().map(p => [p.lng, p.lat]);
+	                const historyItem = { id: polygon.getExtData().id, name: `区域 ${regionCounter}`, areaSqm: area, remark: '', color: regionColors[(regionCounter - 1) % regionColors.length], coords: coords, source: 'draw' };
+	                historyData.push(historyItem);
+	                addAreaMarker(polygon, area, historyItem.name);
+	                updateTotalAreaDisplay(); renderHistoryList();
+	                showStatus(`区域 ${regionCounter} 测量完成: ${formatArea(area, currentUnit)}`);
+	            }
+	            function undoLast() {
+	                if (polygons.length === 0) return;
+	                const lastPolygon = polygons.pop(); const lastMarker = markers.pop(); const lastHistory = historyData.pop();
+	                map.remove(lastPolygon); map.remove(lastMarker);
+	                totalAreaInSquareMeters -= lastHistory.areaSqm; regionCounter--;
+	                updateTotalAreaDisplay(); renderHistoryList(); showStatus("已撤销");
+	            }
+	            function clearAll() {
+	                if (polygons.length === 0) return;
+	                if (!confirm('确定要清除所有测量数据吗？')) return;
+	                mouseTool.close(true); map.remove(polygons); map.remove(markers); clearPreviewMarkers(); clearJsonPreview();
+	                polygons = []; markers = []; historyData = []; totalAreaInSquareMeters = 0; regionCounter = 0;
+	                updateTotalAreaDisplay(); renderHistoryList(); showStatus("已清除所有数据");
+	            }
+	            function deleteRegion(id) {
+	                const index = historyData.findIndex(h => h.id === id); if (index === -1) return;
+	                const item = historyData[index];
+	                const polygon = polygons.find(p => p.getExtData().id === id);
+	                const marker = markers.find(m => m.getExtData().polygonId === id);
+	                if (polygon) { map.remove(polygon); polygons = polygons.filter(p => p.getExtData().id !== id); }
+	                if (marker) { map.remove(marker); markers = markers.filter(m => m.getExtData().polygonId !== id); }
+	                totalAreaInSquareMeters -= item.areaSqm; historyData.splice(index, 1);
+	                updateTotalAreaDisplay(); renderHistoryList(); showStatus(`已删除 ${item.name}`);
+	            }
+	            function highlightRegion(id) {
+	                const polygon = polygons.find(p => p.getExtData().id === id); if (!polygon) return;
+	                if (highlightedPolygon) { highlightedPolygon.setOptions({ strokeWeight: 3, fillOpacity: 0.3 }); }
+	                polygon.setOptions({ strokeWeight: 5, fillOpacity: 0.5 });
+	                highlightedPolygon = polygon; map.setFitView([polygon]);
+	            }
+	            function unhighlightRegion() { if (highlightedPolygon) { highlightedPolygon.setOptions({ strokeWeight: 3, fillOpacity: 0.3 }); highlightedPolygon = null; } }
+	            function handleUnitChange() {
+	                document.querySelectorAll('.unit-btn').forEach(btn => btn.classList.remove('active'));
+	                this.classList.add('active'); currentUnit = this.getAttribute('data-unit');
+	                updateTotalAreaDisplay(); updateAllMarkers(); renderHistoryList();
+	            }
+	            function addAreaMarker(polygon, areaSqm, name) {
+	                const text = new AMap.Text({
+	                    text: `${name}: ${formatArea(areaSqm, currentUnit)}`, position: polygon.getBounds().getCenter(),
+	                    style: { 'background': 'linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%)', 'border': 'none', 'color': 'white', 'padding': '8px 12px', 'border-radius': '8px', 'font-size': '12px', 'font-weight': '600', 'box-shadow': '0 2px 8px rgba(0,0,0,0.2)' },
+	                    extData: { polygonId: polygon.getExtData().id, areaSqm: areaSqm }
+	                });
+	                markers.push(text); map.add(text);
+	            }
+	            function updateAllMarkers() { markers.forEach(marker => { const historyItem = historyData.find(h => h.id === marker.getExtData().polygonId); if (historyItem) marker.setText(`${historyItem.name}: ${formatArea(marker.getExtData().areaSqm, currentUnit)}`); }); }
+	            function updateTotalAreaDisplay() {
+	                document.getElementById('totalAreaValue').textContent = formatNumber(convertArea(totalAreaInSquareMeters, currentUnit));
+	                document.getElementById('totalAreaUnit').textContent = getUnitText(currentUnit);
+	                document.getElementById('totalAreaInfo').style.display = totalAreaInSquareMeters > 0 ? 'block' : 'none';
+	            }
+	            function renderHistoryList() {
+	                const listEl = document.getElementById('historyList');
+	                if (historyData.length === 0) { listEl.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><p>暂无测量记录</p></div>`; return; }
+	                listEl.innerHTML = '';
+	                historyData.forEach((item) => {
+	                    const itemEl = document.createElement('div'); itemEl.className = 'history-item';
+	                    itemEl.innerHTML = `
+	                        <div class="history-item-header">
+	                            <div class="history-item-name"><input type="text" value="${item.name}" data-id="${item.id}" class="name-input"></div>
+	                            <div class="history-item-area">${formatArea(item.areaSqm, currentUnit)}</div>
+	                            <div class="history-item-actions">
+	                                <button class="history-item-btn btn-highlight" data-id="${item.id}" title="高亮"><i class="fas fa-eye"></i></button>
+	                                <button class="history-item-btn btn-delete" data-id="${item.id}" title="删除"><i class="fas fa-trash"></i></button>
+	                            </div>
+	                        </div>`;
+	                    listEl.appendChild(itemEl);
+	                });
+	                listEl.querySelectorAll('.name-input').forEach(input => { input.addEventListener('change', (e) => { const item = historyData.find(h => h.id === parseInt(e.target.dataset.id)); if (item) { item.name = e.target.value; updateAllMarkers(); } }); });
+	                listEl.querySelectorAll('.btn-highlight').forEach(btn => { btn.addEventListener('click', (e) => { highlightRegion(parseInt(e.currentTarget.dataset.id)); }); });
+	                listEl.querySelectorAll('.btn-delete').forEach(btn => { btn.addEventListener('click', (e) => { if (confirm('确定删除?')) deleteRegion(parseInt(e.currentTarget.dataset.id)); }); });
+	                listEl.querySelectorAll('.history-item').forEach(item => {
+	                    const btns = item.querySelectorAll('.history-item-btn');
+	                    if (btns.length > 0) { const id = parseInt(btns[0].dataset.id); item.addEventListener('mouseenter', () => highlightRegion(id)); item.addEventListener('mouseleave', () => unhighlightRegion()); }
+	                });
+	            }
+	            function saveData() {
+	                if (historyData.length === 0) return;
+	                const data = { version: '2.1.0', timestamp: new Date().toISOString(), totalArea: totalAreaInSquareMeters, regionCounter: regionCounter, regions: historyData, polygonPaths: polygons.map(p => ({ id: p.getExtData().id, path: p.getPath().map(point => [point.lng, point.lat]) })) };
+	                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+	                const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `data.json`; link.click();
+	            }
+	            function loadData() {
+	                const input = document.createElement('input'); input.type = 'file'; input.accept = '.json';
+	                input.onchange = (e) => {
+	                    const file = e.target.files[0]; if (!file) return;
+	                    const reader = new FileReader();
+	                    reader.onload = (event) => {
+	                        try {
+	                            const data = JSON.parse(event.target.result); clearAll();
+	                            totalAreaInSquareMeters = data.totalArea; regionCounter = data.regionCounter; historyData = data.regions || [];
+	                            if (data.polygonPaths) {
+	                                data.polygonPaths.forEach((pathData, index) => {
+	                                    const historyItem = historyData.find(h => h.id === pathData.id); if (!historyItem) return;
+	                                    const polygon = new AMap.Polygon({ path: pathData.path, strokeColor: historyItem.color, strokeOpacity: 0.9, strokeWeight: 3, fillColor: historyItem.color, fillOpacity: 0.3, extData: { id: pathData.id, source: historyItem.source } });
+	                                    map.add(polygon); polygons.push(polygon); addAreaMarker(polygon, historyItem.areaSqm, historyItem.name);
+	                                });
+	                            }
+	                            updateTotalAreaDisplay(); renderHistoryList(); map.setFitView();
+	                        } catch (err) { alert("文件格式错误"); }
+	                    };
+	                    reader.readAsText(file);
+	                };
+	                input.click();
+	            }
+	            function exportHistoryToCSV() {
+	                if (historyData.length === 0) return;
+	                let csv = "名称,面积(平方米),面积(亩)\r\n";
+	                historyData.forEach(item => { csv += `${item.name},${item.areaSqm.toFixed(2)},${convertArea(item.areaSqm, 'mu').toFixed(4)}\r\n`; });
+	                const blob = new Blob([csv], { type: 'text/csv' });
+	                const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'report.csv'; link.click();
+	            }
+	            function captureMap() { showStatus("请使用系统截图工具"); }
+	            function toggleFullScreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+	            function convertArea(areaSqm, unit) { switch (unit) { case 'mu': return areaSqm * 0.0015; case 'hectare': return areaSqm / 10000; case 'sqkm': return areaSqm / 1000000; default: return areaSqm; } }
+	            function getUnitText(unit) { return { sqm: '平方米', mu: '亩', hectare: '公顷', sqkm: '平方千米' }[unit] || '平方米'; }
+	            function formatNumber(num) { return num === 0 ? '0' : num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 }); }
+	            function formatArea(areaSqm, unit) { return `${formatNumber(convertArea(areaSqm, unit))} ${getUnitText(unit)}`; }
+	            function showStatus(message, duration = 3000) { const statusBar = document.getElementById('statusBar'); document.getElementById('statusText').textContent = message; statusBar.style.display = 'block'; setTimeout(() => { statusBar.style.display = 'none'; }, duration); }
+	        }
+	    </script>
+	</body>
+	</html>
