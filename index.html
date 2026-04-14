@@ -1479,20 +1479,23 @@
 	                    </select>
 	                </div>
 	                <!-- 操作按钮组 -->
-	                <div class="btn-group-custom">
-	                    <button id="drawArea" class="btn-custom btn-primary-custom">
-	                        <i class="fas fa-draw-polygon"></i> 绘制区域
-	                    </button>
-	                    <button id="undoLast" class="btn-custom btn-warning-custom">
-	                        <i class="fas fa-undo"></i> 撤销上一步
-	                    </button>
-	                    <button id="saveData" class="btn-custom btn-success-custom">
-	                        <i class="fas fa-save"></i> 保存数据
-	                    </button>
-	                    <button id="clearAll" class="btn-custom btn-danger-custom">
-	                        <i class="fas fa-trash-alt"></i> 全部清除
-	                    </button>
-	                </div>
+                <div class="btn-group-custom">
+                    <button id="drawArea" class="btn-custom btn-primary-custom">
+                        <i class="fas fa-draw-polygon"></i> 绘制区域
+                    </button>
+                    <button id="undoLast" class="btn-custom btn-warning-custom">
+                        <i class="fas fa-undo"></i> 撤销上一步
+                    </button>
+                    <button id="saveData" class="btn-custom btn-success-custom">
+                        <i class="fas fa-save"></i> 保存数据
+                    </button>
+                    <button id="clearAll" class="btn-custom btn-danger-custom">
+                        <i class="fas fa-trash-alt"></i> 全部清除
+                    </button>
+                    <button id="togglePresets" class="btn-custom btn-info-custom">
+                        <i class="fas fa-map-marker-alt"></i> 显示预设
+                    </button>
+                </div>
 	                <!-- JSON批量导入区域 -->
 	                <div class="json-input-section">
 	                    <div class="json-input-header">
@@ -1770,8 +1773,13 @@
 	            var previewMarkers = [];
 	            var previewPolygon = null;
 	            var jsonPreviewMarkers = [];
-	            var jsonPreviewPolygons = [];
-	            const regionColors = [
+            var jsonPreviewPolygons = [];
+            // 开发者预设区域
+            var developerPresets = [];
+            var presetPolygons = [];
+            var presetMarkers = [];
+            var presetsVisible = false;
+            const regionColors = [
 	                '#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe',
 	                '#43e97b', '#38f9d7', '#fa709a', '#fee140', '#30cfd0', '#330867',
 	                '#a855f7', '#ec4899', '#f97316', '#84cc16', '#06b6d4', '#8b5cf6'
@@ -1835,15 +1843,16 @@
 	                    button.addEventListener('click', handleUnitChange);
 	                });
 	                document.getElementById('mapStyleSelector').addEventListener('change', function () {
-	                    const selectedStyle = this.value;
-	                    map.setMapStyle(selectedStyle);
-	                    showStatus(`地图样式已切换`);
-	                });
-	                renderHistoryList();
-	                hideLoadingOverlay();
-	                setTimeout(() => {
-	                    showStatus("已就绪，可以开始测量！");
-	                }, 800);
+                    const selectedStyle = this.value;
+                    map.setMapStyle(selectedStyle);
+                    showStatus(`地图样式已切换`);
+                });
+                document.getElementById('togglePresets').addEventListener('click', togglePresets);
+                renderHistoryList();
+                hideLoadingOverlay();
+                setTimeout(() => {
+                    showStatus("已就绪，可以开始测量！");
+                }, 800);
 	            }
 	            function togglePanel() {
 	                const content = document.querySelector('.panel-content');
@@ -2276,7 +2285,157 @@
 	            function formatNumber(num) { return num === 0 ? '0' : num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 }); }
 	            function formatArea(areaSqm, unit) { return `${formatNumber(convertArea(areaSqm, unit))} ${getUnitText(unit)}`; }
 	            function showStatus(message, duration = 3000) { const statusBar = document.getElementById('statusBar'); document.getElementById('statusText').textContent = message; statusBar.style.display = 'block'; setTimeout(() => { statusBar.style.display = 'none'; }, duration); }
-	        }
+            
+            // 加载预设数据
+            function loadPresetData() {
+                console.log('===== 开始加载预设数据 =====');
+                console.log('当前页面URL:', window.location.href);
+                
+                // 直接使用当前目录下的preset.json文件
+                const path = 'preset.json';
+                console.log('尝试加载预设文件，路径:', path);
+                
+                console.log('开始发起fetch请求');
+                fetch(path)
+                    .then(response => {
+                        console.log('预设文件响应状态:', response.status);
+                        console.log('预设文件响应URL:', response.url);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        console.log('预设文件加载成功，开始读取内容');
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('预设文件内容:', data);
+                        console.log('数据长度:', data.length);
+                        
+                        // 验证数据格式
+                        const validData = data.filter(item => {
+                            return item.name && item.shape && Array.isArray(item.shape) && item.shape.length >= 3;
+                        });
+                        
+                        console.log('验证后的数据长度:', validData.length);
+                        if (validData.length > 0) {
+                            // 加载数据到地图
+                            console.log('开始加载预设数据到地图...');
+                            loadPresetToMap(validData);
+                            console.log('预设数据加载完成');
+                            showStatus(`成功加载 ${validData.length} 个预设区域`);
+                        } else {
+                            console.log('没有有效数据');
+                            showStatus('预设文件中没有有效数据');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('加载预设文件失败:', error);
+                        showStatus('加载预设文件失败');
+                    });
+            }
+            
+            // 处理预设数据并加载到地图
+            function loadPresetToMap(data) {
+                console.log('===== 开始处理预设数据 =====');
+                console.log('数据长度:', data.length);
+                developerPresets = [];
+                presetPolygons = [];
+                presetMarkers = [];
+                
+                data.forEach((item, index) => {
+                    console.log('处理第', index + 1, '条数据');
+                    const { name, shape } = item;
+                    
+                    if (shape && shape.length >= 3) {
+                        console.log('坐标点数量:', shape.length, '，符合要求');
+                        const color = regionColors[index % regionColors.length];
+                        console.log('使用颜色:', color);
+                        const path = shape.map(c => new AMap.LngLat(c[0], c[1]));
+                        console.log('创建路径完成');
+                        const area = AMap.GeometryUtil.ringArea(path);
+                        console.log('计算面积:', area, '平方米');
+                        
+                        const preset = {
+                            id: `preset_${index}`,
+                            name: name,
+                            coords: shape,
+                            areaSqm: area,
+                            color: color
+                        };
+                        
+                        developerPresets.push(preset);
+                        console.log('添加预设区域:', preset);
+                        
+                        const polygon = new AMap.Polygon({
+                            path: path,
+                            strokeColor: color,
+                            strokeOpacity: 0.9,
+                            strokeWeight: 3,
+                            fillColor: color,
+                            fillOpacity: 0.3,
+                            extData: { id: preset.id, source: 'preset' }
+                        });
+                        console.log('创建多边形完成');
+                        map.add(polygon);
+                        presetPolygons.push(polygon);
+                        console.log('添加多边形到地图');
+                        
+                        const text = new AMap.Text({
+                            text: `${name}: ${formatArea(area, currentUnit)}`,
+                            position: polygon.getBounds().getCenter(),
+                            style: {
+                                'background': `linear-gradient(135deg, ${color} 0%, ${color}80 100%)`,
+                                'border': 'none',
+                                'color': 'white',
+                                'padding': '8px 12px',
+                                'border-radius': '8px',
+                                'font-size': '12px',
+                                'font-weight': '600',
+                                'box-shadow': '0 2px 8px rgba(0,0,0,0.2)'
+                            },
+                            extData: { polygonId: preset.id, areaSqm: area }
+                        });
+                        console.log('创建文本标注完成');
+                        map.add(text);
+                        presetMarkers.push(text);
+                        console.log('添加文本标注到地图');
+                    } else {
+                        console.log('坐标点不足3个，跳过');
+                    }
+                });
+                
+                console.log('处理完成，共添加', presetPolygons.length, '个预设区域');
+                if (presetPolygons.length > 0) {
+                    console.log('设置地图视野以显示所有预设区域');
+                    map.setFitView(presetPolygons);
+                    showStatus(`成功加载 ${presetPolygons.length} 个预设区域`);
+                } else {
+                    console.log('没有添加任何预设区域');
+                    showStatus('没有加载到预设区域');
+                }
+            }
+            
+            // 显示/关闭预设地图区域
+            function togglePresets() {
+                const button = document.getElementById('togglePresets');
+                if (presetsVisible) {
+                    // 关闭预设区域
+                    if (presetPolygons.length > 0) {
+                        map.remove(presetPolygons);
+                        map.remove(presetMarkers);
+                        presetPolygons = [];
+                        presetMarkers = [];
+                    }
+                    button.innerHTML = '<i class="fas fa-map-marker-alt"></i> 显示预设';
+                    presetsVisible = false;
+                    showStatus('已关闭预设区域');
+                } else {
+                    // 显示预设区域
+                    loadPresetData();
+                    button.innerHTML = '<i class="fas fa-map-marker-alt"></i> 关闭预设';
+                    presetsVisible = true;
+                }
+            }
+        }
 	    </script>
 	</body>
 	</html>
