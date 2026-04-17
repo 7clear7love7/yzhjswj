@@ -471,6 +471,9 @@
 	        .btn-warning-custom {
 	            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 	        }
+	        .btn-info-custom {
+	            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	        }
 	        .btn-custom:hover {
 	            transform: translateY(-2px);
 	            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -632,22 +635,30 @@
 	            border: 2px solid #667eea30;
 	        }
 	        .json-input-header {
-	            display: flex;
-	            align-items: center;
-	            justify-content: space-between;
-	            margin-bottom: 12px;
-	        }
-	        .json-input-header h5 {
-	            font-size: 15px;
-	            font-weight: 700;
-	            color: #667eea;
-	            margin: 0;
-	            display: flex;
-	            align-items: center;
-	            gap: 8px;
-	        }
-	        .toggle-json-btn {
-	            background: #667eea;
+            margin-bottom: 12px;
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .header-top h5 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #667eea;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .json-input-header .json-input-hint {
+            margin: 0 0 12px 0;
+            font-size: 12px;
+            color: #666;
+        }
+        .toggle-json-btn {
+            background: #667eea;
 	            color: white;
 	            border: none;
 	            padding: 4px 10px;
@@ -1497,15 +1508,18 @@
                     </button>
                 </div>
 	                <!-- JSON批量导入区域 -->
-	                <div class="json-input-section">
-	                    <div class="json-input-header">
-	                        <h5>
-	                            <i class="fas fa-file-code"></i> JSON数据批量导入
-	                        </h5>
-	                        <button class="toggle-json-btn collapsed" id="toggleJsonInput">
-	                            <i class="fas fa-chevron-down"></i> 展开
-	                        </button>
-	                    </div>
+                <div class="json-input-section">
+                    <div class="json-input-header">
+                        <div class="header-top">
+                            <h5>
+                                <i class="fas fa-file-code"></i> JSON数据批量导入
+                            </h5>
+                            <button class="toggle-json-btn collapsed" id="toggleJsonInput">
+                                <i class="fas fa-chevron-down"></i> 展开
+                            </button>
+                        </div>
+                        <p class="json-input-hint">由于高德地图接口限制，使用此功能前请先登录高德地图，<a href="https://www.amap.com" target="_blank" style="text-decoration: underline; color: #667eea;">点此登录</a></p>
+                    </div>
 	                    <div class="json-input-body collapsed" id="jsonInputBody">
 	                        <textarea id="jsonInput" class="json-textarea" placeholder="粘贴JSON格式数据..."></textarea>
 	                        <div class="json-format-hint">
