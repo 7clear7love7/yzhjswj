@@ -1812,7 +1812,7 @@
 	            function initializePlugins() {
 	                AMap.plugin(['AMap.PlaceSearch', 'AMap.AutoComplete', 'AMap.MouseTool', 'AMap.GeometryUtil'], function () {
 	                    placeSearch = new AMap.PlaceSearch({ map: map, pageSize: 5 });
-	                    autoComplete = new AMap.AutoComplete({ input: "tipinput", city: "扬州", citylimit: true });
+	                    autoComplete = new AMap.AutoComplete({ input: "tipinput", city: "扬州", citylimit: false });
 	                    mouseTool = new AMap.MouseTool(map);
 	                    autoComplete.on("select", handleSearchSelect);
 	                    mouseTool.on('draw', handleDrawFinish);
