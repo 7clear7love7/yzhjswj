@@ -1506,6 +1506,9 @@
                     <button id="togglePresets" class="btn-custom btn-info-custom">
                         <i class="fas fa-map-marker-alt"></i> 显示预设
                     </button>
+                    <button id="toggleLandLevels" class="btn-custom btn-info-custom">
+                        <i class="fas fa-layer-group"></i> 土地等级
+                    </button>
                 </div>
 	                <!-- JSON批量导入区域 -->
                 <div class="json-input-section">
@@ -1793,6 +1796,10 @@
             var presetPolygons = [];
             var presetMarkers = [];
             var presetsVisible = false;
+            // 土地等级区域（后台 landLevels.json）
+            var landLevelPolygons = [];
+            var landLevelMarkers = [];
+            var landLevelsVisible = false;
             const regionColors = [
 	                '#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe',
 	                '#43e97b', '#38f9d7', '#fa709a', '#fee140', '#30cfd0', '#330867',
@@ -1862,6 +1869,7 @@
                     showStatus(`地图样式已切换`);
                 });
                 document.getElementById('togglePresets').addEventListener('click', togglePresets);
+                document.getElementById('toggleLandLevels').addEventListener('click', toggleLandLevels);
                 renderHistoryList();
                 hideLoadingOverlay();
                 setTimeout(() => {
@@ -2447,6 +2455,112 @@
                     loadPresetData();
                     button.innerHTML = '<i class="fas fa-map-marker-alt"></i> 关闭预设';
                     presetsVisible = true;
+                }
+            }
+
+            // ========== 土地等级区域（读取后台 landLevels.json）==========
+            // 加载后台土地等级数据并绘制
+            function loadLandLevelData() {
+                fetch('landLevels.json')
+                    .then(function (response) {
+                        if (!response.ok) throw new Error('HTTP ' + response.status);
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        const regions = (data && data.regions) ? data.regions : [];
+                        const valid = regions.filter(function (item) {
+                            return item && Array.isArray(item.coords) && item.coords.length >= 3;
+                        });
+                        if (valid.length === 0) {
+                            landLevelsVisible = false;
+                            document.getElementById('toggleLandLevels').innerHTML =
+                                '<i class="fas fa-layer-group"></i> 土地等级';
+                            showStatus('土地等级暂无坐标数据，请在 landLevels.json 中补充');
+                            return;
+                        }
+                        drawLandLevels(valid);
+                    })
+                    .catch(function () {
+                        landLevelsVisible = false;
+                        document.getElementById('toggleLandLevels').innerHTML =
+                            '<i class="fas fa-layer-group"></i> 土地等级';
+                        showStatus('加载土地等级数据失败');
+                    });
+            }
+
+            // 绘制土地等级多边形与标注
+            function drawLandLevels(regions) {
+                clearLandLevels();
+                regions.forEach(function (item) {
+                    const level = item.level || 1;
+                    const color = item.color || '#e74c3c';
+                    const path = item.coords.map(function (c) {
+                        return new AMap.LngLat(c[0], c[1]);
+                    });
+                    const polygon = new AMap.Polygon({
+                        path: path,
+                        strokeColor: color,
+                        strokeOpacity: 0.9,
+                        strokeWeight: 2,
+                        fillColor: color,
+                        fillOpacity: 0.25,
+                        zIndex: 100 - level,
+                        bubble: true
+                    });
+                    map.add(polygon);
+                    landLevelPolygons.push(polygon);
+
+                    const label = item.name + (item.tax ? ' ' + item.tax + '元/㎡' : '');
+                    const text = new AMap.Text({
+                        text: label,
+                        position: polygon.getBounds().getCenter(),
+                        anchor: 'center',
+                        style: {
+                            'background-color': color,
+                            'border': 'none',
+                            'color': '#fff',
+                            'padding': '3px 8px',
+                            'border-radius': '4px',
+                            'font-size': '12px',
+                            'font-weight': '600',
+                            'white-space': 'nowrap',
+                            'box-shadow': '0 2px 6px rgba(0,0,0,0.2)'
+                        },
+                        zIndex: 200 - level
+                    });
+                    map.add(text);
+                    landLevelMarkers.push(text);
+                });
+                if (landLevelPolygons.length > 0) {
+                    map.setFitView(landLevelPolygons);
+                    showStatus('已显示 ' + landLevelPolygons.length + ' 个土地等级区域');
+                }
+            }
+
+            // 清除土地等级覆盖物
+            function clearLandLevels() {
+                if (landLevelPolygons.length > 0) {
+                    map.remove(landLevelPolygons);
+                    landLevelPolygons = [];
+                }
+                if (landLevelMarkers.length > 0) {
+                    map.remove(landLevelMarkers);
+                    landLevelMarkers = [];
+                }
+            }
+
+            // 显示/关闭土地等级（默认关闭）
+            function toggleLandLevels() {
+                const button = document.getElementById('toggleLandLevels');
+                if (landLevelsVisible) {
+                    clearLandLevels();
+                    button.innerHTML = '<i class="fas fa-layer-group"></i> 土地等级';
+                    landLevelsVisible = false;
+                    showStatus('已关闭土地等级');
+                } else {
+                    button.innerHTML = '<i class="fas fa-layer-group"></i> 关闭等级';
+                    landLevelsVisible = true;
+                    loadLandLevelData();
                 }
             }
         }
