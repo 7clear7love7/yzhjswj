@@ -337,7 +337,7 @@ body { font-family:'Microsoft YaHei','Segoe UI',Tahoma,Geneva,Verdana,sans-serif
 <h5><i class="fas fa-file-code"></i> JSON数据批量导入</h5>
 <button class="toggle-json-btn collapsed" id="toggleJsonInput"><i class="fas fa-chevron-down"></i> 展开</button>
 </div>
-<p class="json-input-hint">由于高德地图接口限制，使用此功能前请先登录高德地图，<a href="https://www.amap.com" target="_blank" style="text-decoration:underline;color:#667eea;">点此登录</a></p>
+<p class="json-input-hint">数据源：高德 POI 详情接口（无需登录）。若预览窗口空白，可<a href="https://www.amap.com" target="_blank" style="text-decoration:underline;color:#667eea;">点此访问高德地图</a>后重试</p>
 </div>
 <div class="json-input-body collapsed" id="jsonInputBody">
 <textarea id="jsonInput" class="json-textarea" placeholder="粘贴JSON格式数据..."></textarea>
@@ -674,7 +674,7 @@ function initializeApp() {
         document.getElementById('poiAddress').textContent = poiAddress;
         document.getElementById('poiIdText').textContent = poiId;
         document.getElementById('poiDetailBtn').onclick = function () {
-            var url = 'https://www.amap.com/detail/get/detail?id=' + poiId;
+            var url = 'https://amap-pc-ssr.amap.com/ssr/api/getPoiInfo?id=' + poiId;
             document.getElementById('jsonIframe').src = url;
             document.getElementById('jsonPreviewModal').style.display = 'flex';
         };
