@@ -319,6 +319,7 @@ body { font-family:'Microsoft YaHei','Segoe UI',Tahoma,Geneva,Verdana,sans-serif
 <div class="auth-forgot-tip" id="forgotTip">请联系开发者获取密码</div>
 <div class="auth-links">
 <button type="button" class="auth-link" id="forgotPassword"><i class="fas fa-key"></i> 忘记密码</button>
+<button type="button" class="auth-link" id="newVersionEntry"><i class="fas fa-external-link-alt"></i> 新版入口</button>
 <button type="button" class="auth-link" id="openChangelog"><i class="fas fa-clipboard-list"></i> 更新记录</button>
 </div>
 </div>
@@ -696,6 +697,9 @@ document.getElementById('changelogOverlay').addEventListener('click', function (
 });
 document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeChangelog();
+});
+document.getElementById('newVersionEntry').addEventListener('click', function () {
+    window.location.href = 'https://taxmap-d4gmq3tkv4bce4cdb-1387502776.tcloudbaseapp.com/';
 });
 
 renderChangelog();
